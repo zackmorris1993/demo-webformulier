@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>eHerkenning Demo Login</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: repeating-linear-gradient(
+        45deg,
+        #f6f6f6,
+        #f6f6f6 10px,
+        #e9e9e9 10px,
+        #e9e9e9 20px
+      );
+    }
+
+    .page {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 20px;
+    }
+
+    .box {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+
+    .box img {
+      width: 100%;
+      border-radius: 4px;
+    }
+
+    h3 {
+      margin-top: 0;
+      color: #00534c;
+    }
+
+    .box p {
+      font-size: 14px;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .btn {
+      background-color: #c9ef00;
+      color: #000;
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #b1d800;
+    }
+
+    .details {
+      font-size: 12px;
+      word-wrap: break-word;
+    }
+
+    .details span {
+      font-family: monospace;
+      display: block;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <div class="box">
+      <h3>📱 Have an account? Use the app</h3>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://voorbeeld.nl&size=200x200" alt="QR-code">
+    </div>
+
+    <div class="box">
+      <h3>🔐 eHerkenning service</h3>
+      <p>
+        You wish to log in to <strong>De Nederlandsche Bank N.V.</strong> for <em>Portaalfunctie</em>.
+        To do this you need an authentication method of at least level EH2.
+      </p>
+
+      <h3>📧 Use your email address</h3>
+      <form onsubmit="return fakeLogin(event)">
+        <input type="email" placeholder="Enter your email address" required>
+        <button class="btn" type="submit">Continue</button>
+      </form>
+    </div>
+
+    <div class="box">
+      <h3>🐞 Debug details</h3>
+      <div class="details">
+        <strong>QR code URI</strong>
+        <span>https://app.link.fake/eherkenning/demo/12345</span>
+
+        <strong>Request ID</strong>
+        <span>PLS-abc1234-def5678-ghi9012</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function fakeLogin(e) {
+      e.preventDefault();
+      alert("Je wordt doorgestuurd naar de demo 'dashboard'.");
+      window.location.href = "dashboard.html";
+    }
+  </script>
+
+</body>
+</html>
