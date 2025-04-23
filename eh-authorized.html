@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>eHerkenning – Authorized</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #fdf8f2;
+      font-family: Arial, sans-serif;
+      color: #002e2e;
+    }
+
+    .header {
+      background-color: #003d33;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.2em;
+    }
+
+    .header div span {
+      margin-left: 20px;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: 80px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .container h2 {
+      color: #004d40;
+    }
+
+    .info {
+      text-align: left;
+      font-size: 14px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .info strong {
+      color: #000;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: 2px solid #003d33;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .cancel {
+      background-color: white;
+      color: #003d33;
+    }
+
+    .continue {
+      background-color: #c9ef00;
+      border-color: #c9ef00;
+      color: #000;
+    }
+
+    .continue:hover {
+      background-color: #b1d800;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>✳️ Digidentity</h1>
+    <div>
+      <span>🌐 Language</span>
+      <span>❓ Support</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>✅ Authorized</h2>
+    <div class="info">
+      <p><strong>You are authorized</strong></p>
+      <p>
+        On behalf of <strong>Global Hotsolotom (90004485)</strong><br>
+        you can use the service <strong>Portaalfunctie</strong><br>
+        at <strong>De Nederlandsche Bank N.V.</strong>
+      </p>
+    </div>
+
+    <div class="buttons">
+      <button class="btn cancel" onclick="goBack()">Cancel</button>
+      <button class="btn continue" onclick="continueToDashboard()">Continue</button>
+    </div>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    function continueToDashboard() {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+
+</body>
+</html>
