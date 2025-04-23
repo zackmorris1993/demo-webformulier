@@ -3,10 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mijn Demo</title>
+  <title>Loginpagina</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f6f6f9;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .banner img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #2d2d7f;
+      border-bottom: 3px solid #2d2d7f;
+      display: inline-block;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+    }
+
+    .login-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #f2f2f2;
+      padding: 15px 20px;
+      margin: 15px 0;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #000;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .login-button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .login-button span {
+      font-size: 1.2em;
+    }
+
+    .arrow {
+      font-size: 1.5em;
+    }
+
+    .nieuw h3 {
+      margin-top: 40px;
+      color: #2d2d7f;
+    }
+
+    .nieuw a {
+      display: block;
+      margin: 5px 0;
+      color: #2d2d7f;
+      text-decoration: none;
+    }
+
+    .nieuw a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welkom op mijn demo site!</h1>
-  <p>Deze pagina staat live via GitHub Pages 🚀</p>
+
+  <div class="banner">
+    <img src="https://www.dnb.nl/binaries/banner_dnb-gebouw_1200x200_tcm47-379755.jpg" alt="DNB banner">
+  </div>
+
+  <div class="container">
+    <h2>Choose your login method</h2>
+
+    <a class="login-button" href="eh-login.html">
+      <span>🔐 Log in with eHerkenning</span>
+      <span class="arrow">➔</span>
+    </a>
+
+    <a class="login-button" href="mijndnb-login.html">
+      <span>💼 Mijn DNB – Log in with My DNB account</span>
+      <span class="arrow">➔</span>
+    </a>
+
+    <div class="nieuw">
+      <h3>New?</h3>
+      <a href="#">➔ Go to Login assistance</a>
+      <a href="#">➔ Read how to apply for eHerkenning</a>
+      <a href="#">➔ Read how to create a My DNB account</a>
+    </div>
+  </div>
+
 </body>
 </html>
+
