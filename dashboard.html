@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mijn DNB – Reporting obligations</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: white;
+      padding: 15px 30px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      color: #002d9c;
+      margin: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    .top-right {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .container h2 {
+      color: #002d9c;
+      margin-bottom: 20px;
+    }
+
+    .search {
+      margin-bottom: 20px;
+    }
+
+    .search input {
+      padding: 10px;
+      width: 300px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f6fa;
+      color: #333;
+    }
+
+    .status {
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .status.open { background-color: #e6f2ff; color: #00539f; border: 1px solid #b3d4fc; }
+    .status.completed { background-color: #e0f8e9; color: #217346; border: 1px solid #b5e4c4; }
+    .status.error { background-color: #fde2e1; color: #b80000; border: 1px solid #ffbaba; }
+
+    .download {
+      margin-top: 15px;
+      text-align: right;
+    }
+
+    .download button {
+      background-color: #002d9c;
+      color: white;
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .download button:hover {
+      background-color: #001f6b;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Mijn DNB</h1>
+    <nav>
+      <span>My services</span>
+      <span>Support & contact</span>
+    </nav>
+    <div class="top-right">
+      <span>EH Tom Jansen, 90004485 (kvk)</span>
+      <span>🔔 Notifications (70)</span>
+      <span>👤</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Reporting obligations</h2>
+
+    <div class="search">
+      <input type="text" placeholder="🔍 Search in reports">
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Report</th>
+            <th>Frequency</th>
+            <th>Period</th>
+            <th>No</th>
+            <th>Expected</th>
+            <th>Status</th>
+            <th>Relates to</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CSDR article 9 individual</td>
+            <td>Per kwartaal</td>
+            <td>31-03-2019</td>
+            <td>1</td>
+            <td>12-04-2109</td>
+            <td><span class="status open">Open</span></td>
+            <td>ABN AMRO Bank N.V.</td>
+          </tr>
+          <tr>
+            <td>CSDR article 9 individual</td>
+            <td>Per kwartaal</td>
+            <td>30-06-2018</td>
+            <td>156</td>
+            <td>16-04-2025</td>
+            <td><span class="status error">Not accepted</span></td>
+            <td>ABN AMRO Bank N.V.</td>
+          </tr>
+          <tr>
+            <td>Digitale handtekening + verklaring</td>
+            <td>Per maand</td>
+            <td>31-10-2022</td>
+            <td>72</td>
+            <td>16-04-2025</td>
+            <td><span class="status completed">Completed</span></td>
+            <td>ABN AMRO Bank N.V.</td>
+          </tr>
+          <!-- Voeg hier meer rijen toe indien gewenst -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="download">
+      <button>⬇️ Download</button>
+    </div>
+  </div>
+
+</body>
+</html>
