@@ -95,13 +95,17 @@
       <label>Identifier <span style="color:red">*</span></label>
       <input type="text" placeholder="Vul hier de identifier in" name="identifier" required>
 
-      <label>Scheme <span style="color:red">*</span></label>
+      <label>
+        Scheme 
+        <span title="Kies hier het juiste type code dat u bij Identifier heeft ingevuld. Bij een KvK-nummer kiest u 'http://www.dnb.nl/kvk', bij een RIAD-code kiest u 'http://www.dnb.nl/riad', bij een LEI-code kiest u 'http://www.dnb.nl/lei'." style="cursor: help; color: #002d9c;">❓</span>
+      </label>
       <select name="scheme" required>
         <option value="">-- Maak een keuze --</option>
         <option value="http://www.dnb.nl/kvk">http://www.dnb.nl/kvk</option>
         <option value="http://www.dnb.nl/riad">http://www.dnb.nl/riad</option>
         <option value="http://www.dnb.nl/lei">http://www.dnb.nl/lei</option>
       </select>
+
 
       <label>Currency</label>
       <input type="text" value="EUR" readonly>
