@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOC - Rapportageformulier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #002d9c;
+      color: white;
+      padding: 15px 30px;
+      font-size: 1.4em;
+    }
+
+    .container {
+      max-width: 600px;
+      background: white;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #002d9c;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+
+    input[readonly] {
+      background-color: #e9ecef;
+    }
+
+    button {
+      background-color: #002d9c;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      margin-top: 20px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #001f6b;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    Mijn DNB - TOC Rapportage
+  </header>
+
+  <div class="container">
+    <h2>TOC - Algemene gegevens</h2>
+
+    <form onsubmit="return goToNext(event)">
+      
+      <label>Period Start</label>
+      <input type="text" value="01-01-2024" readonly>
+
+      <label>Period End</label>
+      <input type="text" value="31-12-2024" readonly>
+
+      <label>Identifier</label>
+      <input type="text" placeholder="Vul hier de identifier in" required>
+
+      <label>Scheme</label>
+      <input type="text" placeholder="Vul hier de scheme in" required>
+
+      <label>Currency</label>
+      <input type="text" value="EUR" readonly>
+
+      <label>Language</label>
+      <input type="text" placeholder="Bijv. nl of en" required>
+
+      <div class="button-group">
+        <button type="button" onclick="goBack()">Vorige</button>
+        <button type="submit">Volgende</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    function goToNext(event) {
+      event.preventDefault();
+      window.location.href = "reporting-t00-01.html"; // Hierna naar de volgende stap
+    }
+  </script>
+
+</body>
+</html>
