@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CFI Benchmark - Rapportageformulier</title>
+  <title>TOC - Rapportageformulier</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,7 +40,7 @@
     }
 
     input[type="text"],
-    input[type="date"] {
+    select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -78,11 +78,11 @@
 <body>
 
   <header>
-    Mijn DNB - CFI Benchmark Rapportage
+    Mijn DNB - TOC Rapportage
   </header>
 
   <div class="container">
-    <h2>CFI Benchmark - Algemene gegevens</h2>
+    <h2>TOC - Algemene gegevens</h2>
 
     <form onsubmit="return goToNext(event)">
       
@@ -92,23 +92,22 @@
       <label>Period End</label>
       <input type="text" value="31-12-2024" readonly>
 
-      <label>Identifier</label>
-      <input type="text" placeholder="Vul hier de identifier in" required>
+      <label>Identifier <span style="color:red">*</span></label>
+      <input type="text" placeholder="Vul hier de identifier in" name="identifier" required>
 
-      <label>Scheme</label>
-      <select required>
+      <label>Scheme <span style="color:red">*</span></label>
+      <select name="scheme" required>
         <option value="">-- Maak een keuze --</option>
         <option value="http://www.dnb.nl/kvk">http://www.dnb.nl/kvk</option>
         <option value="http://www.dnb.nl/riad">http://www.dnb.nl/riad</option>
         <option value="http://www.dnb.nl/lei">http://www.dnb.nl/lei</option>
       </select>
 
-
       <label>Currency</label>
       <input type="text" value="EUR" readonly>
 
       <label>Language</label>
-      <input type="text" value="en" readonly>
+      <input type="text" placeholder="Bijv. nl of en" name="language" required>
 
       <div class="button-group">
         <button type="button" onclick="goBack()">Vorige</button>
@@ -124,6 +123,16 @@
 
     function goToNext(event) {
       event.preventDefault();
+      
+      // Controle of Identifier en Scheme zijn ingevuld
+      const identifier = document.querySelector('input[name="identifier"]').value.trim();
+      const scheme = document.querySelector('select[name="scheme"]').value.trim();
+
+      if (identifier === '' || scheme === '') {
+        alert('Vul zowel Identifier als Scheme in voordat je doorgaat.');
+        return false;
+      }
+
       window.location.href = "reporting-t00-01.html"; // Hierna naar de volgende stap
     }
   </script>
