@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>T 01.01 - Subsidiaries</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9fb;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #002d9c;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #002d9c;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      margin-top: 30px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #001f6b;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>T 01.01 - Subsidiaries</h2>
+
+  <form onsubmit="saveForm(event)">
+
+    <label>Country of counterparty</label>
+    <select required id="country">
+      <option value="">-- Selecteer een land --</option>
+      <option value="Netherlands">Netherlands</option>
+      <option value="Belgium">Belgium</option>
+      <option value="Germany">Germany</option>
+      <option value="France">France</option>
+      <option value="United Kingdom">United Kingdom</option>
+      <option value="United States">United States</option>
+      <option value="China">China</option>
+      <option value="Japan">Japan</option>
+      <option value="Australia">Australia</option>
+      <!-- Hier komen straks álle landen, dit is voorbeeld! -->
+    </select>
+
+    <label>Position at the beginning of the book year (010)</label>
+    <input type="number" step="0.01" placeholder="Vul bedrag in" required>
+
+    <label>Position at the end of the book year (020)</label>
+    <input type="number" step="0.01" placeholder="Vul bedrag in" required>
+
+    <label>Dividend amount received during the book year (030)</label>
+    <input type="number" step="0.01" placeholder="Vul bedrag in" required>
+
+    <label>Result from operational management (net) (040)</label>
+    <input type="number" step="0.01" placeholder="Vul bedrag in" required>
+
+    <button type="submit">Opslaan</button>
+  </form>
+
+  <script>
+    function saveForm(event) {
+      event.preventDefault();
+      alert('Formulier opgeslagen! (Demo)');
+      // Hier kun je straks data verwerken of doorgaan naar volgende tabblad
+    }
+  </script>
+
+</body>
+</html>
