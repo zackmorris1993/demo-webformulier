@@ -267,7 +267,6 @@
     <div class="chat-options">
       <button onclick="showAnswer('identifier')">Wat is een Identifier?</button>
       <button onclick="showAnswer('scheme')">Wat moet ik invullen bij Scheme?</button>
-      <button onclick="showAnswer('language')">Welke taal moet ik kiezen?</button>
     </div>
   </div>
 </div>
@@ -291,15 +290,13 @@
       answer = "Een Identifier is een unieke code die uw instelling identificeert bij DNB. Dit kan een KvK-nummer, RIAD-code of LEI-code zijn.";
     } else if (topic === 'scheme') {
       answer = "U kiest een Scheme op basis van uw Identifier: KvK-nummer = kvk-link, RIAD-code = riad-link, LEI-code = lei-link.";
-    } else if (topic === 'language') {
-      answer = "Gebruik 'nl' voor Nederlands of 'en' voor Engels, afhankelijk van de gewenste taal van uw rapportage.";
     }
 
     var message = document.createElement('div');
     message.className = 'chat-message';
     message.innerHTML = `
       ${answer}<br><br>
-      <small>❓ Nog vragen? <a href="mailto:CFI@dnb.nl" style="color: #002d9c;">Mail ons via CFI@dnb.nl</a></small>
+      <small>Komt u er niet uit? Neem dan contact met op ons via:<a href="mailto:cfi@dnb.nl" style="color: #002d9c;">cfi@dnb.nl</a></small>
     `;
     chatBody.appendChild(message);
     chatBody.scrollTop = chatBody.scrollHeight;
