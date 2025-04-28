@@ -275,10 +275,18 @@
 <script>
   function toggleChat() {
     var chat = document.getElementById('chatWindow');
+    var chatBody = document.getElementById('chatBody');
+    
     if (chat.style.display === 'none' || chat.style.display === '') {
       chat.style.display = 'block';
     } else {
       chat.style.display = 'none';
+      chatBody.innerHTML = `
+        <div class="chat-options">
+          <button onclick="showAnswer('identifier')">Wat is een Identifier?</button>
+          <button onclick="showAnswer('scheme')">Wat moet ik invullen bij Scheme?</button>
+        </div>
+      `;
     }
   }
 
@@ -292,16 +300,20 @@
       answer = "U kiest een Scheme op basis van uw Identifier: KvK-nummer = kvk-link, RIAD-code = riad-link, LEI-code = lei-link.";
     }
 
-    var message = document.createElement('div');
-    message.className = 'chat-message';
-    message.innerHTML = `
-      ${answer}<br><br>
-      <small>Komt u er niet uit? Neem dan contact met op ons via:<a href="mailto:cfi@dnb.nl" style="color: #002d9c;">cfi@dnb.nl</a></small>
+    chatBody.innerHTML = `
+      <div class="chat-options">
+        <button onclick="showAnswer('identifier')">Wat is een Identifier?</button>
+        <button onclick="showAnswer('scheme')">Wat moet ik invullen bij Scheme?</button>
+      </div>
+      <div class="chat-message">
+        ${answer}<br><br>
+        <small>❓ Komt u er niet uit? <a href="mailto:cfi@dnb.nl" style="color: #002d9c;">Mail ons via cfi@dnb.nl</a></small>
+      </div>
     `;
-    chatBody.appendChild(message);
     chatBody.scrollTop = chatBody.scrollHeight;
   }
 </script>
+
 
 </body>
 </html>
