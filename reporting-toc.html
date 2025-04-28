@@ -114,6 +114,18 @@
       <label>Identifier <span style="color:red">*</span></label>
       <input type="text" placeholder="Vul hier de identifier in" name="identifier" required>
 
+      <a class="help-link" onclick="toggleHelp('identifierHelp')">❓ Hulp bij invullen</a>
+
+      <div id="identifierHelp" class="help-box">
+        Om u te identificeren als rapporterende instelling dient u hier een identificatie-code in te vullen..<br><br>
+        Dit kan een:<br>
+        • KvK-nummer zijn,<br>
+        • RIAD-code zijn,<br>
+        • of LEI-code zijn.<br><br>
+        Vult u hier de juiste code in die bij uw instelling hoort.
+      </div>
+
+
       <label>Scheme <span style="color:red">*</span></label>
       <select name="scheme" required>
         <option value="">-- Maak een keuze --</option>
