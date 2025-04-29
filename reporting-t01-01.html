@@ -10,10 +10,35 @@
       margin: 0;
       padding: 30px;
     }
+
     h2 {
       color: #004080;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
+
+    /* Hulp‐link en help‐box */
+    .help-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.9em;
+      color: #004080;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .help-box {
+      display: none;
+      background-color: #e6f4ff;
+      border-left: 4px solid #004080;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-size: 0.95em;
+      color: #003366;
+      max-height: 300px;
+      overflow-y: auto;
+      line-height: 1.4;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -23,15 +48,18 @@
       overflow: hidden;
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
+
     th, td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
     }
+
     th {
       background-color: #f0f6ff;
       color: #004080;
     }
+
     select, input[type="number"] {
       width: 100%;
       padding: 8px;
@@ -39,11 +67,13 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+
     .button-group {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       gap: 10px;
     }
+
     .button-group button {
       background-color: #004080;
       color: white;
@@ -54,6 +84,7 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
+
     .button-group button:hover {
       background-color: #003060;
     }
@@ -62,6 +93,36 @@
 <body>
 
   <h2>T 01.01 - Subsidiaries</h2>
+
+  <!-- Hulp bij invullen -->
+  <a class="help-link" onclick="toggleHelp('subsidiariesHelp')">❓ Hulp bij invullen</a>
+  <div id="subsidiariesHelp" class="help-box">
+    <p>
+      Op form T01.01 dienen rapporterende instellingen de totale posities aan te geven 
+      aan het begin en aan het einde van het boekjaar voor “participating interests” 
+      en “direct holdings” (geen vastgoed via dochters of vestigingen), zowel in Nederland 
+      als in het buitenland.
+    </p>
+    <p>
+      <strong>Participating interests</strong> (minimaal 10% inclusief groepsbelang) 
+      omvatten beursgenoteerde en niet-genoteerde aandelen. Alles onder 10% rapporteert u op T01.03. 
+      Vestigingen worden statistisch als participating interest beschouwd; waarde = netto‐vermogenswaarde.
+    </p>
+    <p>
+      <strong>Kolom 030 – Dividend amount received during the book year:</strong> 
+      bruto dividend vóór belasting. Incidentele uitdelingen (bijv. verkoop deelneming) niet meenemen.
+    </p>
+    <p>
+      <strong>Kolom 040 – Result from operational management (net):</strong> 
+      resultaat na belasting voor dat boekjaar, exclusief bijzondere baten en lasten; 
+      bij direct vastgoed: behaalde exploitatie-resultaten. Indien geen data, schat naar evenredigheid met kolom 030.
+    </p>
+    <p>
+      De instelling moet holdings uitsplitsen naar land via de “Country of counterparty” kolom. 
+      Bij gebruik van het Excel-bestand kopieer de eerste rij voor elke nieuwe positie.
+    </p>
+  </div>
+
 
   <form onsubmit="return false;">
 
@@ -96,12 +157,31 @@
     </table>
 
     <div class="button-group">
-      <button type="button" onclick="parent.loadForm('reporting-t01-02.html', parent.document.querySelector('.sidebar button[onclick*=&quot;reporting-t01-02.html&quot;]'))">
-        Volgende ➔
-      </button>
+      <button type="button" onclick="addRow()">➕ Voeg rij toe</button>
+      <button type="button" onclick="
+        parent.loadForm(
+          'reporting-t01-02.html',
+          parent.document.querySelector('.sidebar button[onclick*=&quot;reporting-t01-02.html&quot;]')
+        )
+      ">Volgende ➔</button>
     </div>
 
   </form>
+
+  <script>
+    function toggleHelp(id) {
+      const box = document.getElementById(id);
+      box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function addRow() {
+      const tbody = document.querySelector('#subsidiariesTable tbody');
+      const newRow = tbody.rows[0].cloneNode(true);
+      newRow.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+      newRow.querySelectorAll('input').forEach(i => i.value = '');
+      tbody.appendChild(newRow);
+    }
+  </script>
 
 </body>
 </html>
