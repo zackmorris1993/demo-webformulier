@@ -35,6 +35,7 @@
     .app-container {
       display: flex;
       height: calc(100vh - 60px);
+      position: relative;
     }
 
     .sidebar {
@@ -43,6 +44,13 @@
       border-right: 1px solid #ddd;
       padding: 20px;
       overflow-y: auto;
+      transition: width 0.3s;
+    }
+
+    .sidebar.hidden {
+      width: 0;
+      padding: 0;
+      border: none;
     }
 
     .sidebar h2 {
@@ -64,7 +72,8 @@
       transition: background-color 0.2s;
     }
 
-    .sidebar button:hover, .sidebar button.active {
+    .sidebar button:hover,
+    .sidebar button.active {
       background-color: #e6f4ff;
     }
 
@@ -82,54 +91,79 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+
+    /* Toggle-knop */
+    #toggleBtn {
+      position: absolute;
+      top: 20px;
+      left: 260px;
+      background-color: #004080;
+      color: white;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      width: 20px;
+      height: 40px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: left 0.3s;
+      z-index: 10;
+    }
+    .sidebar.hidden ~ #toggleBtn {
+      left: 0;
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/De_Nederlandsche_Bank_logo.svg" alt="Mijn DNB Logo">
-  <nav>
-    <span>My services</span>
-    <span>Support & contact</span>
-    <span>EH Tom Jansen, 90004485 (kvk)</span>
-    <span>🔔 Notifications</span>
-    <span>👤</span>
-  </nav>
-</header>
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/De_Nederlandsche_Bank_logo.svg" alt="Mijn DNB Logo">
+    <nav>
+      <span>My services</span>
+      <span>Support & contact</span>
+      <span>EH Tom Jansen, 90004485 (kvk)</span>
+      <span>🔔 Notifications</span>
+      <span>👤</span>
+    </nav>
+  </header>
 
-<div class="app-container">
-  <div class="sidebar">
-    <h2>Formulieren</h2>
-    <button onclick="loadForm('reporting-t01-01.html', this)">T 01.01 - Subsidiaries</button>
-    <button onclick="loadForm('reporting-t01-02.html', this)">T 01.02 - Loans granted</button>
-    <button onclick="loadForm('reporting-t01-03.html', this)">T 01.03 - Securities held</button>
-    <button onclick="loadForm('reporting-t01-04.html', this)">T 01.04 - Derivative assets</button>
-    <button onclick="loadForm('reporting-t02-01.html', this)">T 02.01 - Shareholders equity</button>
-    <button onclick="loadForm('reporting-t02-02.html', this)">T 02.02 - Loans received</button>
-    <button onclick="loadForm('reporting-t02-03.html', this)">T 02.03 - Securities issued</button>
-    <button onclick="loadForm('reporting-t02-04.html', this)">T 02.04 - Derivative liabilities</button>
-    <button onclick="loadForm('reporting-t03-01.html', this)">T 03.01 - Balance sheet total</button>
-    <button onclick="loadForm('reporting-t04-01.html', this)">T 04.01 - International trade royalties</button>
-    <button onclick="loadForm('reporting-t05-01.html', this)">T 05.01 - Totals CFI Benchmark</button>
+  <div class="app-container">
+    <div class="sidebar" id="sidebar">
+      <h2>Formulieren</h2>
+      <button onclick="loadForm('reporting-t01-01.html', this)">T 01.01 - Subsidiaries</button>
+      <button onclick="loadForm('reporting-t01-02.html', this)">T 01.02 - Loans granted</button>
+      <button onclick="loadForm('reporting-t01-03.html', this)">T 01.03 - Securities held</button>
+      <button onclick="loadForm('reporting-t01-04.html', this)">T 01.04 - Derivative assets</button>
+      <button onclick="loadForm('reporting-t02-01.html', this)">T 02.01 - Shareholders equity</button>
+      <button onclick="loadForm('reporting-t02-02.html', this)">T 02.02 - Loans received</button>
+      <button onclick="loadForm('reporting-t02-03.html', this)">T 02.03 - Securities issued</button>
+      <button onclick="loadForm('reporting-t02-04.html', this)">T 02.04 - Derivative liabilities</button>
+      <button onclick="loadForm('reporting-t03-01.html', this)">T 03.01 - Balance sheet total</button>
+      <button onclick="loadForm('reporting-t04-01.html', this)">T 04.01 - International trade royalties</button>
+      <button onclick="loadForm('reporting-t05-01.html', this)">T 05.01 - Totals CFI Benchmark</button>
+    </div>
+
+    <button id="toggleBtn" onclick="toggleSidebar()">◂</button>
+
+    <div class="content">
+      <iframe id="formFrame" src=""></iframe>
+    </div>
   </div>
 
-  <div class="content">
-    <iframe id="formFrame" src=""></iframe>
-  </div>
-</div>
+  <script>
+    function loadForm(page, button) {
+      document.getElementById('formFrame').src = page;
+      var buttons = document.querySelectorAll('.sidebar button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
 
-<script>
-  function loadForm(page, button) {
-    document.getElementById('formFrame').src = page;
-
-    // Verwijder 'active' van alle knoppen
-    var buttons = document.querySelectorAll('.sidebar button');
-    buttons.forEach(btn => btn.classList.remove('active'));
-
-    // Voeg 'active' toe aan de huidige knop
-    button.classList.add('active');
-  }
-</script>
+    function toggleSidebar() {
+      var sb = document.getElementById('sidebar');
+      sb.classList.toggle('hidden');
+      var btn = document.getElementById('toggleBtn');
+      btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
+    }
+  </script>
 
 </body>
 </html>
