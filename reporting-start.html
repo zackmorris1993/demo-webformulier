@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Aanlevering</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,14 +12,12 @@
       margin: 0;
       padding: 0;
     }
-
     header {
       background-color: #002d9c;
       color: white;
       padding: 15px 30px;
       font-size: 1.4em;
     }
-
     .container {
       max-width: 600px;
       background: white;
@@ -28,16 +27,16 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       text-align: center;
     }
-
     h2 {
       color: #002d9c;
     }
-
     p {
       margin-top: 20px;
       font-size: 16px;
     }
-
+    input[type="file"] {
+      margin-top: 20px;
+    }
     button {
       background-color: #002d9c;
       color: white;
@@ -48,8 +47,11 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
-    button:hover {
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    button:hover:enabled {
       background-color: #001f6b;
     }
   </style>
@@ -64,15 +66,40 @@
     <h2>Je staat op het punt om een nieuwe rapportage aan te leveren.</h2>
     <p>
       Rapportage: <strong>CSDR article 9 individual</strong><br>
-      Periode: <strong>01-01-2024 t/m 31-12-2024</strong><br>
+      Periode: <strong>01-01-2024 t/m 31-12-2024</strong>
     </p>
-    <button onclick="startReporting()">Start aanlevering</button>
+
+    <!-- CSV/Excel upload -->
+    <input type="file" id="excelUpload" accept=".xlsx,.xls">
+    <br>
+    <button id="startBtn" disabled>Start aanlevering</button>
   </div>
 
   <script>
-    function startReporting() {
-      window.location.href = "reporting-toc.html";
-    }
+    const uploadInput = document.getElementById('excelUpload');
+    const startBtn    = document.getElementById('startBtn');
+
+    uploadInput.addEventListener('change', evt => {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+        // Sla elke sheet op in localStorage onder de sheetnaam
+        wb.SheetNames.forEach(name => {
+          const sheet = wb.Sheets[name];
+          const json2d = XLSX.utils.sheet_to_json(sheet, { header:1 });
+          localStorage.setItem(name, JSON.stringify(json2d));
+        });
+        startBtn.disabled = false;
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    startBtn.addEventListener('click', () => {
+      window.location.href = 'reporting-app.html';
+    });
   </script>
 
 </body>
