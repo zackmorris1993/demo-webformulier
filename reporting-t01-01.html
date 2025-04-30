@@ -134,29 +134,33 @@
 
     // ** HIER START DE EXCEL-IMPORT ** 
     document.addEventListener('DOMContentLoaded', ()=>{
-      const raw = localStorage.getItem('T01.01');
-      if(!raw) return;                 // geen Excel-sheet ingeladen
-      const data = JSON.parse(raw);
-      const rows = data.slice(1);      // eerste rij is header
+      // zoek een key die met "T01.01" begint
+      const sheetKey = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
+      if(!sheetKey) return;                 // geen Excel geladen, laat lege rij
+
+      const data  = JSON.parse(localStorage.getItem(sheetKey));
+      const rows  = data.slice(1);          // skip header
       const tbody = document.querySelector('#subsidiariesTable tbody');
-      tbody.innerHTML = '';            // verwijder template-rij
+
+      // verwijder template-rij(ën)
+      tbody.innerHTML = '';
 
       rows.forEach(cols=>{
         addRow();
         const tr = tbody.lastElementChild;
         tr.cells[0].querySelector('input').value = cols[0]||'';
         for(let i=1; i<=4; i++){
-          tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
+          tr.cells[i].querySelector('input').value = cols[i]!=null? cols[i] : '';
         }
       });
     });
 
-    // Taxonomie-validatie en volgende knop (zoals eerder)
+    // Validatie + Volgende
     const rules = [
       {id:'dnb_v0056',sev:'ERROR',validate:r=>{ const a=+r.cells[1].querySelector('input').value||0,b=r.cells[2].querySelector('input').value; return !(a>300000000&& !b); },msg:'010 >300 000 000 → vul ook 020 in'},
       {id:'dnb_v0057',sev:'WARNING',validate:r=>{ const a=+r.cells[1].querySelector('input').value||0,b=+r.cells[2].querySelector('input').value||0; return !(a<300000000&& a>=b); },msg:'010 moet <020 wanneer <300 000 000'},
-      {id:'dnb_v0054',sev:'ERROR',validate:r=> (+r.cells[3].querySelector('input').value||0)>=-30000000, msg:'030 ≥ –30 000 000'},
-      {id:'dnb_v0058',sev:'ERROR',validate:r=> (+r.cells[4].querySelector('input').value||0)>=0, msg:'040 ≥ 0'}
+      {id:'dnb_v0054',sev:'ERROR',validate:r=>(+r.cells[3].querySelector('input').value||0)>=-30000000, msg:'030 ≥ –30 000 000'},
+      {id:'dnb_v0058',sev:'ERROR',validate:r=>(+r.cells[4].querySelector('input').value||0)>=0, msg:'040 ≥ 0'}
     ];
     function runValidation(){
       const rows = Array.from(document.querySelectorAll('#subsidiariesTable tbody tr'));
@@ -171,9 +175,13 @@
       if(errs.length) out.push('🛑 Errors:\n'+errs.join('\n'));
       if(warns.length) out.push('⚠️ Warnings:\n'+warns.join('\n'));
       if(out.length) alert(out.join('\n\n'));
-      else parent.loadForm('reporting-t01-02.html', parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]'));
+      else parent.loadForm(
+        'reporting-t01-02.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+      );
     });
   </script>
 
 </body>
 </html>
+
