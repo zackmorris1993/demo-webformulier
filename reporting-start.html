@@ -48,7 +48,7 @@
     .card input {
       display: none;
     }
-    .card .filename {
+    .filename {
       margin-top: 8px;
       font-size: 0.9em;
       color: #333;
@@ -67,7 +67,7 @@
       background: #aaa;
       cursor: not-allowed;
     }
-    .card .start-btn {
+    .start-btn {
       display: none;
       background: #007b00;
     }
@@ -114,19 +114,13 @@
     const excelFilename = document.getElementById('excelFilename');
     const btnStartExcel = document.getElementById('btnStartExcel');
 
-    // Bestand geselecteerd → toon naam & activeer “Bestand kiezen…”
     excelInput.addEventListener('change', () => {
       const file = excelInput.files[0];
       excelFilename.textContent = file ? file.name : '';
       btnExcel.disabled = !file;
       btnStartExcel.style.display = 'none';
     });
-
-    // Klik op card opent filepicker
-    document.getElementById('card-excel')
-      .addEventListener('click', () => excelInput.click());
-
-    // Inlezen Excel
+    document.getElementById('card-excel').addEventListener('click', () => excelInput.click());
     btnExcel.addEventListener('click', () => {
       const file = excelInput.files[0];
       const reader = new FileReader();
@@ -134,23 +128,15 @@
         const data = new Uint8Array(e.target.result);
         const wb = XLSX.read(data, { type: 'array' });
         wb.SheetNames.forEach(name => {
-          const json2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
-            header: 1,
-            raw: true
-          });
+          const json2d = XLSX.utils.sheet_to_json(wb.Sheets[name], { header:1, raw:true });
           localStorage.setItem(name, JSON.stringify(json2d));
         });
-        // na inlezen: toon start-knop
         btnExcel.style.display      = 'none';
         btnStartExcel.style.display = 'inline-block';
       };
       reader.readAsArrayBuffer(file);
     });
-
-    // Start na Excel-invoer
-    btnStartExcel.addEventListener('click', () => {
-      location.href = 'reporting-app.html';
-    });
+    btnStartExcel.addEventListener('click', () => location.href = 'reporting-app.html');
 
     // XBRL-upload handlers
     const xbrlInput    = document.getElementById('xbrlUpload');
@@ -164,10 +150,7 @@
       btnXBRL.disabled       = !file;
       btnStartXBRL.style.display = 'none';
     });
-
-    document.getElementById('card-xbrl')
-      .addEventListener('click', () => xbrlInput.click());
-
+    document.getElementById('card-xbrl').addEventListener('click', () => xbrlInput.click());
     btnXBRL.addEventListener('click', () => {
       const file = xbrlInput.files[0];
       const reader = new FileReader();
@@ -178,18 +161,13 @@
       };
       reader.readAsText(file);
     });
-
-    btnStartXBRL.addEventListener('click', () => {
-      location.href = 'reporting-app.html';
-    });
+    btnStartXBRL.addEventListener('click', () => location.href = 'reporting-app.html');
 
     // Leeg formulier
-    document.getElementById('btnBlank')
-      .addEventListener('click', () => {
-        location.href = 'reporting-t01-01.html';
-      });
+    document.getElementById('btnBlank').addEventListener('click', () => {
+      location.href = 'reporting-t01-01.html';
+    });
   </script>
 
 </body>
 </html>
-
