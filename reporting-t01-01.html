@@ -11,14 +11,13 @@
     table { width:100%; border-collapse:collapse; background:#fff; box-shadow:0 0 8px rgba(0,0,0,0.1); margin-bottom:20px; }
     th, td { border:1px solid #ddd; padding:10px; text-align:center; }
     th { background:#f0f6ff; color:#004080; }
-    input[type="number"] { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
+    input[type="number"], .country-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
     .button-group { display:flex; justify-content:space-between; gap:10px; }
     .button-group button { background:#004080; color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; transition:background 0.2s; }
     .button-group button:hover { background:#003060; }
     .delete-button { background:transparent; border:none; color:red; font-size:1.2em; cursor:pointer; }
     /* searchable dropdown CSS */
     .country-cell { position: relative; }
-    .country-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
     .country-dropdown {
       position: absolute; top: 100%; left: 0; right: 0;
       background: white; border:1px solid #ccc;
@@ -41,11 +40,9 @@
       <li><code>dnb_v0057 (WARNING)</code>: Als <strong>010 &lt; 300 000 000</strong>, dan <strong>010 &lt; 020</strong>.</li>
       <li><code>dnb_v0054 (ERROR)</code>: <strong>030 ≥ –30 000 000</strong> (Dividend niet negatief).</li>
       <li><code>dnb_v0058 (ERROR)</code>: <strong>040 ≥ 0</strong> (Operationeel resultaat niet negatief).</li>
-      <!-- voeg hier overige regels toe -->
     </ul>
   </div>
 
-  <!-- formulier -->
   <form onsubmit="return false;">
     <table id="subsidiariesTable">
       <thead>
@@ -79,51 +76,53 @@
     </div>
   </form>
 
-  <!-- verborgen volledige landenlijst -->
+  <!-- volledige landenlijst -->
   <ul id="allCountries" style="display:none;">
     <li>Netherlands</li><li>Belgium</li><li>Germany</li><li>France</li>
     <li>United Kingdom</li><li>United States</li>
-    <!-- … voeg hier ALLE overige landen toe … -->
+    <!-- …alle overige landen… -->
   </ul>
 
   <script>
-    // help toggle
+    // Hulp togglen
     function toggleHelp(){
-      const h=document.getElementById('helpBox');
-      h.style.display = h.style.display==='block'? 'none':'block';
+      const hb = document.getElementById('helpBox');
+      hb.style.display = hb.style.display==='block'? 'none':'block';
     }
-    // rows toevoegen/verwijderen
+
+    // Rijen toevoegen / verwijderen
     function addRow(){
-      const tb=document.querySelector('#subsidiariesTable tbody');
-      const nr=tb.rows[0].cloneNode(true);
-      nr.querySelectorAll('input').forEach(e=>e.value='');
+      const tb = document.querySelector('#subsidiariesTable tbody');
+      const nr = tb.rows[0].cloneNode(true);
+      nr.querySelectorAll('input').forEach(i=>i.value='');
       tb.appendChild(nr);
     }
     function removeRow(btn){
-      const tb=document.querySelector('#subsidiariesTable tbody');
+      const tb = document.querySelector('#subsidiariesTable tbody');
       if(tb.rows.length>1) btn.closest('tr').remove();
       else alert('Minstens één rij is vereist.');
     }
 
-    // searchable country dropdown
+    // Searchable country-dropdown
     document.addEventListener('DOMContentLoaded', ()=>{
-      const countries=Array.from(document.querySelectorAll('#allCountries li')).map(li=>li.textContent);
-      const table=document.getElementById('subsidiariesTable');
+      const countries = Array.from(document.querySelectorAll('#allCountries li')).map(li=>li.textContent);
+      const table = document.getElementById('subsidiariesTable');
 
       table.addEventListener('input', e=>{
         if(!e.target.classList.contains('country-input')) return;
-        const input=e.target, dd=input.nextElementSibling;
-        const val=input.value.toLowerCase();
-        dd.innerHTML = countries.filter(c=>c.toLowerCase().includes(val))
-                                .map(c=>`<div>${c}</div>`).join('');
+        const dd = e.target.nextElementSibling;
+        const val = e.target.value.toLowerCase();
+        dd.innerHTML = countries
+          .filter(c=>c.toLowerCase().includes(val))
+          .map(c=>`<div>${c}</div>`).join('');
         dd.style.display = dd.innerHTML? 'block':'none';
       });
 
       table.addEventListener('click', e=>{
         if(e.target.parentNode.classList.contains('country-dropdown')){
-          const input=e.target.closest('.country-cell').querySelector('.country-input');
-          input.value=e.target.textContent;
-          e.target.parentNode.style.display='none';
+          const input = e.target.closest('.country-cell').querySelector('.country-input');
+          input.value = e.target.textContent;
+          e.target.parentNode.style.display = 'none';
         }
       });
 
@@ -133,37 +132,46 @@
       });
     });
 
-    // taxonomie-validatie (zoals eerder)
-    const rules=[
-      {id:'dnb_v0056',sev:'ERROR',validate:r=>{
-         const a=+r.cells[1].querySelector('input').value||0, b=r.cells[2].querySelector('input').value;
-         return !(a>300000000 && !b);
-       },msg:'010 >300 000 000 → vul ook 020 in'},
-      {id:'dnb_v0057',sev:'WARNING',validate:r=>{
-         const a=+r.cells[1].querySelector('input').value||0, b=+r.cells[2].querySelector('input').value||0;
-         return !(a<300000000 && a>=b);
-       },msg:'010 moet <020 wanneer <300 000 000'},
-      {id:'dnb_v0054',sev:'ERROR',validate:r=>(+r.cells[3].querySelector('input').value||0)>=-30000000, msg:'030 ≥ –30 000 000'},
-      {id:'dnb_v0058',sev:'ERROR',validate:r=>(+r.cells[4].querySelector('input').value||0)>=0, msg:'040 ≥ 0'}
+    // ** HIER START DE EXCEL-IMPORT ** 
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const raw = localStorage.getItem('T01.01');
+      if(!raw) return;                 // geen Excel-sheet ingeladen
+      const data = JSON.parse(raw);
+      const rows = data.slice(1);      // eerste rij is header
+      const tbody = document.querySelector('#subsidiariesTable tbody');
+      tbody.innerHTML = '';            // verwijder template-rij
+
+      rows.forEach(cols=>{
+        addRow();
+        const tr = tbody.lastElementChild;
+        tr.cells[0].querySelector('input').value = cols[0]||'';
+        for(let i=1; i<=4; i++){
+          tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
+        }
+      });
+    });
+
+    // Taxonomie-validatie en volgende knop (zoals eerder)
+    const rules = [
+      {id:'dnb_v0056',sev:'ERROR',validate:r=>{ const a=+r.cells[1].querySelector('input').value||0,b=r.cells[2].querySelector('input').value; return !(a>300000000&& !b); },msg:'010 >300 000 000 → vul ook 020 in'},
+      {id:'dnb_v0057',sev:'WARNING',validate:r=>{ const a=+r.cells[1].querySelector('input').value||0,b=+r.cells[2].querySelector('input').value||0; return !(a<300000000&& a>=b); },msg:'010 moet <020 wanneer <300 000 000'},
+      {id:'dnb_v0054',sev:'ERROR',validate:r=> (+r.cells[3].querySelector('input').value||0)>=-30000000, msg:'030 ≥ –30 000 000'},
+      {id:'dnb_v0058',sev:'ERROR',validate:r=> (+r.cells[4].querySelector('input').value||0)>=0, msg:'040 ≥ 0'}
     ];
     function runValidation(){
-      const rows=[...document.querySelectorAll('#subsidiariesTable tbody tr')], errs=[], warns=[];
+      const rows = Array.from(document.querySelectorAll('#subsidiariesTable tbody tr'));
+      const errs=[], warns=[];
       rows.forEach((r,i)=> rules.forEach(rule=>{
         if(!rule.validate(r)) (rule.sev==='ERROR'?errs:warns).push(`Rij ${i+1}[${rule.id}]: ${rule.msg}`);
       }));
       return {errs,warns};
     }
-    document.getElementById('nextBtn').addEventListener('click',function(){
-      const {errs,warns}=runValidation(), msgs=[];
-      if(errs.length) msgs.push('🛑 Errors:\n'+errs.join('\n'));
-      if(warns.length) msgs.push('⚠️ Warnings:\n'+warns.join('\n'));
-      if(msgs.length){
-        alert(msgs.join('\n\n'));
-      } else {
-        parent.loadForm('reporting-t01-02.html',
-          parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
-        );
-      }
+    document.getElementById('nextBtn').addEventListener('click', ()=>{
+      const {errs,warns}=runValidation(), out=[];
+      if(errs.length) out.push('🛑 Errors:\n'+errs.join('\n'));
+      if(warns.length) out.push('⚠️ Warnings:\n'+warns.join('\n'));
+      if(out.length) alert(out.join('\n\n'));
+      else parent.loadForm('reporting-t01-02.html', parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]'));
     });
   </script>
 
