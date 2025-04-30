@@ -2,43 +2,44 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TOC - Rapportageformulier</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mijn DNB - TOC Rapportage</title>
   <style>
+    /* Body & reset */
     body {
       font-family: Arial, sans-serif;
       background-color: #f9f9fb;
       margin: 0;
       padding: 0;
     }
-
+    /* Header */
     header {
       background-color: #002d9c;
       color: white;
       padding: 15px 30px;
       font-size: 1.4em;
     }
-
+    /* Card container */
     .container {
       max-width: 600px;
       background: white;
-      margin: 40px auto;
+      margin: 30px auto;
       padding: 30px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     h2 {
       color: #002d9c;
+      margin-top: 0;
       margin-bottom: 20px;
     }
-
+    /* Labels & fields */
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
+      color: #333;
     }
-
     input[type="text"],
     select {
       width: 100%;
@@ -47,12 +48,15 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 1em;
-    }
-
-    input[readonly] {
       background-color: #e9ecef;
     }
-
+    input[type="text"][readonly] {
+      color: #555;
+    }
+    select {
+      background-color: white;
+    }
+    /* Help link & box */
     .help-link {
       display: inline-block;
       margin-top: 5px;
@@ -61,7 +65,6 @@
       text-decoration: underline;
       cursor: pointer;
     }
-
     .help-box {
       display: none;
       background-color: #e6f4ff;
@@ -70,27 +73,30 @@
       border-radius: 6px;
       font-size: 0.95em;
       color: #003366;
+      border-left: 4px solid #002d9c;
     }
-
-    button {
-      background-color: #002d9c;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      margin-top: 20px;
-      border-radius: 5px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #001f6b;
-    }
-
+    /* Buttons */
     .button-group {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      margin-top: 30px;
+    }
+    button {
+      background-color: #002d9c;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #001f6b;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -101,219 +107,66 @@
   </header>
 
   <div class="container">
-    <h2>TOC - Algemene gegevens</h2>
+    <h2>TOC – Algemene gegevens</h2>
 
-    <form onsubmit="return goToNext(event)">
-      
-      <label>Period Start</label>
-      <input type="text" value="01-01-2024" readonly>
+    <form id="tocForm" onsubmit="return false;">
+      <label for="periodStart">Period Start</label>
+      <input type="text" id="periodStart" value="01-01-2024" readonly>
 
-      <label>Period End</label>
-      <input type="text" value="31-12-2024" readonly>
+      <label for="periodEnd">Period End</label>
+      <input type="text" id="periodEnd" value="31-12-2024" readonly>
 
-      <label>Identifier <span style="color:red">*</span></label>
-      <input type="text" placeholder="Vul hier de identifier in" name="identifier" required>
+      <label for="identifier">Identifier <span style="color:red">*</span></label>
+      <input type="text" id="identifier" name="identifier" placeholder="Vul hier de identifier in" required>
+      <a class="help-link" onclick="toggleHelp()">Hulp bij invullen</a>
 
-      <a class="help-link" onclick="toggleHelp('identifierHelp')">Hulp bij invullen</a>
-
-      <div id="identifierHelp" class="help-box">
-        Om u te identificeren als rapporterende instelling dient u hier een identificatie-code in te vullen..<br><br>
-        Dit kan een:<br><br>
-        • KvK-nummer zijn,<br>
-        • RIAD-code zijn,<br>
-        • of LEI-code zijn.<br><br>
-        Vult u hier de juiste code in die bij uw instelling hoort.
+      <div id="helpBox" class="help-box">
+        <p>Om u te identificeren als rapporterende instelling dient u hier een identificatie-code in te vullen. Dit kan een:</p>
+        <ul>
+          <li>KvK-nummer</li>
+          <li>RIAD-code</li>
+          <li>LEI-code</li>
+        </ul>
+        <p>Kies bij “Scheme” het bijbehorende type code.</p>
       </div>
 
-
-      <label>Scheme <span style="color:red">*</span></label>
-      <select name="scheme" required>
+      <label for="scheme">Scheme <span style="color:red">*</span></label>
+      <select id="scheme" name="scheme" required>
         <option value="">-- Maak een keuze --</option>
         <option value="http://www.dnb.nl/kvk">http://www.dnb.nl/kvk</option>
         <option value="http://www.dnb.nl/riad">http://www.dnb.nl/riad</option>
         <option value="http://www.dnb.nl/lei">http://www.dnb.nl/lei</option>
       </select>
 
-      <a class="help-link" onclick="toggleHelp('schemeHelp')"> Hulp bij invullen</a>
+      <label for="currency">Currency</label>
+      <input type="text" id="currency" value="EUR" readonly>
 
-      <div id="schemeHelp" class="help-box">
-        Kies hier het juiste type code dat u bij Identifier heeft ingevuld.<br><br>
-        • Bij een KvK-nummer kiest u <strong>http://www.dnb.nl/kvk</strong>.<br>
-        • Bij een RIAD-code kiest u <strong>http://www.dnb.nl/riad</strong>.<br>
-        • Bij een LEI-code kiest u <strong>http://www.dnb.nl/lei</strong>.
-      </div>
-
-      <label>Currency</label>
-      <input type="text" value="EUR" readonly>
-
-      <label>Language</label>
-      <input type="text" value="en" readonly>
+      <label for="language">Language</label>
+      <input type="text" id="language" value="en" readonly>
 
       <div class="button-group">
-        <button type="button" onclick="goBack()">Vorige</button>
-        <button type="submit">Volgende</button>
+        <button type="button" onclick="history.back()">Vorige</button>
+        <button type="submit" onclick="goNext()">Volgende</button>
       </div>
     </form>
   </div>
 
   <script>
-    function goBack() {
-      window.history.back();
+    function toggleHelp() {
+      const box = document.getElementById('helpBox');
+      box.style.display = box.style.display === 'block' ? 'none' : 'block';
     }
-
-    function goToNext(event) {
-      event.preventDefault();
-      
-      // Controle of Identifier en Scheme zijn ingevuld
-      const identifier = document.querySelector('input[name="identifier"]').value.trim();
-      const scheme = document.querySelector('select[name="scheme"]').value.trim();
-
-      if (identifier === '' || scheme === '') {
+    function goNext() {
+      const id = document.getElementById('identifier').value.trim();
+      const sc = document.getElementById('scheme').value;
+      if (!id || !sc) {
         alert('Vul zowel Identifier als Scheme in voordat je doorgaat.');
-        return false;
+        return;
       }
-
-      window.location.href = "reporting-app.html"; // Door naar volgende formulier
-    }
-
-    function toggleHelp(id) {
-      var helpBox = document.getElementById(id);
-      if (helpBox.style.display === "none") {
-        helpBox.style.display = "block";
-      } else {
-        helpBox.style.display = "none";
-      }
+      window.location.href = 'reporting-t01-01.html';
     }
   </script>
 
-  <!-- Chatbot-styling -->
-<style>
-  .chatbot-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #002d9c;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
-
-  .chat-window {
-    display: none;
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 300px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-
-  .chat-header {
-    background-color: #002d9c;
-    color: white;
-    padding: 10px;
-    font-weight: bold;
-  }
-
-  .chat-body {
-    padding: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-
-  .chat-message {
-    background: #f1f1f1;
-    margin: 8px 0;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-
-  .chat-options button {
-  background: #e0e0e0; /* Iets donkerder grijs */
-  border: 1px solid #bbb;
-  margin: 5px 0;
-  padding: 8px;
-  width: 100%;
-  text-align: left;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #000; /* Tekst gewoon zwart */
-  font-weight: bold;
-}
-.chat-options button:hover {
-  background: #d0e9ff; /* Bij hover nog steeds blauwachtig */
-}
-  
-</style>
-
-<!-- Chatbot-knop en venster -->
-<button class="chatbot-button" onclick="toggleChat()">💬</button>
-
-<div class="chat-window" id="chatWindow">
-  <div class="chat-header">
-    Hulp Chat
-  </div>
-  <div class="chat-body" id="chatBody">
-    <div class="chat-options">
-      <button onclick="showAnswer('identifier')">Wat is een Identifier?</button>
-      <button onclick="showAnswer('scheme')">Wat moet ik invullen bij Scheme?</button>
-    </div>
-  </div>
-</div>
-
-<!-- Chatbot-script -->
-<script>
-  function toggleChat() {
-    var chat = document.getElementById('chatWindow');
-    var chatBody = document.getElementById('chatBody');
-    
-    if (chat.style.display === 'none' || chat.style.display === '') {
-      chat.style.display = 'block';
-    } else {
-      chat.style.display = 'none';
-      chatBody.innerHTML = `
-        <div class="chat-options">
-          <button onclick="showAnswer('identifier')">Wat is een Identifier?</button>
-          <button onclick="showAnswer('scheme')">Wat moet ik invullen bij Scheme?</button>
-        </div>
-      `;
-    }
-  }
-
-  function showAnswer(topic) {
-    var chatBody = document.getElementById('chatBody');
-    var answer = '';
-
-    if (topic === 'identifier') {
-      answer = "Een Identifier is een unieke code die uw instelling identificeert bij DNB. Dit kan een KvK-nummer, RIAD-code of LEI-code zijn.";
-    } else if (topic === 'scheme') {
-      answer = "U kiest een Scheme op basis van uw Identifier: KvK-nummer = kvk-link, RIAD-code = riad-link, LEI-code = lei-link.";
-    }
-
-    chatBody.innerHTML = `
-      <div class="chat-options">
-        <button onclick="showAnswer('identifier')">Wat is een Identifier?</button>
-        <button onclick="showAnswer('scheme')">Wat moet ik invullen bij Scheme?</button>
-      </div>
-      <div class="chat-message">
-        ${answer}<br><br>
-        <small>❓ Komt u er niet uit? <a href="mailto:cfi@dnb.nl" style="color: #002d9c;">Mail ons via cfi@dnb.nl</a></small>
-      </div>
-    `;
-    chatBody.scrollTop = chatBody.scrollHeight;
-  }
-</script>
-
-
 </body>
 </html>
+
