@@ -2,105 +2,125 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Aanlevering</title>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9fb;
+      background: #f5f7fa;
       margin: 0;
-      padding: 0;
+      padding: 40px;
     }
-    header {
-      background-color: #002d9c;
-      color: white;
-      padding: 15px 30px;
-      font-size: 1.4em;
+    .options {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
     }
-    .container {
-      max-width: 600px;
+    .card {
       background: white;
-      margin: 40px auto;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      width: 280px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       text-align: center;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
     }
-    h2 {
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .card input {
+      display: none;
+    }
+    .card h3 {
+      margin-top: 0;
       color: #002d9c;
     }
-    p {
-      margin-top: 20px;
-      font-size: 16px;
+    .card p {
+      font-size: 0.9em;
+      color: #555;
     }
-    input[type="file"] {
-      margin-top: 20px;
-    }
-    button {
-      background-color: #002d9c;
+    .card button {
+      margin-top: 15px;
+      background: #002d9c;
       color: white;
-      padding: 12px 25px;
-      margin-top: 30px;
-      font-size: 16px;
       border: none;
-      border-radius: 6px;
+      padding: 10px 16px;
+      border-radius: 4px;
       cursor: pointer;
     }
-    button:disabled {
-      background-color: #999;
+    .card button:disabled {
+      background: #aaa;
       cursor: not-allowed;
     }
-    button:hover:enabled {
-      background-color: #001f6b;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    Mijn DNB - Aanlevering Starten
-  </header>
+  <h2 style="text-align:center; color:#002d9c;">Kies een startmethode</h2>
+  <div class="options">
 
-  <div class="container">
-    <h2>Je staat op het punt om een nieuwe rapportage aan te leveren.</h2>
-    <p>
-      Rapportage: <strong>CFI Benchmark</strong><br>
-      Periode: <strong>01-01-2024 - 31-12-2024</strong>
-    </p>
+    <!-- Card 1: Upload Excel -->
+    <div class="card" id="card-upload">
+      <h3>Upload Excel-template</h3>
+      <p>Als u al een ingevulde Excel-template heeft, kunt u die hier uploaden.  
+      De data wordt automatisch ingeladen in de formulieren.</p>
+      <input type="file" id="excelUpload" accept=".xlsx,.xls">
+      <button id="btnUpload" disabled>Bestand kiezen…</button>
+    </div>
 
-    <!-- CSV/Excel upload -->
-    <input type="file" id="excelUpload" accept=".xlsx,.xls">
-    <br>
-    <button id="startBtn" disabled>Start aanlevering</button>
+    <!-- Card 2: Leeg formulier -->
+    <div class="card" id="card-blank">
+      <h3>Start lege rapportage</h3>
+      <p>Geen Excel-bestand? Geen probleem. U kunt het formulier ook helemaal zelf invullen.</p>
+      <button id="btnBlank">Start leeg formulier</button>
+    </div>
+
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script>
     const uploadInput = document.getElementById('excelUpload');
-    const startBtn    = document.getElementById('startBtn');
+    const btnUpload   = document.getElementById('btnUpload');
+    const btnBlank    = document.getElementById('btnBlank');
 
-    uploadInput.addEventListener('change', evt => {
-      const file = evt.target.files[0];
+    // Wanneer een bestand geselecteerd is, activeer de knop
+    uploadInput.addEventListener('change', () => {
+      btnUpload.disabled = !uploadInput.files.length;
+    });
+
+    // Klik op “Bestand kiezen” opent de filepicker
+    document.getElementById('card-upload').addEventListener('click', () => {
+      uploadInput.click();
+    });
+
+    // Na file-select: lees Excel in en ga door
+    btnUpload.addEventListener('click', () => {
+      const file = uploadInput.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = e => {
         const data = new Uint8Array(e.target.result);
         const wb = XLSX.read(data, { type: 'array' });
-        // Sla elke sheet op in localStorage onder de sheetnaam
         wb.SheetNames.forEach(name => {
-          const sheet = wb.Sheets[name];
-          const json2d = XLSX.utils.sheet_to_json(sheet, { header:1 });
+          const json2d = XLSX.utils.sheet_to_json(wb.Sheets[name], { header:1 });
           localStorage.setItem(name, JSON.stringify(json2d));
         });
-        startBtn.disabled = false;
+        // Ga naar de TOC / App
+        window.location.href = 'reporting-app.html';
       };
       reader.readAsArrayBuffer(file);
     });
 
-    startBtn.addEventListener('click', () => {
+    // Klik op lege rapportage: gewoon door naar TOC
+    btnBlank.addEventListener('click', () => {
       window.location.href = 'reporting-app.html';
     });
   </script>
 
 </body>
 </html>
+
