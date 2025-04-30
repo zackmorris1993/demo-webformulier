@@ -2,7 +2,9 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Aanlevering</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,10 +12,16 @@
       margin: 0;
       padding: 40px;
     }
+    h2 {
+      text-align: center;
+      color: #002d9c;
+    }
     .options {
       display: flex;
       gap: 20px;
       justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
     }
     .card {
       background: white;
@@ -25,12 +33,10 @@
       text-align: center;
       cursor: pointer;
       transition: box-shadow 0.2s;
+      position: relative;
     }
     .card:hover {
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .card input {
-      display: none;
     }
     .card h3 {
       margin-top: 0;
@@ -39,6 +45,9 @@
     .card p {
       font-size: 0.9em;
       color: #555;
+    }
+    .card input {
+      display: none;
     }
     .card button {
       margin-top: 15px;
@@ -53,54 +62,46 @@
       background: #aaa;
       cursor: not-allowed;
     }
-    .hidden {
-      display: none;
-    }
   </style>
 </head>
 <body>
 
-  <h2 style="text-align:center; color:#002d9c;">Kies een startmethode</h2>
+  <h2>Kies een startmethode</h2>
   <div class="options">
 
-    <!-- Card 1: Upload Excel -->
-    <div class="card" id="card-upload">
+    <!-- Card 1: Excel -->
+    <div class="card" id="card-excel">
       <h3>Upload Excel-template</h3>
-      <p>Als u al een ingevulde Excel-template heeft, kunt u die hier uploaden.  
-      De data wordt automatisch ingeladen in de formulieren.</p>
+      <p>Gebruik uw ingevulde Excel-template. Deze wordt automatisch ingeladen.</p>
       <input type="file" id="excelUpload" accept=".xlsx,.xls">
-      <button id="btnUpload" disabled>Bestand kiezen…</button>
+      <button id="btnExcel" disabled>Bestand kiezen…</button>
     </div>
 
-    <!-- Card 2: Leeg formulier -->
+    <!-- Card 2: XBRL -->
+    <div class="card" id="card-xbrl">
+      <h3>Upload XBRL-rapportage</h3>
+      <p>Upload uw XBRL-file. Deze wordt straks verwerkt in de formulieren.</p>
+      <input type="file" id="xbrlUpload" accept=".xbrl,.xml">
+      <button id="btnXBRL" disabled>Bestand kiezen…</button>
+    </div>
+
+    <!-- Card 3: Leeg -->
     <div class="card" id="card-blank">
       <h3>Start lege rapportage</h3>
-      <p>Geen Excel-bestand? Geen probleem. U kunt het formulier ook helemaal zelf invullen.</p>
+      <p>Geen bestand? U kunt het formulier ook helemaal zelf invullen.</p>
       <button id="btnBlank">Start leeg formulier</button>
     </div>
 
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    const uploadInput = document.getElementById('excelUpload');
-    const btnUpload   = document.getElementById('btnUpload');
-    const btnBlank    = document.getElementById('btnBlank');
-
-    // Wanneer een bestand geselecteerd is, activeer de knop
-    uploadInput.addEventListener('change', () => {
-      btnUpload.disabled = !uploadInput.files.length;
-    });
-
-    // Klik op “Bestand kiezen” opent de filepicker
-    document.getElementById('card-upload').addEventListener('click', () => {
-      uploadInput.click();
-    });
-
-    // Na file-select: lees Excel in en ga door
-    btnUpload.addEventListener('click', () => {
-      const file = uploadInput.files[0];
-      if (!file) return;
+    // Excel-upload handlers
+    const excelInput = document.getElementById('excelUpload');
+    const btnExcel   = document.getElementById('btnExcel');
+    excelInput.addEventListener('change', () => btnExcel.disabled = !excelInput.files.length );
+    document.getElementById('card-excel').addEventListener('click', () => excelInput.click());
+    btnExcel.addEventListener('click', () => {
+      const file = excelInput.files[0];
       const reader = new FileReader();
       reader.onload = e => {
         const data = new Uint8Array(e.target.result);
@@ -109,15 +110,30 @@
           const json2d = XLSX.utils.sheet_to_json(wb.Sheets[name], { header:1 });
           localStorage.setItem(name, JSON.stringify(json2d));
         });
-        // Ga naar de TOC / App
-        window.location.href = 'reporting-app.html';
+        location.href = 'reporting-app.html';
       };
       reader.readAsArrayBuffer(file);
     });
 
-    // Klik op lege rapportage: gewoon door naar TOC
-    btnBlank.addEventListener('click', () => {
-      window.location.href = 'reporting-app.html';
+    // XBRL-upload handlers
+    const xbrlInput = document.getElementById('xbrlUpload');
+    const btnXBRL   = document.getElementById('btnXBRL');
+    xbrlInput.addEventListener('change', () => btnXBRL.disabled = !xbrlInput.files.length );
+    document.getElementById('card-xbrl').addEventListener('click', () => xbrlInput.click());
+    btnXBRL.addEventListener('click', () => {
+      const file = xbrlInput.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        // sla de ruwe XBRL/XML op
+        localStorage.setItem('XBRL', e.target.result);
+        location.href = 'reporting-app.html';
+      };
+      reader.readAsText(file);
+    });
+
+    // Leeg formulier
+    document.getElementById('btnBlank').addEventListener('click', () => {
+      location.href = 'reporting-app.html';
     });
   </script>
 
