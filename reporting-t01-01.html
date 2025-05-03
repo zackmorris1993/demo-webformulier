@@ -2,35 +2,35 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>T 01.01 - Subsidiaries</title>
+  <title>T 01.01 – Subsidiaries</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f9f9fb; margin:0; padding:30px; }
-    h2 { color: #004080; margin-bottom:10px; }
-    a.help-link { font-size:0.9em; color:#004080; text-decoration:underline; cursor:pointer; }
-    .help-box { display:none; background:#e6f4ff; padding:15px; margin:10px 0 20px; border-left:4px solid #004080; border-radius:4px; color:#003366; }
-    table { width:100%; border-collapse:collapse; background:#fff; box-shadow:0 0 8px rgba(0,0,0,0.1); margin-bottom:20px; }
-    th, td { border:1px solid #ddd; padding:10px; text-align:center; }
-    th { background:#f0f6ff; color:#004080; }
-    input[type="number"], .country-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
-    .button-group { display:flex; justify-content:space-between; gap:10px; }
-    .button-group button { background:#004080; color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; transition:background 0.2s; }
-    .button-group button:hover { background:#003060; }
-    .delete-button { background:transparent; border:none; color:red; font-size:1.2em; cursor:pointer; }
+    body { font-family: Arial, sans-serif; background: #f9f9fb; margin: 0; padding: 30px; }
+    h2 { color: #004080; margin-bottom: 10px; }
+    a.help-link { font-size: 0.9em; color: #004080; text-decoration: underline; cursor: pointer; }
+    .help-box { display: none; background: #e6f4ff; padding: 15px; margin: 10px 0 20px; border-left: 4px solid #004080; border-radius: 4px; color: #003366; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 0 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background: #f0f6ff; color: #004080; }
+    input[type="number"], .country-input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    .button-group { display: flex; justify-content: space-between; gap: 10px; }
+    .button-group button { background: #004080; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: background 0.2s; }
+    .button-group button:hover { background: #003060; }
+    .delete-button { background: transparent; border: none; color: red; font-size: 1.2em; cursor: pointer; }
     /* searchable dropdown CSS */
     .country-cell { position: relative; }
     .country-dropdown {
       position: absolute; top: 100%; left: 0; right: 0;
-      background: white; border:1px solid #ccc;
-      max-height:150px; overflow-y:auto; display:none; z-index:10;
+      background: white; border: 1px solid #ccc;
+      max-height: 150px; overflow-y: auto; display: none; z-index: 10;
     }
-    .country-dropdown div { padding:5px 10px; cursor:pointer; }
-    .country-dropdown div:hover { background:#e6f4ff; }
+    .country-dropdown div { padding: 5px 10px; cursor: pointer; }
+    .country-dropdown div:hover { background: #e6f4ff; }
   </style>
 </head>
 <body>
 
-  <h2>T 01.01 - Subsidiaries</h2>
-  <a class="help-link" onclick="toggleHelp()"> Hulp bij invullen</a>
+  <h2>T 01.01 – Subsidiaries</h2>
+  <a class="help-link" onclick="toggleHelp()">Hulp bij invullen</a>
   <div id="helpBox" class="help-box">
     <p>Rapporteurs geven hier posities aan het begin en eind van het jaar op voor deelnemingen (participating interests) en directe holdings. …</p>
     <hr>
@@ -84,13 +84,13 @@
   </ul>
 
   <script>
-    // Hulp togglen
+    // togglet hulpblok
     function toggleHelp(){
       const hb = document.getElementById('helpBox');
       hb.style.display = hb.style.display==='block'? 'none':'block';
     }
 
-    // Rijen toevoegen / verwijderen
+    // voeg/verwijder rijen
     function addRow(){
       const tb = document.querySelector('#subsidiariesTable tbody');
       const nr = tb.rows[0].cloneNode(true);
@@ -99,25 +99,27 @@
     }
     function removeRow(btn){
       const tb = document.querySelector('#subsidiariesTable tbody');
-      if(tb.rows.length>1) btn.closest('tr').remove();
+      if(tb.rows.length > 1) btn.closest('tr').remove();
       else alert('Minstens één rij is vereist.');
     }
 
-    // Searchable country-dropdown
+    // searchable country-dropdown
     document.addEventListener('DOMContentLoaded', ()=>{
       const countries = Array.from(document.querySelectorAll('#allCountries li')).map(li=>li.textContent);
       const table = document.getElementById('subsidiariesTable');
 
+      // filter lijst bij typen
       table.addEventListener('input', e=>{
         if(!e.target.classList.contains('country-input')) return;
         const dd = e.target.nextElementSibling;
         const val = e.target.value.toLowerCase();
         dd.innerHTML = countries
-          .filter(c=>c.toLowerCase().includes(val))
-          .map(c=>`<div>${c}</div>`).join('');
+          .filter(c => c.toLowerCase().includes(val))
+          .map(c => `<div>${c}</div>`).join('');
         dd.style.display = dd.innerHTML? 'block':'none';
       });
 
+      // klik keuze
       table.addEventListener('click', e=>{
         if(e.target.parentNode.classList.contains('country-dropdown')){
           const input = e.target.closest('.country-cell').querySelector('.country-input');
@@ -126,62 +128,85 @@
         }
       });
 
+      // klik buiten → sluit dropdown
       document.addEventListener('click', e=>{
         if(!e.target.classList.contains('country-input'))
           document.querySelectorAll('.country-dropdown').forEach(d=>d.style.display='none');
       });
     });
 
-    // ** HIER START DE EXCEL-IMPORT ** 
+    // ** Excel-import uit localStorage **
     document.addEventListener('DOMContentLoaded', ()=>{
-      // zoek een key die met "T01.01" begint
+      // vind key die begint met "T01.01"
       const sheetKey = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
-      if(!sheetKey) return;                 // geen Excel geladen, laat lege rij
+      if(!sheetKey) return;  // geen Excel geladen
 
       const data  = JSON.parse(localStorage.getItem(sheetKey));
-      const rows  = data.slice(1);          // skip header
+      const rows  = data.slice(1);      // eerste rij is header
       const tbody = document.querySelector('#subsidiariesTable tbody');
+      tbody.innerHTML = '';             // wis template
 
-      // verwijder template-rij(ën)
-      tbody.innerHTML = '';
-
-      rows.forEach(cols=>{
+      rows.forEach(cols => {
         addRow();
         const tr = tbody.lastElementChild;
-        tr.cells[0].querySelector('input').value = cols[0]||'';
+        // vul country + 4 kolommen
+        tr.cells[0].querySelector('input').value = cols[0] || '';
         for(let i=1; i<=4; i++){
-          tr.cells[i].querySelector('input').value = cols[i]!=null? cols[i] : '';
+          tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
         }
       });
     });
 
-    // Validatie + Volgende
+    // validatie regels
     const rules = [
-      {id:'dnb_v0056',sev:'ERROR',validate:r=>{ const a=+r.cells[1].querySelector('input').value||0,b=r.cells[2].querySelector('input').value; return !(a>300000000&& !b); },msg:'010 >300 000 000 → vul ook 020 in'},
-      {id:'dnb_v0057',sev:'WARNING',validate:r=>{ const a=+r.cells[1].querySelector('input').value||0,b=+r.cells[2].querySelector('input').value||0; return !(a<300000000&& a>=b); },msg:'010 moet <020 wanneer <300 000 000'},
-      {id:'dnb_v0054',sev:'ERROR',validate:r=>(+r.cells[3].querySelector('input').value||0)>=-30000000, msg:'030 ≥ –30 000 000'},
-      {id:'dnb_v0058',sev:'ERROR',validate:r=>(+r.cells[4].querySelector('input').value||0)>=0, msg:'040 ≥ 0'}
+      {id:'dnb_v0056',sev:'ERROR',validate:r=>{
+         const a=+r.cells[1].querySelector('input').value||0,
+               b=r.cells[2].querySelector('input').value;
+         return !(a>300000000 && !b);
+       },msg:'010 >300 000 000 → vul ook 020 in'},
+      {id:'dnb_v0057',sev:'WARNING',validate:r=>{
+         const a=+r.cells[1].querySelector('input').value||0,
+               b=+r.cells[2].querySelector('input').value||0;
+         return !(a<300000000 && a>=b);
+       },msg:'010 moet <020 wanneer <300 000 000'},
+      {id:'dnb_v0054',sev:'ERROR',validate:r=>
+         (+r.cells[3].querySelector('input').value||0)>=-30000000, msg:'030 ≥ –30 000 000'},
+      {id:'dnb_v0058',sev:'ERROR',validate:r=>
+         (+r.cells[4].querySelector('input').value||0)>=0, msg:'040 ≥ 0'}
     ];
     function runValidation(){
       const rows = Array.from(document.querySelectorAll('#subsidiariesTable tbody tr'));
-      const errs=[], warns=[];
-      rows.forEach((r,i)=> rules.forEach(rule=>{
-        if(!rule.validate(r)) (rule.sev==='ERROR'?errs:warns).push(`Rij ${i+1}[${rule.id}]: ${rule.msg}`);
-      }));
+      const errs = [], warns = [];
+      rows.forEach((r,i) => {
+        rules.forEach(rule => {
+          if(!rule.validate(r)){
+            if(rule.sev==='ERROR') errs.push(`Rij ${i+1}[${rule.id}]: ${rule.msg}`);
+            else                warns.push(`Rij ${i+1}[${rule.id}]: ${rule.msg}`);
+          }
+        });
+      });
       return {errs,warns};
     }
+
+    // Volgende knop
     document.getElementById('nextBtn').addEventListener('click', ()=>{
-      const {errs,warns}=runValidation(), out=[];
-      if(errs.length) out.push('🛑 Errors:\n'+errs.join('\n'));
-      if(warns.length) out.push('⚠️ Warnings:\n'+warns.join('\n'));
-      if(out.length) alert(out.join('\n\n'));
-      else parent.loadForm(
-        'reporting-t01-02.html',
-        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
-      );
+      const {errs,warns} = runValidation();
+      let msg = '';
+      if(errs.length)  msg += '🛑 Errors:\n'   + errs.join('\n') + '\n\n';
+      if(warns.length) msg += '⚠️ Warnings:\n' + warns.join('\n');
+      if(msg) {
+        alert(msg);
+      } else {
+        // terug naar de app
+        parent.loadForm(
+          'reporting-t01-02.html',
+          parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+        );
+      }
     });
   </script>
 
 </body>
 </html>
+
 
