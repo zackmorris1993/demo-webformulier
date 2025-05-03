@@ -88,6 +88,15 @@
   </ul>
 
   <script>
+    function resetTable() {
+      // 1) wis alle rijen
+      tbody.innerHTML = '';
+      // 2) voeg precies 1 lege template-rij toe
+      addRow();
+      // 3) verwijder oude highlights
+      clearHighlights();
+    }
+    
     // help togglen
     function toggleHelp() {
       const hb = document.getElementById('helpBox');
