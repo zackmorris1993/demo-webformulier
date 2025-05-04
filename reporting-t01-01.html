@@ -238,21 +238,43 @@
     }
 
     document.getElementById('nextBtn').addEventListener('click', ()=>{
-      clearHighlights();
-      const {errs, warns} = runValidation();
-      let msg = '';
-      if (errs.length) msg += '🛑 Errors:\n' + errs.map(e=>`Rij ${e.row+1} [${e.rule}]`).join('\n') + '\n\n';
-      if (warns.length) msg += '⚠️ Warnings:\n' + warns.map(e=>`Rij ${e.row+1} [${e.rule}]`).join('\n');
-      if (msg) {
-        markErrors(errs);
-        alert(msg);
-      } else {
-        parent.loadForm(
-          'reporting-t01-02.html',
-          parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
-        );
+    clearHighlights();
+    const {errs, warns} = runValidation();
+    const container = document.getElementById('validationMessages');
+
+    // Als er fouten of waarschuwingen zijn, tonen we ze inline:
+    if (errs.length || warns.length) {
+      let html = '';
+      if (errs.length) {
+        html += `<div class="error"><strong>🛑 Errors:</strong><ul>`;
+        errs.forEach(e => {
+          html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
+        });
+        html += `</ul></div>`;
       }
-    });
+      if (warns.length) {
+        html += `<div class="warning"><strong>⚠️ Warnings:</strong><ul>`;
+        warns.forEach(e => {
+          html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
+        });
+        html += `</ul></div>`;
+      }
+
+      container.innerHTML = html;
+      container.style.display = 'block';
+
+      // markeer alleen de ERROR-cellen (warns laten we visueel achterwege)
+      markErrors(errs);
+    } else {
+      // geen validatiefouten → berichten verbergen en door naar volgend formulier
+      container.style.display = 'none';
+      parent.loadForm(
+        'reporting-t01-02.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+      );
+    }
+  });
+
   </script>
 
 </body>
