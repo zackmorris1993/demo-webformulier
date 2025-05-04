@@ -289,43 +289,86 @@
       });
     }
 
-    document.getElementById('nextBtn').addEventListener('click', ()=>{
-    clearHighlights();
-    const {errs, warns} = runValidation();
-    const container = document.getElementById('validationMessages');
+    const ruleDescriptions = {
+      dnb_v0056: 'Als beginpositie > 300 000 000, moet slotpositie zijn ingevuld.',
+      dnb_v0057: 'Als beginpositie < 300 000 000, hoort deze < slotpositie.',
+      dnb_v0054: 'Dividend mag niet negatief zijn.',
+      dnb_v0058: 'Operationeel resultaat mag niet negatief zijn.'
+    };
 
-    // Als er fouten of waarschuwingen zijn, tonen we ze inline:
-    if (errs.length || warns.length) {
-      let html = '';
-      if (errs.length) {
-        html += `<div class="error"><strong>🛑 Errors:</strong><ul>`;
-        errs.forEach(e => {
-          html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
-        });
-        html += `</ul></div>`;
-      }
-      if (warns.length) {
-        html += `<div class="warning"><strong>⚠️ Warnings:</strong><ul>`;
-        warns.forEach(e => {
-          html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
-        });
-        html += `</ul></div>`;
-      }
+    document.getElementById('nextBtn').addEventListener('click', () => {
+  clearHighlights();
+  const { errs, warns } = runValidation();
+  const report = document.getElementById('validationReport');
 
-      container.innerHTML = html;
-      container.style.display = 'block';
+  if (errs.length || warns.length) {
+    let html = '';
+    // ERRORS
+    html += `
+      <details open>
+        <summary class="error-summary">
+          🛑 Errors <span class="badge">${errs.length}</span>
+        </summary>
+        <ul>
+    `;
+    errs.forEach(e => {
+      const colMap = { dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
+      html += `
+        <li data-row="${e.row}" data-col="${colMap[e.rule]}">
+          [${e.rule}] ${ruleDescriptions[e.rule]}
+        </li>
+      `;
+    });
+    html += `
+        </ul>
+      </details>
+    `;
 
-      // markeer alleen de ERROR-cellen (warns laten we visueel achterwege)
-      markErrors(errs);
-    } else {
-      // geen validatiefouten → berichten verbergen en door naar volgend formulier
-      container.style.display = 'none';
-      parent.loadForm(
-        'reporting-t01-02.html',
-        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
-      );
-    }
-  });
+    // WARNINGS
+    html += `
+      <details>
+        <summary class="warn-summary">
+          ⚠️ Warnings <span class="badge">${warns.length}</span>
+        </summary>
+        <ul>
+    `;
+    warns.forEach(e => {
+      const colMap = { dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
+      html += `
+        <li data-row="${e.row}" data-col="${colMap[e.rule]}">
+          [${e.rule}] ${ruleDescriptions[e.rule]}
+        </li>
+      `;
+    });
+    html += `
+        </ul>
+      </details>
+    `;
+
+    report.innerHTML    = html;
+    report.style.display = 'block';
+    markErrors(errs);
+
+    // klik‐handler voor scrollen
+    Array.from(report.querySelectorAll('li')).forEach(li => {
+      li.addEventListener('click', () => {
+        const r = +li.dataset.row, c = +li.dataset.col;
+        const inp = tbody.rows[r].cells[c].querySelector('input');
+        inp.scrollIntoView({ behavior:'smooth', block:'center' });
+        inp.focus();
+      });
+    });
+
+  } else {
+    report.style.display = 'none';
+    parent.loadForm(
+      'reporting-t01-02.html',
+      parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+    );
+  }
+});
+
+    
 
   </script>
 
