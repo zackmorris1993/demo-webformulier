@@ -49,6 +49,58 @@
       color: #856404;
       border-left: 4px solid #ffeeba;
     }
+
+      /* VALIDATIERAPPORT */
+    #validationReport {
+      font-size: 0.95em;
+    }
+    #validationReport details {
+      margin-bottom: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      overflow: hidden;
+    }
+    #validationReport summary {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+    #validationReport summary.error-summary {
+      background: #fdd;
+    }
+    #validationReport summary.error-summary .badge {
+      background: #e60000;  
+    }
+    #validationReport summary.warn-summary {
+      background: #ffd;
+    }
+    #validationReport summary.warn-summary .badge {
+      background: #e69500;
+    }
+    #validationReport summary .badge {
+      margin-left: auto;
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+    }
+    #validationReport ul {
+      margin: 0;
+      padding: 10px 20px;
+      list-style: none;
+    }
+    #validationReport li {
+      padding: 4px 0;
+      cursor: pointer;
+      color: #004080;
+    }
+    #validationReport li:hover {
+      text-decoration: underline;
+      background: #f0f6ff;
+    }
+
   </style>
 </head>
 <body>
