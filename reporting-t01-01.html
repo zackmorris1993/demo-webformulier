@@ -101,6 +101,31 @@
       background: #f0f6ff;
     }
 
+    /* Validatierapport styling */
+#validationReport {
+  margin-bottom: 20px;
+}
+#validationReport h3 {
+  margin: 0 0 8px;
+  color: #004080;
+  font-size: 1.1em;
+}
+#validationMessages {
+  padding: 12px;
+  border-radius: 4px;
+}
+#validationMessages .error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 4px solid #f5c6cb;
+}
+#validationMessages .warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border-left: 4px solid #ffeeba;
+}
+
+
   </style>
 </head>
 <body>
@@ -303,55 +328,32 @@
 
     document.getElementById('nextBtn').addEventListener('click', () => {
   clearHighlights();
-  const { errs, warns } = runValidation();
-  const report = document.getElementById('validationReport');
+  const {errs, warns} = runValidation();
+
+  const reportSection = document.getElementById('validationReport');
+  const container     = document.getElementById('validationMessages');
 
   if (errs.length || warns.length) {
+    // 1) Bouw de HTML
     let html = '';
-    // ERRORS
-    html += `
-      <details open>
-        <summary class="error-summary">
-          🛑 Errors <span class="badge">${errs.length}</span>
-        </summary>
-        <ul>
-    `;
-    errs.forEach(e => {
-      const colMap = { dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
-      html += `
-        <li data-row="${e.row}" data-col="${colMap[e.rule]}">
-          [${e.rule}] ${ruleDescriptions[e.rule]}
-        </li>
-      `;
-    });
-    html += `
-        </ul>
-      </details>
-    `;
+    if (errs.length) {
+      html += `<div class="error"><strong>🛑 Errors:</strong><ul>`;
+      errs.forEach(e => {
+        html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
+      });
+      html += `</ul></div>`;
+    }
+    if (warns.length) {
+      html += `<div class="warning"><strong>⚠️ Warnings:</strong><ul>`;
+      warns.forEach(e => {
+        html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
+      });
+      html += `</ul></div>`;
+    }
 
-    // WARNINGS
-    html += `
-      <details>
-        <summary class="warn-summary">
-          ⚠️ Warnings <span class="badge">${warns.length}</span>
-        </summary>
-        <ul>
-    `;
-    warns.forEach(e => {
-      const colMap = { dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
-      html += `
-        <li data-row="${e.row}" data-col="${colMap[e.rule]}">
-          [${e.rule}] ${ruleDescriptions[e.rule]}
-        </li>
-      `;
-    });
-    html += `
-        </ul>
-      </details>
-    `;
-
-    report.innerHTML    = html;
-    report.style.display = 'block';
+    // 2) Toon sectie en berichten
+    reportSection.style.display      = 'block';
+    container.innerHTML              = html;
     markErrors(errs);
 
     // klik‐handler voor scrollen
