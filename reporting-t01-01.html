@@ -348,14 +348,14 @@
     // 1) Bouw de HTML
     let html = '';
     if (errs.length) {
-      html += `<div class="error"><strong>🛑 Errors:</strong><ul>`;
+      html += `<div class="error"><strong>Errors:</strong><ul>`;
       errs.forEach(e => {
         html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
       });
       html += `</ul></div>`;
     }
     if (warns.length) {
-      html += `<div class="warning"><strong>⚠️ Warnings:</strong><ul>`;
+      html += `<div class="warning"><strong>Warnings:</strong><ul>`;
       warns.forEach(e => {
         html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
       });
