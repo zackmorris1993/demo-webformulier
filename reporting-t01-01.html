@@ -263,6 +263,15 @@
 
   <script>
 
+    // vlak onder je `const rules = [...]`:
+    const ruleDescriptions = {
+    'dnb_v0056': 'Als 010 > 300 000 000 moet je ook 020 invullen',
+    'dnb_v0057': 'Als 010 < 300 000 000 dan moet 010 < 020 zijn',
+    'dnb_v0054': 'Dividend (030) mag niet negatief zijn',
+    'dnb_v0058': 'Operationeel resultaat (040) mag niet negatief zijn'
+    // … vul hier al je overige regels in …
+    };
+
     function resetTable() {
     // 0) vraag eerst bevestiging
     if (!confirm('Weet je zeker dat je het formulier wilt resetten? Alle ingevulde gegevens gaan dan verloren.')) {
