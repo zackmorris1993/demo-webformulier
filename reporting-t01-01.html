@@ -264,18 +264,22 @@
   <script>
 
     function resetTable() {
-    // 0) verwijder alle Excel-sheets voor dit formulier uit localStorage
+    // 0) vraag eerst bevestiging
+    if (!confirm('Weet je zeker dat je het formulier wilt resetten? Alle ingevulde gegevens gaan dan verloren.')) {
+      return; // als gebruiker op “Annuleren” klikt: stop hier
+    }  
+    // 1) verwijder alle Excel-sheets voor dit formulier uit localStorage
     Object.keys(localStorage)
       .filter(k => k.startsWith('T01.01'))
       .forEach(k => localStorage.removeItem(k));
 
-    // 1) wis alle rijen in de tabel
+    // 2) wis alle rijen in de tabel
     tbody.innerHTML = '';
 
-    // 2) voeg precies 1 lege template-rij toe
+    // 3) voeg precies 1 lege template-rij toe
     addRow();
 
-    // 3) verwijder oude highlights en validatierapport
+    // 4) verwijder oude highlights en validatierapport
     clearHighlights();
     document.getElementById('validationReport').style.display = 'none';
     }
