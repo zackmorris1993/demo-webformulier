@@ -194,7 +194,16 @@
     background: #f0f6ff;
     text-decoration: underline;
   }
-</style>
+
+  /* Succes‐bericht */
+  #validationMessages .success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 4px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  </style>
 
 </head>
 <body>
@@ -262,15 +271,6 @@
   </ul>
 
   <script>
-
-    // vlak onder je `const rules = [...]`:
-    const ruleDescriptions = {
-    'dnb_v0056': 'Als 010 > 300 000 000 moet je ook 020 invullen',
-    'dnb_v0057': 'Als 010 < 300 000 000 dan moet 010 < 020 zijn',
-    'dnb_v0054': 'Dividend (030) mag niet negatief zijn',
-    'dnb_v0058': 'Operationeel resultaat (040) mag niet negatief zijn'
-    // … vul hier al je overige regels in …
-    };
 
     function resetTable() {
     // 0) vraag eerst bevestiging
@@ -411,6 +411,7 @@
       });
     }
 
+    // Beschrijvingen van de regels
     const ruleDescriptions = {
       dnb_v0056: 'Als beginpositie > 300 000 000, moet slotpositie zijn ingevuld.',
       dnb_v0057: 'Als beginpositie < 300 000 000, hoort deze < slotpositie.',
@@ -418,56 +419,82 @@
       dnb_v0058: 'Operationeel resultaat mag niet negatief zijn.'
     };
 
-    document.getElementById('nextBtn').addEventListener('click', () => {
-  clearHighlights();
-  const {errs, warns} = runValidation();
+    document.getElementById('nextBtn').addEventListener('click', function handler() {
+      clearHighlights();
+      const { errs, warns } = runValidation();
+      const reportSection = document.getElementById('validationReport');
+      const container     = document.getElementById('validationMessages');
+      const btn           = this;  // de knop zelf
 
-  const reportSection = document.getElementById('validationReport');
-  const container     = document.getElementById('validationMessages');
+      // eerst alles verbergen
+      reportSection.style.display = 'none';
+      container.style.display     = 'none';
 
-  if (errs.length || warns.length) {
-    // 1) Bouw de HTML
-    let html = '';
-    if (errs.length) {
-      html += `<div class="error"><strong>Errors:</strong><ul>`;
-      errs.forEach(e => {
-        html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
-      });
-      html += `</ul></div>`;
-    }
-    if (warns.length) {
-      html += `<div class="warning"><strong>Warnings:</strong><ul>`;
-      warns.forEach(e => {
-        html += `<li>Rij ${e.row+1} [${e.rule}]</li>`;
-      });
-      html += `</ul></div>`;
-    }
+      if (errs.length || warns.length) {
+        // 1) Bouw de HTML voor errors & warnings
+        let html = '';
 
-    // 2) Toon sectie en berichten
-    reportSection.style.display      = 'block';
-    container.innerHTML              = html;
-    markErrors(errs);
+        if (errs.length) {
+          html += `<div class="error">
+                     <strong>🛑 Errors:</strong>
+                     <ul>`;
+          errs.forEach(e => {
+            html += `<li>Rij ${e.row+1} [${e.rule}]: ${ruleDescriptions[e.rule]}</li>`;
+          });
+          html += `  </ul>
+                   </div>`;
+        }
 
-    // klik‐handler voor scrollen
-    Array.from(report.querySelectorAll('li')).forEach(li => {
-      li.addEventListener('click', () => {
-        const r = +li.dataset.row, c = +li.dataset.col;
-        const inp = tbody.rows[r].cells[c].querySelector('input');
-        inp.scrollIntoView({ behavior:'smooth', block:'center' });
-        inp.focus();
-      });
+        if (warns.length) {
+          html += `<div class="warning">
+                     <strong>⚠️ Warnings:</strong>
+                     <ul>`;
+          warns.forEach(e => {
+            html += `<li>Rij ${e.row+1} [${e.rule}]: ${ruleDescriptions[e.rule]}</li>`;
+          });
+          html += `  </ul>
+                   </div>`;
+        }
+
+        // 2) Inject en toon het Validatierapport
+        reportSection.innerHTML   = `<h3>Validatierapport</h3>` + html;
+        reportSection.style.display = 'block';
+
+        // 3) Highlight alleen de error-cellen
+        markErrors(errs);
+
+        // 4) Scroll‐handler zodat klik op een <li> je naar de juiste cel brengt
+        reportSection.querySelectorAll('li').forEach(li => {
+          li.addEventListener('click', () => {
+            const row = +li.dataset.row;
+            const col = +li.dataset.col;
+            const inp = tbody.rows[row].cells[col].querySelector('input');
+            inp.scrollIntoView({ behavior:'smooth', block:'center' });
+            inp.focus();
+          });
+        });
+
+      } else {
+        // --- Geen issues: toon inline succesbericht ---
+        container.innerHTML = `
+          <div class="success">
+            ✅ Alles is gevalideerd, je kunt nu verder.
+          </div>
+        `;
+        container.style.display = 'block';
+
+        // Verander de knop zodat de volgende klik navigeert
+        btn.textContent = 'Naar volgend formulier';
+        btn.removeEventListener('click', handler);  // oude handler weghalen
+        btn.addEventListener('click', () => {
+          parent.loadForm(
+            'reporting-t01-02.html',
+            parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+          );
+        });
+      }
     });
-
-  } else {
-    report.style.display = 'none';
-    parent.loadForm(
-      'reporting-t01-02.html',
-      parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
-    );
-  }
-});
-
-    
+   
 
   </script>
 
