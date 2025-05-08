@@ -4,158 +4,200 @@
   <meta charset="UTF-8">
   <title>T 01.01 - Subsidiaries</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f9f9fb; margin:0; padding:30px; }
-    h2 { color: #004080; margin-bottom:10px; }
-    a.help-link { font-size:0.9em; color:#004080; text-decoration:underline; cursor:pointer; }
-    .help-box { display:none; background:#e6f4ff; padding:15px; margin:10px 0 20px; border-left:4px solid #004080; border-radius:4px; color:#003366; }
-    table { width:100%; border-collapse:collapse; background:#fff; box-shadow:0 0 8px rgba(0,0,0,0.1); margin-bottom:20px; }
-    th, td { border:1px solid #ddd; padding:10px; text-align:center; }
-    th { background:#f0f6ff; color:#004080; }
-    input[type="number"], .country-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
-    .button-group { display:flex; justify-content:space-between; gap:10px; }
-    .button-group button { background:#004080; color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; transition:background 0.2s; }
-    .button-group button:hover { background:#003060; }
-    .delete-button { background:transparent; border:none; color:red; font-size:1.2em; cursor:pointer; }
-    /* searchable dropdown CSS */
-    .country-cell { position: relative; }
-    .country-dropdown {
-      position: absolute; top: 100%; left: 0; right: 0;
-      background: white; border:1px solid #ccc;
-      max-height:150px; overflow-y:auto; display:none; z-index:10;
-    }
-    .country-dropdown div { padding:5px 10px; cursor:pointer; }
-    .country-dropdown div:hover { background:#e6f4ff; }
+  /* basis */
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9fb;
+    margin: 0;
+    padding: 30px;
+  }
+  h2 {
+    color: #004080;
+    margin-bottom: 10px;
+  }
 
-    /* ERROR‐HIGHLIGHTING */
-    .error-cell { background-color: #e60000 !important; }
+  /* help-link */
+  .help-link {
+    display: inline-block;
+    font-size: 0.9em;
+    color: #004080;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-bottom: 12px; /* extra ruimte onder “Hulp bij invullen” */
+  }
+  .help-box {
+    display: none;
+    background: #e6f4ff;
+    padding: 15px;
+    margin: 10px 0 20px;
+    border-left: 4px solid #004080;
+    border-radius: 4px;
+    color: #003366;
+  }
 
-    /* invulvelden binnen kolommen fitten */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
+  /* tabel */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  th {
+    background: #f0f6ff;
+    color: #004080;
+  }
+  input[type="number"], .country-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
 
-    /* Validatieberichten */
-    #validationMessages {
-      padding: 12px;
-    }
-    #validationMessages .error {
-      background-color: white;
-      color: white;
-    }
-    #validationMessages .warning {
-      background-color: white;
-      color: white;
-    }
+  /* knoppen */
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .button-group button {
+    background: #004080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .button-group button:hover {
+    background: #003060;
+  }
+  .delete-button {
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
 
-      /* VALIDATIERAPPORT */
-    #validationReport {
-      font-size: 0.95em;
-    }
-    #validationReport details {
-      margin-bottom: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: #fff;
-      overflow: hidden;
-    }
-    #validationReport summary {
-      display: flex;
-      align-items: center;
-      padding: 10px 15px;
-      cursor: pointer;
-    }
-    #validationReport summary.error-summary {
-      background: #fdd;
-    }
-    #validationReport summary.error-summary .badge {
-      background: #e60000;  
-    }
-    #validationReport summary.warn-summary {
-      background: #ffd;
-    }
-    #validationReport summary.warn-summary .badge {
-      background: #e69500;
-    }
-    #validationReport summary .badge {
-      margin-left: auto;
-      padding: 2px 8px;
-      border-radius: 12px;
-      color: white;
-      font-weight: bold;
-    }
-    #validationReport ul {
-      margin: 0;
-      padding: 10px 20px;
-      list-style: none;
-    }
-    #validationReport li {
-      padding: 4px 0;
-      cursor: pointer;
-      color: #004080;
-    }
-    #validationReport li:hover {
-      text-decoration: underline;
-      background: #f0f6ff;
-    }
+  /* searchable dropdown */
+  .country-cell {
+    position: relative;
+  }
+  .country-dropdown {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+  }
+  .country-dropdown div {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .country-dropdown div:hover {
+    background: #e6f4ff;
+  }
 
-    /* Validatierapport styling */
-#validationReport {
-  margin-bottom: 20px;
-}
-#validationReport h3 {
-  margin: 0 0 8px;
-  color: #004080;
-  font-size: 1.1em;
-}
-#validationMessages {
-  padding: 12px;
-  border-radius: 4px;
-}
-#validationMessages .error {
-  background-color: white;
-  color: #004080;
-}
-#validationMessages .warning {
-  background-color: white;
-  color: #004080;
-}
+  /* error highlighting */
+  .error-cell {
+    background-color: #e60000 !important;
+  }
 
-    /* Zorg dat er wat ruimte komt onder de help-link */
-.help-link {
-  display: inline-block;    /* zodat margin-bottom werkt */
-  margin-bottom: 12px;
-}
+  /* ——— VALIDATIERAPPORT ——— */
+  #validationReport {
+    display: none;               /* wordt via JS zichtbaar gemaakt */
+    background-color: #fff;      /* wit kaartje */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 12px 0 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    font-size: 0.95em;
+  }
+  #validationReport h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #004080;
+    font-size: 1.2em;
+  }
 
-/* Of: extra ruimte bovenaan het validatierapport */
-#validationReport {
-  margin-top: 12px;
-}
+  /* inline error/warning blokken */
+  #validationMessages .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #f5c6cb;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+  #validationMessages .warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffeeba;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
 
-    /* Voeg dit toe aan je bestaande CSS */
-#validationReport {
-  display: none;                /* standaard verborgen */
-  background-color: #ffffff;    /* wit */
-  border: 1px solid #ddd;       /* lichte rand */
-  border-radius: 6px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
+  /* details/summary styling */
+  #validationReport details {
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    overflow: hidden;
+  }
+  #validationReport summary {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  #validationReport summary.error-summary {
+    background: #fdd;
+  }
+  #validationReport summary.error-summary .badge {
+    background: #e60000;
+  }
+  #validationReport summary.warn-summary {
+    background: #ffd;
+  }
+  #validationReport summary.warn-summary .badge {
+    background: #e69500;
+  }
+  #validationReport summary .badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+  }
+  #validationReport ul {
+    margin: 0;
+    padding: 10px 20px;
+    list-style: none;
+  }
+  #validationReport li {
+    padding: 4px 0;
+    cursor: pointer;
+    color: #004080;
+  }
+  #validationReport li:hover {
+    background: #f0f6ff;
+    text-decoration: underline;
+  }
+</style>
 
-#validationReport h3 {
-  margin-top: 0;
-  color: #004080;
-  font-size: 1.2em;
-  margin-bottom: 10px;
-}
-
-#validationReport .error,
-#validationReport .warning {
-  margin: 0;   /* reset marges */
-}
-
-
-  </style>
 </head>
 <body>
 
