@@ -275,6 +275,32 @@
   </ul>
 
   <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    // alleen als we in “blank” modus begonnen zijn
+    if (sessionStorage.getItem('reportStartMode') === 'blank') {
+      // stel hier je formulier-specifieke vraag
+      const ok = confirm(
+        'Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024\n' +
+        'posities in dochterondernemingen gehad?\n\n' +
+        'OK = Ja, Annuleren = Nee'
+      );
+
+      if (!ok) {
+        // bij “Nee” direct door naar het volgende formulier
+        parent.loadForm(
+          'reporting-t01-02.html',                               // volgende pagina
+          parent.document.querySelector(
+            '.sidebar button[onclick*="reporting-t01-02.html"]'
+          )
+        );
+        return; // stop verder initialiseren van deze pagina
+      }
+      // anders: “Ja” → laat de rest van de script gewoon doorlopen
+    }
+
+    // … hier komt de rest van je bestaande init-logic:
+    // Excel-import, addRow(), removeRow(), resetTable(), validatie, etc.
+
 
     function resetTable() {
     // 0) vraag eerst bevestiging
