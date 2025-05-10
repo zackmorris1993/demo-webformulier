@@ -274,250 +274,159 @@
     <!-- …alle overige landen… -->
   </ul>
 
-  <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    // alleen als we in “blank” modus begonnen zijn
-    if (sessionStorage.getItem('reportStartMode') === 'blank') {
-      // stel hier je formulier-specifieke vraag
-      const ok = confirm(
-        'Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024\n' +
-        'posities in dochterondernemingen gehad?\n\n' +
-        'OK = Ja, Annuleren = Nee'
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  // 1) Confirm-vraag (alleen in lege rapportage-modus)
+  if (sessionStorage.getItem('reportStartMode') === 'blank') {
+    const heeft = confirm(
+      'Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024\n' +
+      'posities in dochterondernemingen gehad?\n\n' +
+      'OK = Ja, Annuleren = Nee'
+    );
+    if (!heeft) {
+      // bij “Nee”: direct naar T01.02 en niets anders initialiseren
+      parent.loadForm(
+        'reporting-t01-02.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
       );
-
-      if (!ok) {
-        // bij “Nee” direct door naar het volgende formulier
-        parent.loadForm(
-          'reporting-t01-02.html',                               // volgende pagina
-          parent.document.querySelector(
-            '.sidebar button[onclick*="reporting-t01-02.html"]'
-          )
-        );
-        return; // stop verder initialiseren van deze pagina
-      }
-      // anders: “Ja” → laat de rest van de script gewoon doorlopen
+      return;
     }
+  }
 
-    // … hier komt de rest van je bestaande init-logic:
-    // Excel-import, addRow(), removeRow(), resetTable(), validatie, etc.
+  // 2) Setup references
+  const tbody         = document.querySelector('#subsidiariesTable tbody');
+  const templateRow   = tbody.querySelector('.template-row').cloneNode(true);
+  const btnAddRow     = document.getElementById('addRowBtn');     // geef je knop een id
+  const btnReset      = document.getElementById('resetBtn');      // geef je knop een id
+  const btnNext       = document.getElementById('nextBtn');
+  const reportSection = document.getElementById('validationReport');
+  const msgContainer  = document.getElementById('validationMessages');
 
-
-    function resetTable() {
-    // 0) vraag eerst bevestiging
-    if (!confirm('Weet je zeker dat je het formulier wilt resetten? Alle ingevulde gegevens gaan dan verloren.')) {
-      return; // als gebruiker op “Annuleren” klikt: stop hier
-    }  
-    // 1) verwijder alle Excel-sheets voor dit formulier uit localStorage
-    Object.keys(localStorage)
-      .filter(k => k.startsWith('T01.01'))
-      .forEach(k => localStorage.removeItem(k));
-
-    // 2) wis alle rijen in de tabel
-    tbody.innerHTML = '';
-
-    // 3) voeg precies 1 lege template-rij toe
-    addRow();
-
-    // 4) verwijder oude highlights en validatierapport
-    clearHighlights();
-    document.getElementById('validationReport').style.display = 'none';
-    }
-
-    
-    // help togglen
-    function toggleHelp() {
-      const hb = document.getElementById('helpBox');
-      hb.style.display = hb.style.display==='block'? 'none':'block';
-    }
-
-    // template‐rij bewaren
-    const tbody = document.querySelector('#subsidiariesTable tbody');
-    const templateRow = tbody.querySelector('.template-row').cloneNode(true);
-
-    // rijen toevoegen / verwijderen
-    function addRow() {
-      const tr = templateRow.cloneNode(true);
-      tr.querySelectorAll('input').forEach(i=>i.value='');
-      tbody.appendChild(tr);
-    }
-    function removeRow(btn) {
-      if (tbody.rows.length > 1) btn.closest('tr').remove();
-      else alert('Minstens één rij is vereist.');
-    }
-
-    // searchable dropdown
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const countries = Array.from(document.querySelectorAll('#allCountries li'))
-                             .map(li=>li.textContent);
-      tbody.addEventListener('input', e=>{
-        if (!e.target.classList.contains('country-input')) return;
-        const dd = e.target.nextElementSibling;
-        const val = e.target.value.toLowerCase();
-        dd.innerHTML = countries
-          .filter(c=>c.toLowerCase().includes(val))
-          .map(c=>`<div>${c}</div>`).join('');
-        dd.style.display = dd.innerHTML? 'block':'none';
-      });
-      tbody.addEventListener('click', e=>{
-        if (e.target.parentNode.classList.contains('country-dropdown')) {
-          const inp = e.target.closest('.country-cell')
-                          .querySelector('.country-input');
-          inp.value = e.target.textContent;
-          e.target.parentNode.style.display='none';
-        }
-      });
-      document.addEventListener('click', e=>{
-        if (!e.target.classList.contains('country-input'))
-          document.querySelectorAll('.country-dropdown')
-                  .forEach(d=>d.style.display='none');
-      });
-    });
-
-    // Excel‐import
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
-      if (!key) return;
-      const data = JSON.parse(localStorage.getItem(key));
-      const rows = data.slice(1);
-      tbody.innerHTML = '';
-      rows.forEach(cols=>{
-        const tr = templateRow.cloneNode(true);
-        tr.cells[0].querySelector('input').value = cols[0]||'';
-        for (let i=1; i<=4; i++){
-          tr.cells[i].querySelector('input').value = cols[i]!=null? cols[i]:'';
-        }
-        tbody.appendChild(tr);
-      });
-    });
-
-    // ** Validation + highlighting **
-    const rules = [
-      {id:'dnb_v0056',sev:'ERROR',validate:r=>{
-         const a=+r.cells[1].querySelector('input').value||0,
-               b=r.cells[2].querySelector('input').value;
-         return !(a>300000000 && !b);
-      }},
-      {id:'dnb_v0057',sev:'WARNING',validate:r=>{
-         const a=+r.cells[1].querySelector('input').value||0,
-               b=+r.cells[2].querySelector('input').value||0;
-         return !(a<300000000 && a>=b);
-      }},
-      {id:'dnb_v0054',sev:'ERROR',validate:r=>
-         (+r.cells[3].querySelector('input').value||0) >= -30000000},
-      {id:'dnb_v0058',sev:'ERROR',validate:r=>
-         (+r.cells[4].querySelector('input').value||0) >= 0}
-    ];
-
-    function runValidation(){
-      const errs=[], warns=[];
-      Array.from(tbody.rows).forEach((r,i)=>{
-        rules.forEach(rule=>{
-          if (!rule.validate(r)) {
-            (rule.sev==='ERROR'? errs:warns)
-             .push({ row:i, rule:rule.id });
-          }
-        });
-      });
-      return {errs, warns};
-    }
-
-    function clearHighlights(){
-      document.querySelectorAll('.error-cell')
-              .forEach(el=>el.classList.remove('error-cell'));
-    }
-
-    function markErrors(errs){
-      errs.forEach(e=>{
-        const row = tbody.rows[e.row];
-        let idx = 1;
-        switch(e.rule){
-          case 'dnb_v0056': idx = 2; break;
-          case 'dnb_v0057': idx = 1; break;
-          case 'dnb_v0054': idx = 3; break;
-          case 'dnb_v0058': idx = 4; break;
-        }
-        const inp = row.cells[idx].querySelector('input');
-        if (inp) inp.classList.add('error-cell');
-      });
-    }
-
-  
-  // Beschrijvingen van de regels
+  // 3) Je rule-definities en beschrijvingen
+  const rules = [
+    { id:'dnb_v0056', sev:'ERROR', validate: r => {
+        const a=+r.cells[1].querySelector('input').value||0,
+              b=r.cells[2].querySelector('input').value;
+        return !(a>300000000 && !b);
+    }},
+    { id:'dnb_v0057', sev:'WARNING', validate: r => {
+        const a=+r.cells[1].querySelector('input').value||0,
+              b=+r.cells[2].querySelector('input').value||0;
+        return !(a<300000000 && a>=b);
+    }},
+    { id:'dnb_v0054', sev:'ERROR', validate: r =>
+        (+r.cells[3].querySelector('input').value||0) >= -30000000
+    },
+    { id:'dnb_v0058', sev:'ERROR', validate: r =>
+        (+r.cells[4].querySelector('input').value||0) >= 0
+    },
+  ];
   const ruleDescriptions = {
-    dnb_v0056: 'Als beginpositie > 300 000 000, moet slotpositie zijn ingevuld.',
+    dnb_v0056: 'Als beginpositie > 300 000 000, moet slotpositie ingevuld zijn.',
     dnb_v0057: 'Als beginpositie < 300 000 000, hoort deze < slotpositie.',
     dnb_v0054: 'Dividend mag niet negatief zijn.',
     dnb_v0058: 'Operationeel resultaat mag niet negatief zijn.'
   };
 
-  document.getElementById('nextBtn').addEventListener('click', function handler() {
+  // 4) Hulpfuncties
+  function addRow() {
+    const tr = templateRow.cloneNode(true);
+    tr.querySelectorAll('input').forEach(i=>i.value='');
+    tbody.appendChild(tr);
+  }
+  function removeRow(btn) {
+    if (tbody.rows.length > 1) btn.closest('tr').remove();
+    else alert('Minstens één rij is vereist.');
+  }
+  function resetTable() {
+    if (!confirm('Weet u zeker dat u wilt resetten? Alle gegevens verdwijnen.')) return;
+    // clear storage
+    Object.keys(localStorage)
+      .filter(k=>k.startsWith('T01.01'))
+      .forEach(k=>localStorage.removeItem(k));
+    // reset DOM
+    tbody.innerHTML = '';
+    addRow();
+    clearHighlights();
+    reportSection.style.display = 'none';
+    msgContainer.style.display = 'none';
+  }
+  function toggleHelp() {
+    const hb = document.getElementById('helpBox');
+    hb.style.display = hb.style.display === 'block' ? 'none' : 'block';
+  }
+  function runValidation() {
+    const errs=[], warns=[];
+    Array.from(tbody.rows).forEach((r,i) => {
+      rules.forEach(rule => {
+        if (!rule.validate(r)) {
+          (rule.sev==='ERROR' ? errs : warns)
+            .push({ row:i, rule:rule.id });
+        }
+      });
+    });
+    return { errs, warns };
+  }
+  function clearHighlights() {
+    document.querySelectorAll('.error-cell')
+            .forEach(el=>el.classList.remove('error-cell'));
+  }
+  function markErrors(errs) {
+    errs.forEach(e => {
+      const row = tbody.rows[e.row];
+      // map rule → kolomindex
+      const colMap = { dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
+      const inp = row.cells[colMap[e.rule]].querySelector('input');
+      if (inp) inp.classList.add('error-cell');
+    });
+  }
+
+  // 5) Bind je knoppen (géén inline onclick meer!)
+  btnAddRow .addEventListener('click', addRow);
+  btnReset  .addEventListener('click', resetTable);
+  document.getElementById('helpLink').addEventListener('click', toggleHelp);
+
+  btnNext.addEventListener('click', function handler() {
     clearHighlights();
     const { errs, warns } = runValidation();
-    const reportSection = document.getElementById('validationReport');
-    const container     = document.getElementById('validationMessages');
-    const btn           = this;  // de knop zelf
 
-    // eerst alles verbergen
+    // hide previous
     reportSection.style.display = 'none';
-    container.style.display     = 'none';
+    msgContainer .style.display = 'none';
 
-    if (errs.length || warns.length) {
-      // 1) Bouw de HTML voor errors & warnings
-      let html = '';
-
+    if (errs.length||warns.length) {
+      // bouw HTML
+      let html = '<h3>Validatierapport</h3>';
       if (errs.length) {
-        html += `<div class="error">
-                   <strong>Errors:</strong>
-                   <ul>`;
-        errs.forEach(e => {
+        html += '<div class="error"><strong>🛑 Errors:</strong><ul>';
+        errs.forEach(e=>{
           html += `<li>Rij ${e.row+1} [${e.rule}]: ${ruleDescriptions[e.rule]}</li>`;
         });
-        html += `  </ul>
-                 </div>`;
+        html += '</ul></div>';
       }
-
       if (warns.length) {
-        html += `<div class="warning">
-                   <strong>Warnings:</strong>
-                   <ul>`;
-        warns.forEach(e => {
+        html += '<div class="warning"><strong>⚠️ Warnings:</strong><ul>';
+        warns.forEach(e=>{
           html += `<li>Rij ${e.row+1} [${e.rule}]: ${ruleDescriptions[e.rule]}</li>`;
         });
-        html += `  </ul>
-                 </div>`;
+        html += '</ul></div>';
       }
-
-      // 2) Inject en toon het Validatierapport
-      reportSection.innerHTML   = `<h3>Validatierapport</h3>` + html;
+      reportSection.innerHTML   = html;
       reportSection.style.display = 'block';
-
-      // 3) Highlight alleen de error-cellen
       markErrors(errs);
 
-      // 4) Scroll‐handler zodat klik op een <li> je naar de juiste cel brengt
-      reportSection.querySelectorAll('li').forEach(li => {
-        li.addEventListener('click', () => {
-          const row = +li.dataset.row;
-          const col = +li.dataset.col;
-          const inp = tbody.rows[row].cells[col].querySelector('input');
-          inp.scrollIntoView({ behavior:'smooth', block:'center' });
-          inp.focus();
-        });
-      });
-
     } else {
-      // --- Geen issues: toon inline succesbericht ---
-      container.innerHTML = `
-        <div class="success">
-          De door uw aangeleverde data op dit formulier is gevalideerd, u kunt nu verder.
-        </div>
-      `;
-      container.style.display = 'block';
+      // alles ok → inline succes
+      msgContainer.innerHTML = `
+        <div class="success-box">
+          ✅ De door u ingevoerde data is gevalideerd. U kunt nu verder.
+        </div>`;
+      msgContainer.style.display = 'block';
 
-      // Verander de knop zodat de volgende klik navigeert
-      btn.textContent = 'Naar volgend formulier';
-      btn.removeEventListener('click', handler);  // oude handler weghalen
-      btn.addEventListener('click', () => {
+      // verander knop naar “next”
+      btnNext.textContent = 'Naar volgend formulier';
+      btnNext.removeEventListener('click', handler);
+      btnNext.addEventListener('click', () => {
         parent.loadForm(
           'reporting-t01-02.html',
           parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
@@ -526,8 +435,11 @@
     }
   });
 
+  // 6) Tenslotte: start met precies 1 lege rij
+  addRow();
+});  // <-- let op: sluit de DOMContentLoaded listener hier
+</script>
 
-  </script>
 
 </body>
 </html>
