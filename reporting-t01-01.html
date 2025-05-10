@@ -311,22 +311,34 @@
   </ul>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-  // 1) Confirm-vraag (alleen in lege rapportage-modus)
+  document.addEventListener('DOMContentLoaded', () => {
+  // alleen blank-modus
   if (sessionStorage.getItem('reportStartMode') === 'blank') {
-    const heeft = confirm(
-      'Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024\n' +
-      'posities in dochterondernemingen gehad?\n\n' +
-      'OK = Ja, Annuleren = Nee'
-    );
-    if (!heeft) {
-      // bij “Nee”: direct naar T01.02 en niets anders initialiseren
+    const qCard = document.getElementById('initialQuestion');
+    const yesBtn = document.getElementById('questionYes');
+    const noBtn  = document.getElementById('questionNo');
+
+    // toont de vraagkaart, verberg de rest
+    qCard.style.display      = 'block';
+    document.querySelector('form').style.display = 'none';
+
+    yesBtn.addEventListener('click', () => {
+      // Ja: verberg vraag en toon formulier
+      qCard.style.display      = 'none';
+      document.querySelector('form').style.display = 'block';
+      // hier kun je +1 lege rij toevoegen of excel import laten lopen
+      resetTable(); 
+    });
+
+    noBtn.addEventListener('click', () => {
+      // Nee: direct door naar T 01.02
       parent.loadForm(
         'reporting-t01-02.html',
         parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
       );
-      return;
-    }
+    });
+
+    return; // stop verdere init
   }
 
   // 2) Setup references
