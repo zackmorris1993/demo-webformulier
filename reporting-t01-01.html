@@ -17,6 +17,34 @@
     margin-bottom: 10px;
   }
 
+  /* Vraagkaart bovenaan */
+  .question-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .question-card p {
+    margin: 0 0 12px;
+    font-size: 1em;
+    color: #004080;
+  }
+  .question-buttons button {
+    background: #004080;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .question-buttons button:hover {
+    background: #003060;
+  }
+    
   /* help-link */
   .help-link {
     display: inline-block;
@@ -222,6 +250,14 @@
       <li><code>dnb_v0058 (ERROR)</code>: <strong>040 ≥ 0</strong> (Operationeel resultaat niet negatief).</li>
     </ul>
   </div>
+  <div id="initialQuestion" class="question-card">
+    <p>Heeft u in de rapportageperiode <strong>01-01-2024 t/m 31-12-2024</strong> posities in dochterondernemingen gehad?</p>
+    <div class="button-group question-buttons">
+      <button id="questionYes">Ja</button>
+      <button id="questionNo">Nee</button>
+    </div>
+  </div>
+  
 
   <form onsubmit="return false;">
     <!-- VALIDATIERAPPORT -->
