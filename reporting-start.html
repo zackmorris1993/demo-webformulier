@@ -171,10 +171,13 @@
       location.href = 'reporting-t01-01.html';
     });
 
-    // === Leeg formulier ===========================================
+    // Leeg formulier
     document.getElementById('btnBlank').addEventListener('click', () => {
-      location.href = 'reporting-t01-01.html';
-    });
+    // 1. Zet een vlag in sessionStorage
+    sessionStorage.setItem('reportStartMode', 'blank');
+    // 2. Navigeer naar het eerste formulier
+    location.href = 'reporting-t01-01.html';
+  });
   </script>
 
 </body>
