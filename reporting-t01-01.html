@@ -427,7 +427,7 @@ window.addEventListener('DOMContentLoaded', () => {
     noBtn.addEventListener('click', () => {
       parent.loadForm(
         'reporting-t01-02.html',
-        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+        parent.document.getElementById('btnT0102')
       );
     });
 
@@ -518,7 +518,7 @@ helpLink.addEventListener('click', toggleHelp);
       btnNext.addEventListener('click', () => {
         parent.loadForm(
           'reporting-t01-02.html',
-          parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+          parent.document.getElementById('btnT0102')
         );
       });
     }
