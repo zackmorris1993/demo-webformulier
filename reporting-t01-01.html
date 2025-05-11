@@ -311,34 +311,43 @@
   </ul>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-  // alleen blank-modus
-  if (sessionStorage.getItem('reportStartMode') === 'blank') {
-    const qCard = document.getElementById('initialQuestion');
-    const yesBtn = document.getElementById('questionYes');
-    const noBtn  = document.getElementById('questionNo');
+    
+    document.addEventListener('DOMContentLoaded', () => {
+    // alleen als we in “blank” modus begonnen zijn
+    if (sessionStorage.getItem('reportStartMode') === 'blank') {
+      const qCard = document.getElementById('initialQuestion');
+      const form  = document.querySelector('form');
+      const yesBtn = document.getElementById('questionYes');
+      const noBtn  = document.getElementById('questionNo');
 
-    // toont de vraagkaart, verberg de rest
-    qCard.style.display      = 'block';
-    document.querySelector('form').style.display = 'none';
+      // tonen vraag, verbergen formulier
+      qCard.style.display      = 'block';
+      form.style.display       = 'none';
 
-    yesBtn.addEventListener('click', () => {
-      // Ja: verberg vraag en toon formulier
-      qCard.style.display      = 'none';
-      document.querySelector('form').style.display = 'block';
-      // hier kun je +1 lege rij toevoegen of excel import laten lopen
-      resetTable(); 
-    });
+      yesBtn.addEventListener('click', () => {
+        // JA: verberg vraag en toon formulier, met 1 lege rij
+        qCard.style.display = 'none';
+        form.style.display  = 'block';
+
+        // Verwijder alle bestaande rijen en voeg precies 1 lege template-rij toe
+        tbody.innerHTML = '';
+        addRow();
+
+        // Maak zeker dat validatie weg is
+        clearHighlights();
+        document.getElementById('validationReport').style.display = 'none';
+        document.getElementById('validationMessages').style.display = 'none';
+      });
 
     noBtn.addEventListener('click', () => {
-      // Nee: direct door naar T 01.02
+      // NEE: direct door naar volgende formulier
       parent.loadForm(
         'reporting-t01-02.html',
         parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
       );
     });
 
-    return; // stop verdere init
+    return; // stop verdere initialisatie
   }
 
   // 2) Setup references
