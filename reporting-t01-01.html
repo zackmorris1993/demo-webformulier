@@ -311,6 +311,136 @@
   </ul>
 
 <script>
+window.addEventListener('DOMContentLoaded', () => {
+  //
+  // 1) ALLER EERST: Globale referenties & hulpfuncties
+  //
+  const tbody         = document.querySelector('#subsidiariesTable tbody');
+  const templateRow   = tbody.querySelector('.template-row').cloneNode(true);
+  const btnAddRow     = document.getElementById('addRowBtn');
+  const btnReset      = document.getElementById('resetBtn');
+  const btnNext       = document.getElementById('nextBtn');
+  const reportSection = document.getElementById('validationReport');
+  const msgContainer  = document.getElementById('validationMessages');
+  const helpLink      = document.getElementById('helpLink');
+
+  // Voeg één lege rij toe
+  function addRow() {
+    const tr = templateRow.cloneNode(true);
+    tr.querySelectorAll('input').forEach(i=>i.value='');
+    tbody.appendChild(tr);
+  }
+
+  function removeRow(btn) {
+    if (tbody.rows.length > 1) btn.closest('tr').remove();
+    else alert('Minstens één rij is vereist.');
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('.error-cell')
+            .forEach(el=>el.classList.remove('error-cell'));
+  }
+
+  function resetTable() {
+    if (!confirm('Weet u zeker dat u het formulier wilt resetten? Alle data gaat verloren.')) {
+      return;
+    }
+    // Opschonen localStorage
+    Object.keys(localStorage)
+      .filter(k=>k.startsWith('T01.01'))
+      .forEach(k=>localStorage.removeItem(k));
+    // Reset DOM
+    tbody.innerHTML = '';
+    addRow();
+    clearHighlights();
+    reportSection.style.display = 'none';
+    msgContainer .style.display = 'none';
+  }
+
+  // Validatieregels & beschrijvingen
+  const rules = [
+    { id:'dnb_v0056', sev:'ERROR', validate: r => { /* ... */ }},
+    { id:'dnb_v0057', sev:'WARNING', validate: r => { /* ... */ }},
+    { id:'dnb_v0054', sev:'ERROR', validate: r => { /* ... */ }},
+    { id:'dnb_v0058', sev:'ERROR', validate: r => { /* ... */ }},
+  ];
+  const ruleDescriptions = {
+    dnb_v0056: 'Als beginpositie > 300 000 000, moet slotpositie ingevuld zijn.',
+    dnb_v0057: 'Als beginpositie < 300 000 000, hoort deze < slotpositie.',
+    dnb_v0054: 'Dividend mag niet negatief zijn.',
+    dnb_v0058: 'Operationeel resultaat mag niet negatief zijn.'
+  };
+
+  function runValidation(){
+    const errs = [], warns = [];
+    Array.from(tbody.rows).forEach((r,i)=>{
+      rules.forEach(rule=>{
+        if (!rule.validate(r)) {
+          (rule.sev==='ERROR' ? errs : warns).push({ row:i, rule:rule.id });
+        }
+      });
+    });
+    return { errs, warns };
+  }
+
+  function markErrors(errs){
+    const colMap = {
+      dnb_v0056: 2,
+      dnb_v0057: 1,
+      dnb_v0054: 3,
+      dnb_v0058: 4
+    };
+    errs.forEach(e => {
+      const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
+      if (inp) inp.classList.add('error-cell');
+    });
+  }
+
+  function toggleHelp(){
+    const hb = document.getElementById('helpBox');
+    hb.style.display = hb.style.display==='block'? 'none':'block';
+  }
+
+  //
+  // 2) BLANK-MODUS: vraag vóór de rest
+  //
+  if (sessionStorage.getItem('reportStartMode') === 'blank') {
+    const qCard  = document.getElementById('initialQuestion');
+    const formEl = document.querySelector('form');
+    const yesBtn = document.getElementById('questionYes');
+    const noBtn  = document.getElementById('questionNo');
+
+    qCard.style.display = 'block';
+    formEl.style.display = 'none';
+
+    yesBtn.addEventListener('click', () => {
+      qCard.style.display = 'none';
+      formEl.style.display = 'block';
+      // 1 lege rij
+      tbody.innerHTML = '';
+      addRow();
+      clearHighlights();
+      reportSection.style.display = 'none';
+      msgContainer .style.display = 'none';
+    });
+
+    noBtn.addEventListener('click', () => {
+      parent.loadForm(
+        'reporting-t01-02.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+      );
+    });
+
+    return; // **stop** verdere initialisatie
+  }
+  
+
+  
+  
+  
+  
+  
+  <script>
     
     document.addEventListener('DOMContentLoaded', () => {
     // alleen als we in “blank” modus begonnen zijn
