@@ -2,274 +2,69 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>T 01.01 - Subsidiaries</title>
+  <title>T 01.01 – Subsidiaries</title>
   <style>
-  /* basis */
-  *, *::before, *::after { box-sizing: border-box; }
-  body {
-    font-family: Arial, sans-serif;
-    background: #f9f9fb;
-    margin: 0;
-    padding: 30px;
-  }
-  h2 {
-    color: #004080;
-    margin-bottom: 10px;
-  }
-
-  /* Vraagkaart bovenaan */
-  .question-card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  }
-  .question-card p {
-    margin: 0 0 12px;
-    font-size: 1em;
-    color: #004080;
-  }
-  .question-buttons button {
-    background: #004080;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin-right: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .question-buttons button:hover {
-    background: #003060;
-  }
-    
-  /* help-link */
-  .help-link {
-    display: inline-block;
-    font-size: 0.9em;
-    color: #004080;
-    text-decoration: underline;
-    cursor: pointer;
-    margin-bottom: 12px; /* extra ruimte onder “Hulp bij invullen” */
-  }
-  .help-box {
-    display: none;
-    background: #e6f4ff;
-    padding: 15px;
-    margin: 10px 0 20px;
-    border-left: 4px solid #004080;
-    border-radius: 4px;
-    color: #003366;
-  }
-
-  /* tabel */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-  }
-  th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-  }
-  th {
-    background: #f0f6ff;
-    color: #004080;
-  }
-  input[type="number"], .country-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  /* knoppen */
-  .button-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .button-group button {
-    background: #004080;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .button-group button:hover {
-    background: #003060;
-  }
-  .delete-button {
-    background: transparent;
-    border: none;
-    color: red;
-    font-size: 1.2em;
-    cursor: pointer;
-  }
-
-  /* searchable dropdown */
-  .country-cell {
-    position: relative;
-  }
-  .country-dropdown {
-    position: absolute;
-    top: 100%; left: 0; right: 0;
-    background: white;
-    border: 1px solid #ccc;
-    max-height: 150px;
-    overflow-y: auto;
-    display: none;
-    z-index: 10;
-  }
-  .country-dropdown div {
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  .country-dropdown div:hover {
-    background: #e6f4ff;
-  }
-
-  /* error highlighting */
-  .error-cell {
-    background-color: #e60000 !important;
-  }
-
-  /* ——— VALIDATIERAPPORT ——— */
-  #validationReport {
-    display: none;               /* wordt via JS zichtbaar gemaakt */
-    background-color: #fff;      /* wit kaartje */
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 20px;
-    margin: 12px 0 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    font-size: 0.95em;
-  }
-  #validationReport h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    color: #004080;
-    font-size: 1.2em;
-  }
-
-  /* inline error/warning blokken */
-  #validationMessages .error {
-    background-color: white;
-    color: #004080;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-  }
-  #validationMessages .warning {
-    background-color: white;
-    color: #004080;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-  }
-
-  /* details/summary styling */
-  #validationReport details {
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #fff;
-    overflow: hidden;
-  }
-  #validationReport summary {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    cursor: pointer;
-  }
-  #validationReport summary.error-summary {
-    background: #fff;
-  }
-  #validationReport summary.error-summary .badge {
-    background: #004080;
-  }
-  #validationReport summary.warn-summary {
-    background: #fff;
-  }
-  #validationReport summary.warn-summary .badge {
-    background: #004080;
-  }
-  #validationReport summary .badge {
-    margin-left: auto;
-    padding: 2px 8px;
-    border-radius: 12px;
-    color: white;
-    font-weight: bold;
-  }
-  #validationReport ul {
-    margin: 0;
-    padding: 10px 20px;
-    list-style: none;
-  }
-  #validationReport li {
-    padding: 4px 0;
-    cursor: pointer;
-    color: #004080;
-  }
-  #validationReport li:hover {
-    background: #f0f6ff;
-    text-decoration: underline;
-  }
-
-  /* Succes‐bericht */
-  #validationMessages .success {
-    background-color: #d4edda;
-    color: #155724;
-    border-left: 4px solid #c3e6cb;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 12px;
-  }
+    body { font-family: Arial, sans-serif; background: #f9f9fb; margin:0; padding:30px; }
+    h2 { color: #004080; margin-bottom:10px; }
+    .help-link { font-size:0.9em; color:#004080; text-decoration:underline; cursor:pointer; margin-bottom:12px; display:inline-block; }
+    .help-box { display:none; background:#e6f4ff; padding:15px; margin:0 0 20px; border-left:4px solid #004080; border-radius:4px; color:#003366; }
+    table { width:100%; border-collapse:collapse; background:#fff; box-shadow:0 0 8px rgba(0,0,0,0.1); margin-bottom:20px; }
+    th, td { border:1px solid #ddd; padding:10px; text-align:center; }
+    th { background:#f0f6ff; color:#004080; }
+    input[type="number"], .country-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
+    .button-group { display:flex; justify-content:space-between; gap:10px; }
+    .button-group button { background:#004080; color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; transition:background 0.2s; }
+    .button-group button:hover { background:#003060; }
+    .delete-button { background:transparent; border:none; color:red; font-size:1.2em; cursor:pointer; }
+    /* dropdown */
+    .country-cell { position: relative; }
+    .country-dropdown { position:absolute; top:100%; left:0; right:0; background:white; border:1px solid #ccc; max-height:150px; overflow-y:auto; display:none; z-index:10; }
+    .country-dropdown div { padding:5px 10px; cursor:pointer; }
+    .country-dropdown div:hover { background:#e6f4ff; }
+    /* error highlight */
+    .error-cell { background-color: #e60000 !important; }
+    /* Validatierapport */
+    #validationReport { display:none; background:white; border:1px solid #ddd; border-radius:6px; padding:20px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
+    #validationReport h3 { margin-top:0; color:#004080; font-size:1.2em; margin-bottom:10px; }
+    #validationReport .error { background:#f8d7da; color:#721c24; border-left:4px solid #f5c6cb; padding:10px; margin-bottom:10px; }
+    #validationReport .warning { background:#fff3cd; color:#856404; border-left:4px solid #ffeeba; padding:10px; }
+    /* Success */
+    .success-box { background:#d4edda; color:#155724; border-left:4px solid #c3e6cb; padding:12px; border-radius:4px; }
+    /* initial question card */
+    #initialQuestion { display:none; background:white; border:1px solid #ddd; border-radius:6px; padding:20px; margin-bottom:20px; }
+    #initialQuestion button { margin:10px; }
   </style>
-
 </head>
 <body>
 
-  <h2>T 01.01 - Subsidiaries</h2>
-  <a href="#" id="helpLink">Hulp bij invullen</a>
+  <h2>T 01.01 – Subsidiaries</h2>
+
+  <!-- 1) Voorafgaande vraag -->
+  <div id="initialQuestion">
+    <p><strong>Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024 posities in dochterondernemingen gehad?</strong></p>
+    <button id="questionYes">Ja</button>
+    <button id="questionNo">Nee</button>
+  </div>
+
+  <!-- 2) Help -->
+  <a class="help-link" id="helpLink">Hulp bij invullen</a>
   <div id="helpBox" class="help-box">
-    <p>Rapporteurs geven hier posities aan het begin en eind van het jaar op voor deelnemingen (participating interests) en directe holdings. Dit kunnen binnen- en buitenlandse deelnemingen zijn. …</p>
+    <p>Rapporteurs geven hier posities aan het begin en eind van het jaar op voor deelnemingen…</p>
     <hr>
-    <strong>Valideringsregels (taxonomie):</strong>
     <ul>
-      <li><code>dnb_v0056 (ERROR)</code>: Als <strong>010 &gt; 300 000 000</strong>, moet 020 zijn ingevuld.</li>
-      <li><code>dnb_v0057 (WARNING)</code>: Als <strong>010 &lt; 300 000 000</strong>, dan <strong>010 &lt; 020</strong>.</li>
-      <li><code>dnb_v0054 (ERROR)</code>: <strong>030 ≥ –30 000 000</strong> (Dividend niet negatief).</li>
-      <li><code>dnb_v0058 (ERROR)</code>: <strong>040 ≥ 0</strong> (Operationeel resultaat niet negatief).</li>
+      <li><code>dnb_v0056</code> ERROR: Als beginpositie > 300 000 000 → slotpositie verplicht</li>
+      <li><code>dnb_v0057</code> WARNING: Als beginpositie < 300 000 000 → begin < slot</li>
+      <li><code>dnb_v0054</code> ERROR: Dividend ≥ –30 000 000</li>
+      <li><code>dnb_v0058</code> ERROR: Operationeel resultaat ≥ 0</li>
     </ul>
   </div>
-  <div id="initialQuestion" class="question-card">
-    <p>Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024 posities in dochterondernemingen gehad?</p>
-    <div class="button-group question-buttons">
-      <button id="questionYes">Ja</button>
-      <button id="questionNo">Nee</button>
-    </div>
-  </div>
-  
 
+  <!-- 3) Validatierapport -->
+  <div id="validationReport"></div>
+  <div id="validationMessages" style="display:none;"></div>
+
+  <!-- 4) Formulier -->
   <form onsubmit="return false;">
-    <!-- VALIDATIERAPPORT -->
-    <section id="validationReport" style="display:none;">
-      <h3>Validatierapport</h3>
-      <div id="validationMessages"></div>
-    </section>
-    
-    <div id="validationMessages" style="display:none;"></div>
-    <section id="validationReport" style="display:none;"></section>
-    
-    <!-- Tabel per formulier -->
     <table id="subsidiariesTable">
       <thead>
         <tr>
@@ -278,258 +73,226 @@
           <th>Position end (020)</th>
           <th>Dividend received (030)</th>
           <th>Operational result (040)</th>
-          <th>Verwijder rij</th>
+          <th>✖️</th>
         </tr>
       </thead>
-      <tbody>
-        <tr class="template-row">
-          <td class="country-cell">
-            <input type="text" class="country-input" placeholder="Typ om te zoeken…" required>
-            <div class="country-dropdown"></div>
-          </td>
-          <td><input type="number" step="0.01" required></td>
-          <td><input type="number" step="0.01" required></td>
-          <td><input type="number" step="0.01" required></td>
-          <td><input type="number" step="0.01" required></td>
-          <td><button class="delete-button" id="removeRow(this)">🗑</button></td>
-        </tr>
-      </tbody>
+      <tbody></tbody>
     </table>
 
     <div class="button-group">
-      <button id="addRowBtn">➕ Voeg rij toe</button>
-      <button id="resetBtn">🔄 Reset formulier</button>
-      <button id="nextBtn">Valideer</button>
+      <button type="button" id="addRowBtn">➕ Voeg rij toe</button>
+      <button type="button" id="resetBtn">🔄 Reset formulier</button>
+      <button type="button" id="nextBtn">Volgende formulier</button>
     </div>
   </form>
 
-  <!-- volledige landenlijst -->
+  <!-- 5) Landenlijst -->
   <ul id="allCountries" style="display:none;">
     <li>Netherlands</li><li>Belgium</li><li>Germany</li><li>France</li>
     <li>United Kingdom</li><li>United States</li>
-    <!-- …alle overige landen… -->
+    <!-- … alle overige landen … -->
   </ul>
 
-<script>
-window.addEventListener('DOMContentLoaded', () => {
-  //
-  // 1) ALLER EERST: Globale referenties & hulpfuncties
-  //
-  const tbody         = document.querySelector('#subsidiariesTable tbody');
-  const templateRow   = tbody.querySelector('.template-row').cloneNode(true);
-  const btnAddRow     = document.getElementById('addRowBtn');
-  const btnReset      = document.getElementById('resetBtn');
-  const btnNext       = document.getElementById('nextBtn');
-  const reportSection = document.getElementById('validationReport');
-  const msgContainer  = document.getElementById('validationMessages');
-  const helpLink      = document.getElementById('helpLink');
-
-  // Voeg één lege rij toe
-  function addRow() {
-    const tr = templateRow.cloneNode(true);
-    tr.querySelectorAll('input').forEach(i=>i.value='');
-    tbody.appendChild(tr);
-  }
-
-  function removeRow(btn) {
-    if (tbody.rows.length > 1) btn.closest('tr').remove();
-    else alert('Minstens één rij is vereist.');
-  }
-
-  function clearHighlights() {
-    document.querySelectorAll('.error-cell')
-            .forEach(el=>el.classList.remove('error-cell'));
-  }
-
-  function resetTable() {
-    if (!confirm('Weet u zeker dat u het formulier wilt resetten? Alle data gaat verloren.')) {
-      return;
-    }
-    // Opschonen localStorage
-    Object.keys(localStorage)
-      .filter(k=>k.startsWith('T01.01'))
-      .forEach(k=>localStorage.removeItem(k));
-    // Reset DOM
-    tbody.innerHTML = '';
-    addRow();
-    clearHighlights();
-    reportSection.style.display = 'none';
-    msgContainer .style.display = 'none';
-  }
-
-  // Validatieregels & beschrijvingen
-  const rules = [
-    { id:'dnb_v0056', sev:'ERROR', validate: r => { /* ... */ }},
-    { id:'dnb_v0057', sev:'WARNING', validate: r => { /* ... */ }},
-    { id:'dnb_v0054', sev:'ERROR', validate: r => { /* ... */ }},
-    { id:'dnb_v0058', sev:'ERROR', validate: r => { /* ... */ }},
-  ];
-  const ruleDescriptions = {
-    dnb_v0056: 'Als beginpositie > 300 000 000, moet slotpositie ingevuld zijn.',
-    dnb_v0057: 'Als beginpositie < 300 000 000, hoort deze < slotpositie.',
-    dnb_v0054: 'Dividend mag niet negatief zijn.',
-    dnb_v0058: 'Operationeel resultaat mag niet negatief zijn.'
-  };
-
-  function runValidation(){
-    const errs = [], warns = [];
-    Array.from(tbody.rows).forEach((r,i)=>{
-      rules.forEach(rule=>{
-        if (!rule.validate(r)) {
-          (rule.sev==='ERROR' ? errs : warns).push({ row:i, rule:rule.id });
-        }
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const mode = sessionStorage.getItem('reportStartMode');
+    const qCard = document.getElementById('initialQuestion');
+    const form  = document.querySelector('form');
+    const yesBtn= document.getElementById('questionYes');
+    const noBtn = document.getElementById('questionNo');
+    // 1) Indien “blank” modus, eerst vraag
+    if (mode === 'blank') {
+      qCard.style.display = 'block';
+      form.style.display  = 'none';
+      yesBtn.addEventListener('click', () => {
+        qCard.style.display = 'none'; form.style.display = 'block';
+        tbody.innerHTML = ''; addRow(); clearHighlights(); hideReports();
       });
-    });
-    return { errs, warns };
-  }
-
-  function markErrors(errs){
-    const colMap = {
-      dnb_v0056: 2,
-      dnb_v0057: 1,
-      dnb_v0054: 3,
-      dnb_v0058: 4
-    };
-    errs.forEach(e => {
-      const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
-      if (inp) inp.classList.add('error-cell');
-    });
-  }
-
-  function toggleHelp(){
-    const hb = document.getElementById('helpBox');
-    hb.style.display = hb.style.display==='block'? 'none':'block';
-  }
-
-  //
-  // 2) BLANK-MODUS: vraag vóór de rest
-  //
-  if (sessionStorage.getItem('reportStartMode') === 'blank') {
-    const qCard  = document.getElementById('initialQuestion');
-    const formEl = document.querySelector('form');
-    const yesBtn = document.getElementById('questionYes');
-    const noBtn  = document.getElementById('questionNo');
-
-    qCard.style.display = 'block';
-    formEl.style.display = 'none';
-
-    yesBtn.addEventListener('click', () => {
-      qCard.style.display = 'none';
-      formEl.style.display = 'block';
-      // 1 lege rij
-      tbody.innerHTML = '';
-      addRow();
-      clearHighlights();
-      reportSection.style.display = 'none';
-      msgContainer .style.display = 'none';
-    });
-
-    noBtn.addEventListener('click', () => {
-      parent.loadForm(
-        'reporting-t01-02.html',
-        parent.document.getElementById('btnT0102')
-      );
-    });
-
-    return; // **stop** verdere initialisatie
-  }
-  
-// 3) NORMALE INITIALISATIE (Excel import, events binden, validation)
-  
-// – **Excel-import**  
-// Lees, parse en laad de sheet uit localStorage in de tabel
-const sheetKey = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
-if (sheetKey) {
-  const data = JSON.parse(localStorage.getItem(sheetKey));
-  const rows = data.slice(1);    // header weg
-  tbody.innerHTML = '';          // wis template-rijen
-  rows.forEach(cols => {
-    const tr = templateRow.cloneNode(true);
-    // kolom 0 = country
-    tr.cells[0].querySelector('input').value = cols[0]||'';
-    // kolom 1–4
-    for (let i=1; i<=4; i++) {
-      tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
-    }
-    tbody.appendChild(tr);
-  });
-}
-
-// – **Row-verwijderen** via event-delegation  
-// Zo hoeft je in de markup geen inline onclick te doen.
-tbody.addEventListener('click', e => {
-  if (e.target.classList.contains('delete-button')) {
-    // gebruik je bestaande removeRow-functie
-    removeRow(e.target);
-  }
-});
-
-// – **Help-link** (als je nog geen id hebt gezet)
-helpLink.addEventListener('click', toggleHelp);
-
-// – **Andere init**  
-// Hier kun je nog andere event listeners zetten, bv. voor dynamic dropdowns,
-// of direct validatie lanceren bij wijziging.
-
-  // Knoppen binden
-  btnAddRow .addEventListener('click', addRow);
-  btnReset  .addEventListener('click', resetTable);
-  helpLink  .addEventListener('click', toggleHelp);
-
-  btnNext.addEventListener('click', function handler() {
-    clearHighlights();
-    const { errs, warns } = runValidation();
-
-    reportSection.style.display = 'none';
-    msgContainer .style.display = 'none';
-
-    if (errs.length || warns.length) {
-      let html = '<h3>Validatierapport</h3>';
-
-      if (errs.length) {
-        html += '<div class="error"><strong>🛑 Errors:</strong><ul>';
-        errs.forEach(e => {
-          html += `<li>Rij ${e.row+1} [${e.rule}]: ${ruleDescriptions[e.rule]}</li>`;
-        });
-        html += '</ul></div>';
-      }
-      if (warns.length) {
-        html += '<div class="warning"><strong>⚠️ Warnings:</strong><ul>';
-        warns.forEach(e => {
-          html += `<li>Rij ${e.row+1} [${e.rule}]: ${ruleDescriptions[e.rule]}</li>`;
-        });
-        html += '</ul></div>';
-      }
-
-      reportSection.innerHTML    = html;
-      reportSection.style.display = 'block';
-      markErrors(errs);
-
-    } else {
-      msgContainer.innerHTML = `
-        <div class="success-box">
-          ✅ De door u ingevoerde data is gevalideerd. U kunt nu verder.
-        </div>`;
-      msgContainer.style.display = 'block';
-
-      // volgende klik navigeert
-      btnNext.textContent = 'Naar volgend formulier';
-      btnNext.removeEventListener('click', handler);
-      btnNext.addEventListener('click', () => {
-        parent.loadForm(
-          'reporting-t01-02.html',
-          parent.document.getElementById('btnT0102')
+      noBtn.addEventListener('click', () => {
+        parent.loadForm('reporting-t01-02.html',
+          parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
         );
       });
     }
-  });
 
-  // start altijd met 1 lege rij
-  addRow();
-});
-</script>
+    // 2) References
+    const tbody         = document.querySelector('#subsidiariesTable tbody');
+    const templateRow   = document.createElement('tr');
+    templateRow.innerHTML = `
+      <td class="country-cell">
+        <input type="text" class="country-input" placeholder="Typ om te zoeken…" required>
+        <div class="country-dropdown"></div>
+      </td>
+      <td><input type="number" step="0.01" required></td>
+      <td><input type="number" step="0.01" required></td>
+      <td><input type="number" step="0.01" required></td>
+      <td><input type="number" step="0.01" required></td>
+      <td><button class="delete-button">🗑</button></td>`;
+    const btnAdd    = document.getElementById('addRowBtn');
+    const btnReset  = document.getElementById('resetBtn');
+    const btnNext   = document.getElementById('nextBtn');
+    const helpLink  = document.getElementById('helpLink');
+    const helpBox   = document.getElementById('helpBox');
+    const reportSec = document.getElementById('validationReport');
+    const msgCont   = document.getElementById('validationMessages');
 
+    // 3) Dropdown data
+    const countries = Array.from(document.querySelectorAll('#allCountries li'))
+                            .map(li=>li.textContent);
 
+    // 4) Helpers
+    function addRow() {
+      const tr = templateRow.cloneNode(true);
+      tr.querySelectorAll('input').forEach(i=>i.value='');
+      tr.querySelector('.delete-button').addEventListener('click', e => {
+        e.preventDefault();
+        if (tbody.rows.length>1) tr.remove();
+        else alert('Minstens één rij vereist.');
+      });
+      tbody.appendChild(tr);
+    }
+    function resetTable() {
+      if (!confirm('Weet je zeker? Gegevens verdwijnen.')) return;
+      Object.keys(localStorage)
+        .filter(k=>k.startsWith('T01.01'))
+        .forEach(k=>localStorage.removeItem(k));
+      tbody.innerHTML = ''; addRow(); clearHighlights(); hideReports();
+    }
+    function toggleHelp() {
+      helpBox.style.display = helpBox.style.display==='block'?'none':'block';
+    }
+    function hideReports() {
+      reportSec.style.display = 'none';
+      msgCont.style.display   = 'none';
+    }
 
+    // 5) Searchable dropdown
+    tbody.addEventListener('input', e => {
+      if (!e.target.classList.contains('country-input')) return;
+      const dd = e.target.nextElementSibling;
+      const val = e.target.value.toLowerCase();
+      dd.innerHTML = countries
+        .filter(c=>c.toLowerCase().includes(val))
+        .map(c=>`<div>${c}</div>`).join('');
+      dd.style.display = dd.innerHTML? 'block':'none';
+    });
+    tbody.addEventListener('click', e => {
+      if (e.target.parentNode.classList.contains('country-dropdown')) {
+        const inp = e.target.closest('.country-cell').querySelector('.country-input');
+        inp.value = e.target.textContent;
+        e.target.parentNode.style.display = 'none';
+      }
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.classList.contains('country-input'))
+        document.querySelectorAll('.country-dropdown')
+                .forEach(d=>d.style.display='none');
+    });
+
+    // 6) Excel-import
+    const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
+    if (key) {
+      const data = JSON.parse(localStorage.getItem(key)).slice(1);
+      tbody.innerHTML = '';
+      data.forEach(cols => {
+        addRow();
+        const tr = tbody.lastChild;
+        tr.cells[0].querySelector('input').value = cols[0]||'';
+        for (let i=1;i<=4;i++){
+          tr.cells[i].querySelector('input').value = cols[i]!=null? cols[i]: '';
+        }
+      });
+    } else {
+      addRow();
+    }
+
+    // 7) Validatie-rules
+    const rules = [
+      { id:'dnb_v0056',sev:'ERROR',validate:r=>{
+          const a=+r.cells[1].querySelector('input').value||0,
+                b=r.cells[2].querySelector('input').value;
+          return !(a>300000000 && !b);
+        }
+      },
+      { id:'dnb_v0057',sev:'WARNING',validate:r=>{
+          const a=+r.cells[1].querySelector('input').value||0,
+                b=+r.cells[2].querySelector('input').value||0;
+          return !(a<300000000 && a>=b);
+        }
+      },
+      { id:'dnb_v0054',sev:'ERROR',validate:r=>
+          (+r.cells[3].querySelector('input').value||0) >= -30000000
+      },
+      { id:'dnb_v0058',sev:'ERROR',validate:r=>
+          (+r.cells[4].querySelector('input').value||0) >= 0
+      }
+    ];
+    const desc = {
+      dnb_v0056:'Als beginpositie > 300 000 000 → slotpositie verplicht.',
+      dnb_v0057:'Als beginpositie < 300 000 000 → begin < slot.',
+      dnb_v0054:'Dividend mag niet negatief.',
+      dnb_v0058:'Operationeel resultaat mag niet negatief.'
+    };
+    function runValidation(){
+      const errs=[], warns=[];
+      Array.from(tbody.rows).forEach((r,i)=>{
+        rules.forEach(rule=>{
+          if (!rule.validate(r)) {
+            (rule.sev==='ERROR'? errs:warns).push({row:i,rule:rule.id});
+          }
+        });
+      });
+      return {errs,warns};
+    }
+    function clearHighlights(){
+      document.querySelectorAll('.error-cell').forEach(e=>e.classList.remove('error-cell'));
+    }
+    function markErrors(errs){
+      errs.forEach(e=>{
+        const colMap={dnb_v0056:2,dnb_v0057:1,dnb_v0054:3,dnb_v0058:4};
+        const inp=tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
+        inp && inp.classList.add('error-cell');
+      });
+    }
+
+    // 8) Bind buttons
+    document.getElementById('addRowBtn').addEventListener('click', addRow);
+    document.getElementById('resetBtn').addEventListener('click', resetTable);
+    helpLink.addEventListener('click', toggleHelp);
+
+    btnNext.addEventListener('click', function onNext(){
+      clearHighlights(); hideReports();
+      const {errs,warns} = runValidation();
+      if (errs.length||warns.length) {
+        let html = '<h3>Validatierapport</h3>';
+        if (errs.length) {
+          html += '<div class="error"><strong>🛑 Errors:</strong><ul>';
+          errs.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
+          html+='</ul></div>';
+        }
+        if (warns.length) {
+          html+='<div class="warning"><strong>⚠️ Warnings:</strong><ul>';
+          warns.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
+          html+='</ul></div>';
+        }
+        reportSec.innerHTML = html;
+        reportSec.style.display = 'block';
+        markErrors(errs);
+      } else {
+        msgCont.innerHTML = `<div class="success-box">✅ Alles is gevalideerd, je kunt nu verder.</div>`;
+        msgCont.style.display = 'block';
+        // maak Next eenmaal om naar volgende sheet te gaan
+        btnNext.textContent = 'Naar volgend formulier';
+        btnNext.removeEventListener('click', onNext);
+        btnNext.addEventListener('click', () => {
+          parent.loadForm('reporting-t01-02.html',
+            parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+          );
+        });
+      }
+    });
+
+  }); // end DOMContentLoaded
+  </script>
 </body>
 </html>
