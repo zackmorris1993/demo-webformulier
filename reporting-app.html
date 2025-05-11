@@ -167,6 +167,11 @@
       var btn = document.getElementById('toggleBtn');
       btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    // vink ‘Start aanlevering’ standaard active
+    const btn = document.querySelector('.sidebar button[onclick*="reporting-start.html"]');
+    loadForm('reporting-start.html', btn);
   </script>
 
 </body>
