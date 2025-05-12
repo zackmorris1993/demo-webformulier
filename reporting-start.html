@@ -5,7 +5,71 @@
   <title>Start Aanlevering</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
-    /* ... jouw bestaande styling ... */
+        body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 40px;
+    }
+    h2 {
+      text-align: center;
+      color: #002d9c;
+    }
+    .options {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      width: 280px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      text-align: center;
+      transition: box-shadow 0.2s;
+      position: relative;
+    }
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #002d9c;
+    }
+    .card p {
+      font-size: 0.9em;
+      color: #555;
+    }
+    .card input {
+      display: none;
+    }
+    .filename {
+      margin-top: 8px;
+      font-size: 0.9em;
+      color: #333;
+      min-height: 1.2em;
+    }
+    .card button {
+      margin-top: 15px;
+      background: #002d9c;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .card button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+    .start-btn {
+      display: none;
+      background: #007b00;
+    }
   </style>
 </head>
 <body>
