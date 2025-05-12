@@ -1,11 +1,11 @@
-<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Aanlevering</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
-        body {
+    body {
       font-family: Arial, sans-serif;
       background: #f5f7fa;
       margin: 0;
@@ -44,7 +44,7 @@
       font-size: 0.9em;
       color: #555;
     }
-    .card input {
+    .card input[type="file"] {
       display: none;
     }
     .filename {
@@ -70,51 +70,65 @@
       display: none;
       background: #007b00;
     }
+    /* ... jouw bestaande styling ... */
   </style>
 </head>
 <body>
 
+  <h2>Kies een startmethode om uw rapportage aan te leveren</h2>
   <h2>Kies een startmethode</h2>
   <div class="options">
 
+    <!-- Card 1: Excel -->
     <!-- Excel -->
     <div class="card" id="card-excel">
       <h3>Upload Excel-template</h3>
+      <p>Gebruik uw ingevulde Excel-template. Deze wordt automatisch ingeladen.</p>
       <input type="file" id="excelUpload" accept=".xlsx,.xls">
+      <button id="btnExcel">Bestand kiezen…</button>
+      <div id="excelFilename" class="filename"></div>
+      <button id="btnStartExcel" class="start-btn">Start met rapporteren op basis van dit bestand</button>
       <button id="btnExcel" disabled>Bestand kiezen…</button>
       <div id="excelFilename"></div>
       <button id="btnStartExcel" style="display:none">Start met rapporteren op basis van dit bestand</button>
     </div>
 
+    <!-- Card 2: XBRL -->
     <!-- XBRL -->
     <div class="card" id="card-xbrl">
       <h3>Upload XBRL-rapportage</h3>
+      <p>Upload uw XBRL-file. Deze wordt straks verwerkt in de formulieren.</p>
       <input type="file" id="xbrlUpload" accept=".xbrl,.xml">
+      <button id="btnXBRL">Bestand kiezen…</button>
+      <div id="xbrlFilename" class="filename"></div>
+      <button id="btnStartXBRL" class="start-btn">Start met rapporteren op basis van dit bestand</button>
       <button id="btnXBRL" disabled>Bestand kiezen…</button>
       <div id="xbrlFilename"></div>
       <button id="btnStartXBRL" style="display:none">Start met rapporteren op basis van dit bestand</button>
     </div>
 
+    <!-- Card 3: Leeg -->
     <!-- Blank -->
     <div class="card" id="card-blank">
       <h3>Start lege rapportage</h3>
+      <p>Geen bestand? U kunt het formulier ook handmatig invullen.</p>
       <button id="btnBlank">Start lege rapportage</button>
     </div>
 
-  </div>
-
-  <script>
-    // === Excel ======================================================
-    const excelInput    = document.getElementById('excelUpload');
-    const btnExcel      = document.getElementById('btnExcel');
+@@ -114,71 +46,74 @@ <h3>Start lege rapportage</h3>
     const excelFilename = document.getElementById('excelFilename');
     const btnStartExcel = document.getElementById('btnStartExcel');
 
+    // klik op knop opent filepicker
     btnExcel.addEventListener('click', () => excelInput.click());
+
+    // zodra bestand gekozen is: lees direct in
     excelInput.addEventListener('change', () => {
       const file = excelInput.files[0];
       if (!file) return;
+      // toon bestandsnaam
       excelFilename.textContent = file.name;
+      // lees in
       btnExcel.disabled = false;
     });
 
@@ -125,13 +139,18 @@
         const wb = XLSX.read(data, { type: 'array' });
         wb.SheetNames.forEach(name => {
           const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
+            header: 1,
+            raw: true
             header: 1, raw: true
           });
           localStorage.setItem(name, JSON.stringify(arr2d));
         });
+        // na inlezen: wissel beide knoppen
         btnExcel.style.display      = 'none';
+        btnStartExcel.style.display = 'block';
         btnStartExcel.style.display = 'inline-block';
       };
+      reader.readAsArrayBuffer(file);
       reader.readAsArrayBuffer(excelInput.files[0]);
     });
 
@@ -148,6 +167,7 @@
     const btnStartXBRL = document.getElementById('btnStartXBRL');
 
     btnXBRL.addEventListener('click', () => xbrlInput.click());
+
     xbrlInput.addEventListener('change', () => {
       const file = xbrlInput.files[0];
       if (!file) return;
@@ -160,8 +180,10 @@
       reader.onload = e => {
         localStorage.setItem('XBRL', e.target.result);
         btnXBRL.style.display      = 'none';
+        btnStartXBRL.style.display = 'block';
         btnStartXBRL.style.display = 'inline-block';
       };
+      reader.readAsText(file);
       reader.readAsText(xbrlInput.files[0]);
     });
 
@@ -170,9 +192,15 @@
       location.href = 'reporting-controle.html';
     });
 
+    // Leeg formulier
 
     // === Blank ======================================================
     document.getElementById('btnBlank').addEventListener('click', () => {
+    // 1. Zet een vlag in sessionStorage
+    sessionStorage.setItem('reportStartMode', 'blank');
+    // 2. Navigeer naar het eerste formulier
+    location.href = 'reporting-t01-01.html';
+  });
       sessionStorage.setItem('reportStartMode','blank');
       location.href = 'reporting-t01-01.html';
     });
@@ -180,4 +208,3 @@
 
 </body>
 </html>
-
