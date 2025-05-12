@@ -26,10 +26,10 @@
     /* Validatierapport */
     #validationReport { display:none; background:white; border:1px solid #ddd; border-radius:6px; padding:20px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
     #validationReport h3 { margin-top:0; color:#004080; font-size:1.2em; margin-bottom:10px; }
-    #validationReport .error { background:#f8d7da; color:#721c24; border-left:4px solid #f5c6cb; padding:10px; margin-bottom:10px; }
-    #validationReport .warning { background:#fff3cd; color:#856404; border-left:4px solid #ffeeba; padding:10px; }
+    #validationReport .error { background: white; color:#004080; padding:10px; margin-bottom:10px; }
+    #validationReport .warning { background: white; color:#004080; padding:10px; }
     /* Success */
-    .success-box { background:#d4edda; color:#155724; border-left:4px solid #c3e6cb; padding:12px; border-radius:4px; }
+    .success-box { background:#d4edda; color:#155724; border-left:4px solid #c3e6cb; padding:12px; border-radius:4px; margin-bottom:10px;}
     /* initial question card */
     #initialQuestion { display:none; background:white; border:1px solid #ddd; border-radius:6px; padding:20px; margin-bottom:20px; }
     #initialQuestion button { margin:10px; }
@@ -93,7 +93,7 @@
           <th>Position end (020)</th>
           <th>Dividend received (030)</th>
           <th>Operational result (040)</th>
-          <th>✖️</th>
+          <th>✖Verwijder rij</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -102,7 +102,7 @@
     <div class="button-group">
       <button type="button" id="addRowBtn">➕ Voeg rij toe</button>
       <button type="button" id="resetBtn">🔄 Reset formulier</button>
-      <button type="button" id="nextBtn">Volgende formulier</button>
+      <button type="button" id="nextBtn">Valideer</button>
     </div>
   </form>
 
@@ -286,12 +286,12 @@
       if (errs.length||warns.length) {
         let html = '<h3>Validatierapport</h3>';
         if (errs.length) {
-          html += '<div class="error"><strong>🛑 Errors:</strong><ul>';
+          html += '<div class="error"><strong>Errors:</strong><ul>';
           errs.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
           html+='</ul></div>';
         }
         if (warns.length) {
-          html+='<div class="warning"><strong>⚠️ Warnings:</strong><ul>';
+          html+='<div class="warning"><strong>Warnings:</strong><ul>';
           warns.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
           html+='</ul></div>';
         }
@@ -299,7 +299,7 @@
         reportSec.style.display = 'block';
         markErrors(errs);
       } else {
-        msgCont.innerHTML = `<div class="success-box">✅ Alles is gevalideerd, je kunt nu verder.</div>`;
+        msgCont.innerHTML = `<div class="success-box"> De rapportagedata op deze pagina is gevalideerd, u kunt nu verder.</div>`;
         msgCont.style.display = 'block';
         // maak Next eenmaal om naar volgende sheet te gaan
         btnNext.textContent = 'Naar volgend formulier';
