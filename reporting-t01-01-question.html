@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Vraag T 01.01 – Subsidiaries</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9fb;
+      margin: 0;
+      padding: 30px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #004080;
+      font-size: 1.2em;
+    }
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .buttons button {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .buttons .yes {
+      background: #007b00;
+      color: white;
+    }
+    .buttons .yes:hover {
+      background: #005a00;
+    }
+    .buttons .no {
+      background: #d00;
+      color: white;
+    }
+    .buttons .no:hover {
+      background: #a00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024 posities in dochterondernemingen gehad?</h2>
+
+    <div class="buttons">
+      <button class="yes" id="btnYes">Ja</button>
+      <button class="no"  id="btnNo">Nee</button>
+    </div>
+  </div>
+
+  <script>
+    // Op klik "Ja": laad T 01.01 – Subsidiaries
+    document.getElementById('btnYes').addEventListener('click', () => {
+      parent.loadForm(
+        'reporting-t01-01.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-01.html"]')
+      );
+    });
+
+    // Op klik "Nee": sla T 01.01 over en laad T 01.02 – Loans granted
+    document.getElementById('btnNo').addEventListener('click', () => {
+      parent.loadForm(
+        'reporting-t01-02.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+      );
+    });
+  </script>
+
+</body>
+</html>
