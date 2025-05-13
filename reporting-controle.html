@@ -1,56 +1,68 @@
-<!-- reporting-controle.html -->
-<!DOCTYPE html><html lang="nl"><head>…</head><body>
-<div class="app-container">
-  <nav class="sidebar">
-    <button data-form="T01.01">T 01.01 – Subsidiaries</button>
-    <button data-form="T01.02">T 01.02 – Loans granted</button>
-    <!-- enz. -->
-  </nav>
-
-  <main class="content">
-    <iframe id="formFrame" src=""></iframe>
-
-    <div class="validation-area">
-      <button id="btnValidate">Valideer</button>
-      <div id="validationReport" style="display:none"></div>
-    </div>
-  </main>
-</div>
-
-<script>
-  const sidebar = document.querySelector('.sidebar');
-  const iframe  = document.getElementById('formFrame');
-  const btnVal  = document.getElementById('btnValidate');
-  const report  = document.getElementById('validationReport');
-
-  // 1) click sidebar → laad juiste form in iframe
-  sidebar.addEventListener('click', e => {
-    if (!e.target.dataset.form) return;
-    const key = e.target.dataset.form;
-    iframe.src = `reporting-${key.toLowerCase().replace('.', '')}.html`;
-    // toon validate-knop en verberg vorig rapport
-    btnVal.style.display   = 'inline-block';
-    report.style.display   = 'none';
-    sidebar.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
-    e.target.classList.add('active');
-  });
-
-  // 2) Valideer-knop
-  btnVal.addEventListener('click', () => {
-    // roep in de iframe de runValidation aan, bijv. via postMessage
-    iframe.contentWindow.postMessage('validate', '*');
-  });
-
-  // 3) Ontvang validatieresultaat vanuit iframe
-  window.addEventListener('message', evt => {
-    if (evt.data.type === 'validationResult') {
-      const { html } = evt.data;       // HTML rapport dat je from runValidation bouwt
-      report.innerHTML = html;
-      report.style.display = 'block';
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Controleer en stuur in</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9fb;
+      margin: 0;
+      padding: 30px;
     }
-  });
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .container h2 {
+      color: #004080;
+      margin-top: 0;
+    }
+    #btnRunAll {
+      background: #004080;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #btnRunAll:hover {
+      background: #003060;
+    }
+  </style>
+</head>
+<body>
 
-  // bij laden: trigger eerste form
-  sidebar.querySelector('button').click();
-</script>
-</body></html>
+  <div class="container">
+    <h2>Controleer en verstuur uw rapportage</h2>
+    <p>
+      Klik op de knop hieronder om al uw formulieren automatisch te valideren. 
+      Als er ergens fouten zijn, stopt het proces en keert u terug naar het desbetreffende formulier.
+    </p>
+    <button id="btnRunAll">✅ Valideer alle formulieren</button>
+  </div>
+
+  <script>
+    document.getElementById('btnRunAll').addEventListener('click', () => {
+      // Roep de functie in de parent op:
+      parent.runAllForms();
+    });
+
+    // Message‐listener om validatieresultaten vanuit iframe terug te sturen
+    window.addEventListener('message', evt => {
+      // evt.data.action === 'runValidation' komt uit parent.postMessage?
+      // Maar in ons patroon stuurt parent naar iframe; iframe antwoordt dan.
+      // Hier in controle‐page dus niets nodig.
+    });
+  </script>
+
+</body>
+</html>
