@@ -4,50 +4,165 @@
   <meta charset="UTF-8">
   <title>T 01.01 – Subsidiaries</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f9f9fb; margin:0; padding:30px; }
-    h2 { color: #004080; margin-bottom:10px; }
-    .help-link { font-size:0.9em; color:#004080; text-decoration:underline; cursor:pointer; margin-bottom:12px; display:inline-block; }
-    .help-box { display:none; background:#e6f4ff; padding:15px; margin:0 0 20px; border-left:4px solid #004080; border-radius:4px; color:#003366; }
-    table { width:100%; border-collapse:collapse; background:#fff; box-shadow:0 0 8px rgba(0,0,0,0.1); margin-bottom:20px; }
-    th, td { border:1px solid #ddd; padding:10px; text-align:center; }
-    th { background:#f0f6ff; color:#004080; }
-    input[type="number"], .country-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
-    .button-group { display:flex; justify-content:space-between; gap:10px; }
-    .button-group button { background:#004080; color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; transition:background 0.2s; }
-    .button-group button:hover { background:#003060; }
-    .delete-button { background:transparent; border:none; color:red; font-size:1.2em; cursor:pointer; }
-    /* dropdown */
-    .country-cell { position: relative; }
-    .country-dropdown { position:absolute; top:100%; left:0; right:0; background:white; border:1px solid #ccc; max-height:150px; overflow-y:auto; display:none; z-index:10; }
-    .country-dropdown div { padding:5px 10px; cursor:pointer; }
-    .country-dropdown div:hover { background:#e6f4ff; }
-    /* error highlight */
-    .error-cell { background-color: #e60000 !important; }
-    /* Validatierapport */
-    #validationReport { display:none; background:white; border:1px solid #ddd; border-radius:6px; padding:20px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
-    #validationReport h3 { margin-top:0; color:#004080; font-size:1.2em; margin-bottom:10px; }
-    #validationReport .error { background: white; color:#004080; padding:10px; margin-bottom:10px; }
-    #validationReport .warning { background: white; color:#004080; padding:10px; }
-    /* Success */
-    .success-box { background:#d4edda; color:#155724; border-left:4px solid #c3e6cb; padding:12px; border-radius:4px; margin-bottom:10px;}
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9fb;
+    margin: 0;
+    padding: 30px;
+  }
 
-  #subsidiariesTable td input {
+  h2 {
+    color: #004080;
+    margin-bottom: 10px;
+  }
+
+  .help-link {
+    font-size: 0.9em;
+    color: #004080;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+
+  .help-box {
+    display: none;
+    background: #e6f4ff;
+    padding: 15px;
+    margin: 0 0 20px;
+    border-left: 4px solid #004080;
+    border-radius: 4px;
+    color: #003366;
+  }
+
+  table {
     width: 100%;
-    box-sizing: border-box;
-    margin: 0;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
   }
 
-  /* 2. Iets minder padding voor strakkere look */
-  #subsidiariesTable th,
-  #subsidiariesTable td {
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;               /* iets minder padding voor strakkere look */
+    text-align: center;
+  }
+
+  th {
+    background: #f0f6ff;
+    color: #004080;
+  }
+
+  /* zorg dat alle inputs netjes passen */
+  #subsidiariesTable td input,
+  input[type="number"],
+  .country-input {
+    width: 100%;
     padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin: 0;                  /* template-rij cleanup */
   }
 
-  /* 3. Template-rij cleanup */
-  .template-row input {
-    margin: 0;
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
   }
-  </style>
+
+  .button-group button {
+    background: #004080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .button-group button:hover {
+    background: #003060;
+  }
+
+  .delete-button {
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+
+  /* searchable dropdown */
+  .country-cell {
+    position: relative;
+  }
+
+  .country-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+  }
+
+  .country-dropdown div {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .country-dropdown div:hover {
+    background: #e6f4ff;
+  }
+
+  /* ERRORS */
+  .error-cell {
+    background-color: #e60000 !important;
+  }
+
+  /* inline validatieberichten */
+  #validationReport {
+    display: none;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  #validationReport h3 {
+    margin-top: 0;
+    color: #004080;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+
+  #validationReport .error,
+  #validationReport .warning {
+    background: white;
+    color: #004080;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  /* SUCCESS */
+  .success-box {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid #c3e6cb;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+</style>
+
 </head>
 <body>
 
