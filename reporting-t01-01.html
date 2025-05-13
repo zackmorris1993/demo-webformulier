@@ -126,6 +126,9 @@
     background-color: #e60000 !important;
   }
 
+  /* Warnings */
+  .warning-cell { background-color: #fff3cd !important; }
+
   /* inline validatieberichten */
   #validationReport {
     display: none;
@@ -306,28 +309,28 @@ this form. For the value of the branch, its net asset value can be used.
     });
 
     // 6) Excel‐import
-const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
-tbody.innerHTML = ''; // altijd eerst leegmaken
+    const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
+    tbody.innerHTML = ''; // altijd eerst leegmaken
 
-if (key) {
-  const rows = JSON.parse(localStorage.getItem(key)).slice(1);
-  if (rows.length > 0) {
-    rows.forEach(cols => {
+    if (key) {
+      const rows = JSON.parse(localStorage.getItem(key)).slice(1);
+        if (rows.length > 0) {
+          rows.forEach(cols => {
+        addRow();
+        const tr = tbody.lastElementChild;
+        tr.cells[0].querySelector('input').value = cols[0]||'';
+        for (let i = 1; i <= 4; i++) {
+          tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
+        }
+      });
+    } else {
+      // sheet bestaat maar bevat geen data‐rijen
       addRow();
-      const tr = tbody.lastElementChild;
-      tr.cells[0].querySelector('input').value = cols[0]||'';
-      for (let i = 1; i <= 4; i++) {
-        tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
-      }
-    });
+    }
   } else {
-    // sheet bestaat maar bevat geen data‐rijen
+    // geen sheet gevonden
     addRow();
   }
-} else {
-  // geen sheet gevonden
-  addRow();
-}
 
     // 7) Validatie-rules
     const rules = [
@@ -370,18 +373,28 @@ if (key) {
     function clearHighlights(){
       document.querySelectorAll('.error-cell').forEach(e=>e.classList.remove('error-cell'));
     }
-    function markErrors(errs){
-      errs.forEach(e=>{
-        const colMap={dnb_v0056:2,dnb_v0057:1,dnb_v0054:3,dnb_v0058:4};
-        const inp=tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
-        inp && inp.classList.add('error-cell');
-      });
-    }
+
+    function markHighlights(errs, warns){
+    const colMap={ dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
+
+    // markeer errors (rood)
+    errs.forEach(e=>{
+      const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
+      inp && inp.classList.add('error-cell');
+    });
+
+    // markeer warnings (geel)
+    warns.forEach(e=>{
+      const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
+      inp && inp.classList.add('warning-cell');
+    });
+  }
+
 
    window.addEventListener('message', evt => {
     if (evt.data.action === 'runValidation') {
       const { errs, warns } = runValidation();
-      markErrors(errs);
+      markHighlights(errs, warns);
       window.parent.postMessage({
         action: 'validationResult',
         errs, warns
