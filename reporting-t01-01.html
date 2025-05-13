@@ -320,22 +320,29 @@ this form. For the value of the branch, its net asset value can be used.
                 .forEach(d=>d.style.display='none');
     });
 
-    // 6) Excel-import
-    const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
-    if (key) {
-      const data = JSON.parse(localStorage.getItem(key)).slice(1);
-      tbody.innerHTML = '';
-      data.forEach(cols => {
-        addRow();
-        const tr = tbody.lastChild;
-        tr.cells[0].querySelector('input').value = cols[0]||'';
-        for (let i=1;i<=4;i++){
-          tr.cells[i].querySelector('input').value = cols[i]!=null? cols[i]: '';
-        }
-      });
-    } else {
+    // 6) Excel‐import
+const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
+tbody.innerHTML = ''; // altijd eerst leegmaken
+
+if (key) {
+  const rows = JSON.parse(localStorage.getItem(key)).slice(1);
+  if (rows.length > 0) {
+    rows.forEach(cols => {
       addRow();
-    }
+      const tr = tbody.lastElementChild;
+      tr.cells[0].querySelector('input').value = cols[0]||'';
+      for (let i = 1; i <= 4; i++) {
+        tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
+      }
+    });
+  } else {
+    // sheet bestaat maar bevat geen data‐rijen
+    addRow();
+  }
+} else {
+  // geen sheet gevonden
+  addRow();
+}
 
     // 7) Validatie-rules
     const rules = [
