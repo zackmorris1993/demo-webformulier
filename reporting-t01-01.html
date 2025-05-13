@@ -372,7 +372,7 @@ this form. For the value of the branch, its net asset value can be used.
       return {errs,warns};
     }
     function clearHighlights(){
-      document.querySelectorAll('.error-cell').forEach(e=>e.classList.remove('error-cell'));
+      document.querySelectorAll('.error-cell, .warning-cell').forEach(e=>e.classList.remove('error-cell', 'warning-cell'));
     }
 
     function markHighlights(errs, warns){
