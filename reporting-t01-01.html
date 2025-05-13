@@ -378,6 +378,16 @@ if (key) {
       });
     }
 
+    window.addEventListener('message', evt => {
+    if (evt.data.action === 'runValidation') {
+      const { errs, warns } = runValidation();      // jouw bestaande validatiefunctie
+      markErrors(errs);                             // eventueel je highlight‐logic
+      // stuur resultaat terug naar parent
+      window.parent.postMessage({
+        action: 'validationResult',
+        errs, warns
+      }, '*');
+
     // 8) Bind buttons
     document.getElementById('addRowBtn').addEventListener('click', addRow);
     document.getElementById('resetBtn').addEventListener('click', resetTable);
