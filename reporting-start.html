@@ -108,73 +108,58 @@
   </div>
 
   <script>
-    // === Excel-upload handlers ===
-    const excelInput    = document.getElementById('excelUpload');
-    const btnExcel      = document.getElementById('btnExcel');
-    const excelFilename = document.getElementById('excelFilename');
-    const btnStartExcel = document.getElementById('btnStartExcel');
+    // === Excel-upload in één stap ===
+const excelInput    = document.getElementById('excelUpload');
+const btnExcel      = document.getElementById('btnExcel');
+const excelFilename = document.getElementById('excelFilename');
 
-    // Open filepicker
-    btnExcel.addEventListener('click', () => excelInput.click());
-    // Zodra bestand gekozen is: toon naam en activeer knop
-    excelInput.addEventListener('change', () => {
-      const file = excelInput.files[0];
-      if (!file) return;
-      excelFilename.textContent = file.name;
-      btnExcel.disabled = false;
-    });
-    // Lees en sla op, toon “Start…” knop
-    btnExcel.addEventListener('click', () => {
-      const file = excelInput.files[0];
-      const reader = new FileReader();
-      reader.onload = e => {
-        const data = new Uint8Array(e.target.result);
-        const wb = XLSX.read(data, { type: 'array' });
-        wb.SheetNames.forEach(name => {
-          const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
-            header: 1,
-            raw: true
-          });
-          localStorage.setItem(name, JSON.stringify(arr2d));
-        });
-        btnExcel.style.display      = 'none';
-        btnStartExcel.style.display = 'inline-block';
-      };
-      reader.readAsArrayBuffer(file);
-    });
-    // Start met upload flow
-    btnStartExcel.addEventListener('click', () => {
-      sessionStorage.setItem('reportStartMode','upload');
-      location.href = 'reporting-controle.html';
-    });
+btnExcel.addEventListener('click', () => excelInput.click());
 
-    // === XBRL-upload handlers ===
-    const xbrlInput    = document.getElementById('xbrlUpload');
-    const btnXBRL      = document.getElementById('btnXBRL');
-    const xbrlFilename = document.getElementById('xbrlFilename');
-    const btnStartXBRL = document.getElementById('btnStartXBRL');
+excelInput.addEventListener('change', () => {
+  const file = excelInput.files[0];
+  if (!file) return;
+  // toon bestandsnaam
+  excelFilename.textContent = file.name;
+  // lees in en bewaar
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = new Uint8Array(e.target.result);
+    const wb   = XLSX.read(data, { type: 'array' });
+    wb.SheetNames.forEach(name => {
+      const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
+        header: 1,
+        raw: true
+      });
+      localStorage.setItem(name, JSON.stringify(arr2d));
+    });
+    // meteen door naar controle
+    sessionStorage.setItem('reportStartMode','upload');
+    location.href = 'reporting-controle.html';
+  };
+  reader.readAsArrayBuffer(file);
+});
 
-    btnXBRL.addEventListener('click', () => xbrlInput.click());
-    xbrlInput.addEventListener('change', () => {
-      const file = xbrlInput.files[0];
-      if (!file) return;
-      xbrlFilename.textContent = file.name;
-      btnXBRL.disabled = false;
-    });
-    btnXBRL.addEventListener('click', () => {
-      const file = xbrlInput.files[0];
-      const reader = new FileReader();
-      reader.onload = e => {
-        localStorage.setItem('XBRL', e.target.result);
-        btnXBRL.style.display      = 'none';
-        btnStartXBRL.style.display = 'inline-block';
-      };
-      reader.readAsText(file);
-    });
-    btnStartXBRL.addEventListener('click', () => {
-      sessionStorage.setItem('reportStartMode','upload');
-      location.href = 'reporting-controle.html';
-    });
+// === XBRL-upload in één stap ===
+const xbrlInput    = document.getElementById('xbrlUpload');
+const btnXBRL      = document.getElementById('btnXBRL');
+const xbrlFilename = document.getElementById('xbrlFilename');
+
+btnXBRL.addEventListener('click', () => xbrlInput.click());
+
+xbrlInput.addEventListener('change', () => {
+  const file = xbrlInput.files[0];
+  if (!file) return;
+  xbrlFilename.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    localStorage.setItem('XBRL', e.target.result);
+    sessionStorage.setItem('reportStartMode','upload');
+    location.href = 'reporting-controle.html';
+  };
+  reader.readAsText(file);
+});
+
+    
 
     // === Start lege rapportage ===
     document.getElementById('btnBlank')
