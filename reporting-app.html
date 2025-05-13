@@ -173,6 +173,59 @@
     const btn = document.querySelector('.sidebar button[onclick*="reporting-start.html"]');
     loadForm('reporting-start.html', btn);
     });
+
+    // 1-klik validatie over alle formulieren
+  function runAllForms() {
+    const forms = [
+      'reporting-t01-01.html',
+      'reporting-t01-02.html',
+      'reporting-t01-03.html',
+      'reporting-t01-04.html',
+      'reporting-t02-01.html',
+      'reporting-t02-02.html',
+      'reporting-t02-03.html',
+      'reporting-t02-04.html',
+      'reporting-t03-01.html',
+      'reporting-t04-01.html',
+      'reporting-t05-01.html'
+    ];
+
+    (async () => {
+      for (let page of forms) {
+        // laad formulier in iframe
+        const btn = document.querySelector(`.sidebar button[onclick*="${page}"]`);
+        loadForm(page, btn);
+
+        // wacht op iframe load
+        await new Promise(res => {
+          const iframe = document.getElementById('formFrame');
+          iframe.onload = () => res();
+        });
+
+        // vraag validatie op
+        const result = await new Promise(res => {
+          window.addEventListener('message', function handler(evt) {
+            if (evt.data.action === 'validationResult') {
+              window.removeEventListener('message', handler);
+              res(evt.data);
+            }
+          });
+          document.getElementById('formFrame').contentWindow.postMessage(
+            { action: 'runValidation' },
+            '*'
+          );
+        });
+
+        if (result.errs.length) {
+          alert(`Er zijn fouten in ${page}.\nGa eerst naar dat formulier om te corrigeren.`);
+          return;
+        }
+      }
+
+      alert('✅ Alle formulieren zijn succesvol gevalideerd. U kunt nu indienen.');
+      // eventueel: hier de “Indienen”-knop activeren
+    })();
+  }
   </script>
 
 </body>
