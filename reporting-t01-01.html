@@ -30,12 +30,6 @@
     #validationReport .warning { background: white; color:#004080; padding:10px; }
     /* Success */
     .success-box { background:#d4edda; color:#155724; border-left:4px solid #c3e6cb; padding:12px; border-radius:4px; margin-bottom:10px;}
-    /* initial question card */
-    #initialQuestion { display:none; background:white; border:1px solid #ddd; border-radius:6px; padding:20px; margin-bottom:20px; }
-    #initialQuestion button { margin:10px; }
-     table td {
-    vertical-align: middle;
-  }
 
   #subsidiariesTable td input {
     width: 100%;
@@ -72,18 +66,11 @@
     </ul>
   </div>
 
-  <!-- 2) Voorafgaande vraag -->
-  <div id="initialQuestion">
-    <p>Heeft u in de rapportageperiode 01-01-2024 t/m 31-12-2024 posities in dochterondernemingen gehad?</p>
-    <button id="questionYes">Ja</button>
-    <button id="questionNo">Nee</button>
-  </div>
-
-  <!-- 3) Validatierapport -->
+  <!-- 2) Validatierapport -->
   <div id="validationReport"></div>
   <div id="validationMessages" style="display:none;"></div>
 
-  <!-- 4) Formulier -->
+  <!-- 3) Formulier -->
   <form onsubmit="return false;">
     <table id="subsidiariesTable">
       <thead>
@@ -106,7 +93,7 @@
     </div>
   </form>
 
-  <!-- 5) Landenlijst -->
+  <!-- 4) Landenlijst -->
   <ul id="allCountries" style="display:none;">
     <li>Netherlands</li><li>Belgium</li><li>Germany</li><li>France</li>
     <li>United Kingdom</li><li>United States</li>
