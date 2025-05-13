@@ -127,7 +127,8 @@
   }
 
   /* Warnings */
-  .warning-cell { background-color: #fff3cd !important; }
+  .warning-cell { background-color: #fff3cd !important; 
+  }
 
   /* inline validatieberichten */
   #validationReport {
@@ -425,8 +426,7 @@ this form. For the value of the branch, its net asset value can be used.
         }
         reportSec.innerHTML = html;
         reportSec.style.display = 'block';
-        markErrors(errs);
-        markWarnings(warns);
+        markHighlights(errs, warns);
       } else {
         msgCont.innerHTML = `<div class="success-box"> De rapportagedata op deze pagina is gevalideerd, u kunt nu verder.</div>`;
         msgCont.style.display = 'block';
