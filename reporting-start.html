@@ -129,7 +129,7 @@ excelInput.addEventListener('change', () => {
     });
     // zet de mode en navigeer door
     sessionStorage.setItem('reportStartMode','upload');
-    location.href = 'reporting-controle.html';
+    location.href = 'reporting-t01-01.html';
   };
   reader.readAsArrayBuffer(file);
 });
@@ -150,7 +150,7 @@ xbrlInput.addEventListener('change', () => {
   reader.onload = e => {
     localStorage.setItem('XBRL', e.target.result);
     sessionStorage.setItem('reportStartMode','upload');
-    location.href = 'reporting-controle.html';
+    location.href = 'reporting-t01-01.html';
   };
   reader.readAsText(file);
 });
