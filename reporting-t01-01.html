@@ -226,25 +226,10 @@ this form. For the value of the branch, its net asset value can be used.
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const mode = sessionStorage.getItem('reportStartMode');
     const qCard = document.getElementById('initialQuestion');
     const form  = document.querySelector('form');
     const yesBtn= document.getElementById('questionYes');
     const noBtn = document.getElementById('questionNo');
-    // 1) Indien “blank” modus, eerst vraag
-    if (mode === 'blank') {
-      qCard.style.display = 'block';
-      form.style.display  = 'none';
-      yesBtn.addEventListener('click', () => {
-        qCard.style.display = 'none'; form.style.display = 'block';
-        tbody.innerHTML = ''; addRow(); clearHighlights(); hideReports();
-      });
-      noBtn.addEventListener('click', () => {
-        parent.loadForm('reporting-t01-02.html',
-          parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
-        );
-      });
-    }
 
     // 2) References
     const tbody         = document.querySelector('#subsidiariesTable tbody');
