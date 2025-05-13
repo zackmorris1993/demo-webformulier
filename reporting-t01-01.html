@@ -380,13 +380,13 @@ this form. For the value of the branch, its net asset value can be used.
     // markeer errors (rood)
     errs.forEach(e=>{
       const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
-      inp && inp.classList.add('.error-cell');
+      inp && inp.classList.add('error-cell');
     });
 
     // markeer warnings (geel)
     warns.forEach(e=>{
       const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
-      inp && inp.classList.add('.warning-cell');
+      inp && inp.classList.add('warning-cell');
     });
   }
 
