@@ -63,10 +63,6 @@
       border-radius: 4px;
       cursor: pointer;
     }
-    .card button:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
     .start-btn {
       display: none;
       background: #007b00;
@@ -83,7 +79,7 @@
       <h3>Upload Excel-template</h3>
       <p>Gebruik uw ingevulde Excel-template. Deze wordt automatisch ingeladen.</p>
       <input type="file" id="excelUpload" accept=".xlsx,.xls">
-      <button id="btnExcel" disabled>Bestand kiezen…</button>
+      <button id="btnExcel">Bestand kiezen…</button>
       <div id="excelFilename" class="filename"></div>
       <button id="btnStartExcel" class="start-btn">Start met rapporteren op basis van dit bestand</button>
     </div>
@@ -93,7 +89,7 @@
       <h3>Upload XBRL-rapportage</h3>
       <p>Upload uw XBRL-file. Deze wordt straks verwerkt in de formulieren.</p>
       <input type="file" id="xbrlUpload" accept=".xbrl,.xml">
-      <button id="btnXBRL" disabled>Bestand kiezen…</button>
+      <button id="btnXBRL">Bestand kiezen…</button>
       <div id="xbrlFilename" class="filename"></div>
       <button id="btnStartXBRL" class="start-btn">Start met rapporteren op basis van dit bestand</button>
     </div>
@@ -108,7 +104,7 @@
   </div>
 
   <script>
-    // === Excel-upload in één stap ===
+  // === Excel upload in één stap ===
 const excelInput    = document.getElementById('excelUpload');
 const btnExcel      = document.getElementById('btnExcel');
 const excelFilename = document.getElementById('excelFilename');
@@ -118,9 +114,8 @@ btnExcel.addEventListener('click', () => excelInput.click());
 excelInput.addEventListener('change', () => {
   const file = excelInput.files[0];
   if (!file) return;
-  // toon bestandsnaam
   excelFilename.textContent = file.name;
-  // lees in en bewaar
+
   const reader = new FileReader();
   reader.onload = e => {
     const data = new Uint8Array(e.target.result);
@@ -132,14 +127,14 @@ excelInput.addEventListener('change', () => {
       });
       localStorage.setItem(name, JSON.stringify(arr2d));
     });
-    // meteen door naar controle
+    // zet de mode en navigeer door
     sessionStorage.setItem('reportStartMode','upload');
     location.href = 'reporting-controle.html';
   };
   reader.readAsArrayBuffer(file);
 });
 
-// === XBRL-upload in één stap ===
+// === XBRL upload in één stap ===
 const xbrlInput    = document.getElementById('xbrlUpload');
 const btnXBRL      = document.getElementById('btnXBRL');
 const xbrlFilename = document.getElementById('xbrlFilename');
@@ -150,6 +145,7 @@ xbrlInput.addEventListener('change', () => {
   const file = xbrlInput.files[0];
   if (!file) return;
   xbrlFilename.textContent = file.name;
+
   const reader = new FileReader();
   reader.onload = e => {
     localStorage.setItem('XBRL', e.target.result);
