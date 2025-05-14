@@ -161,6 +161,15 @@
 
   <script>
 
+    function loadForm(page, button) {
+    document.getElementById('formFrame').src = page;
+
+    const buttons = document.querySelectorAll('.sidebar button[onclick^="loadForm"]');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+      if (button) button.classList.add('active');
+    }
+
     function toggleSidebar() {
       var sb = document.getElementById('sidebar');
       sb.classList.toggle('hidden');
