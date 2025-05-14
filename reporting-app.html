@@ -111,6 +111,8 @@
     .sidebar.hidden ~ #toggleBtn {
       left: 0;
     }
+
+    
   </style>
 </head>
 <body>
@@ -128,10 +130,14 @@
 
   <div class="app-container">
     <div class="sidebar" id="sidebar">
+      <div class="sidebar-controls" style="margin-bottom: 10px;">
+        <button onclick="filterForms()" id="filterToggleBtn">🔍 Toon alleen ingevulde formulieren</button>
+      </div>
+
       <h2>Formulieren</h2>
       <button onclick="loadForm('reporting-start.html', this)">Start aanlevering</button>
       <button onclick="loadForm('reporting-toc.html', this)"> TOC - Rapportage gegevens</button>
-      <button onclick="loadForm('reporting-t01-01.html', this)">T 01.01 - Subsidiaries</button>
+      <button onclick="loadForm('reporting-t01-01.html', this)" data-status="ingevuld">T 01.01 - Subsidiaries</button>
       <button onclick="loadForm('reporting-t01-02.html', this)">T 01.02 - Loans granted</button>
       <button onclick="loadForm('reporting-t01-03.html', this)">T 01.03 - Securities held</button>
       <button onclick="loadForm('reporting-t01-04.html', this)">T 01.04 - Derivative assets</button>
@@ -154,12 +160,6 @@
   </div>
 
   <script>
-    function loadForm(page, button) {
-      document.getElementById('formFrame').src = page;
-      var buttons = document.querySelectorAll('.sidebar button');
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-    }
 
     function toggleSidebar() {
       var sb = document.getElementById('sidebar');
@@ -167,12 +167,6 @@
       var btn = document.getElementById('toggleBtn');
       btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-    // vink ‘Start aanlevering’ standaard active
-    const btn = document.querySelector('.sidebar button[onclick*="reporting-start.html"]');
-    loadForm('reporting-start.html', btn);
-    });
 
     // 1-klik validatie over alle formulieren
   function runAllForms() {
@@ -226,6 +220,33 @@
       // eventueel: hier de “Indienen”-knop activeren
     })();
   }
+
+  let filterActive = false;
+
+  function filterForms() {
+    const buttons = document.querySelectorAll('.sidebar button[onclick^="loadForm"]');
+    filterActive = !filterActive;
+
+    buttons.forEach(btn => {
+      const isIngevuld = btn.dataset.status === 'ingevuld';
+      btn.style.display = (!filterActive || isIngevuld) ? 'block' : 'none';
+    });
+
+    const toggleBtn = document.getElementById('filterToggleBtn');
+    toggleBtn.textContent = filterActive
+      ? 'Toon alle formulieren'
+      : 'Toon alleen ingevulde formulieren';
+  }
+    
+  document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.querySelector('.sidebar button[onclick*="reporting-start.html"]');
+  loadForm('reporting-start.html', btn);
+
+  // Zorg dat alle knoppen zichtbaar zijn bij start
+  filterForms(); // activeert filter één keer
+  filterForms(); // deactiveert het direct weer (start met alle knoppen zichtbaar)
+  });
+
   </script>
 
 </body>
