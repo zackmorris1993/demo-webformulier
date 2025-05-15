@@ -66,48 +66,46 @@
 </head>
 <body>
 
-  <div class="box">
+   <div class="box">
     <h2>Stuur uw rapportage in</h2>
-    <h3> Controleer of u alle formulieren heeft ingevuld en gevalideerd.</h3>
-    <p class="status" id="statusBox">Valideert formulier T 01.01…</p>
+    <h3>Controleer of u alle formulieren heeft ingevuld en gevalideerd.</h3>
+    <p class="status" id="statusBox">Controleert formulier T 01.01…</p>
     <button id="submitBtn" disabled>Indienen rapportage</button>
   </div>
 
   <script>
     const statusBox = document.getElementById('statusBox');
     const submitBtn = document.getElementById('submitBtn');
+    const iframe    = parent.document.getElementById('formFrame');
 
-    // 1) Vraag via postMessage de validatie van T 01.01 op
-    parent.document.getElementById('formFrame').contentWindow.postMessage(
-      { action: 'runValidation' },
-      '*'
-    );
+    function checkValidation() {
+      // Toegang tot de Next-knop in T 01.01
+      const doc     = iframe.contentWindow.document;
+      const nextBtn = doc.getElementById('nextBtn');
+      const txt     = nextBtn ? nextBtn.textContent.trim() : '';
 
-    // 2) Ontvang resultaat van de validatie
-    window.addEventListener('message', function handler(evt) {
-      if (evt.data.action === 'validationResult') {
-        window.removeEventListener('message', handler);
-        const { errs, warns } = evt.data;
-
-        if (errs.length || warns.length) {
-          statusBox.className = 'status error';
-          statusBox.textContent = 
-            `Kan niet indienen: ${errs.length} fouten en ${warns.length} waarschuwingen in T 01.01.`;
-          submitBtn.disabled = true;
-        } else {
-          statusBox.className = 'status success';
-          statusBox.textContent = 
-            'Formulier T 01.01 is volledig gevalideerd. Je kunt de rapportage nu indienen.';
-          submitBtn.disabled = false;
-        }
+      if (txt === 'Naar volgend formulier') {
+        statusBox.className = 'status success';
+        statusBox.textContent = '✅ T 01.01 is gevalideerd. Indienen mogelijk.';
+        submitBtn.disabled = false;
+      } else {
+        statusBox.className = 'status error';
+        statusBox.textContent = '❌ T 01.01 is nog niet gevalideerd.';
+        submitBtn.disabled = true;
       }
-    });
+    }
+
+    // 1) Check meteen bij laden
+    iframe.addEventListener('load', checkValidation);
+
+    // 2) En nog eens als de user terugklikt of iets verandert
+    //    (voor demo is dit meestal niet nodig, maar je kunt het toevoegen)
+    setInterval(checkValidation, 500);
 
     // 3) Fictieve indiende-actie
     submitBtn.addEventListener('click', () => {
-      alert("📨 De rapportage is ingediend en geaccepteerd. Bedankt voor uw inzending.");
+      alert('📨 Rapportage (fictief) ingediend!');
     });
   </script>
-
 </body>
 </html>
