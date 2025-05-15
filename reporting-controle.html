@@ -67,9 +67,10 @@
 <body>
 
   <div class="box">
-    <h1>Controle & Indienen</h1>
+    <h2>Stuur uw rapportage in</h2>
+    <h3> Controleer of u alle formulieren heeft ingevuld en gevalideerd.</h3>
     <p class="status" id="statusBox">Valideert formulier T 01.01…</p>
-    <button id="submitBtn" disabled>📤 Indienen rapportage</button>
+    <button id="submitBtn" disabled>Indienen rapportage</button>
   </div>
 
   <script>
@@ -91,12 +92,12 @@
         if (errs.length || warns.length) {
           statusBox.className = 'status error';
           statusBox.textContent = 
-            `❌ Kan niet indienen: ${errs.length} fouten en ${warns.length} waarschuwingen in T 01.01.`;
+            `Kan niet indienen: ${errs.length} fouten en ${warns.length} waarschuwingen in T 01.01.`;
           submitBtn.disabled = true;
         } else {
           statusBox.className = 'status success';
           statusBox.textContent = 
-            '✅ Formulier T 01.01 is volledig gevalideerd. Je kunt de rapportage nu indienen.';
+            'Formulier T 01.01 is volledig gevalideerd. Je kunt de rapportage nu indienen.';
           submitBtn.disabled = false;
         }
       }
