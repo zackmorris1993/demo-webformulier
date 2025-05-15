@@ -4,19 +4,13 @@
   <meta charset="UTF-8">
   <title>Controle & Indienen</title>
   <style>
-    body {
+    body {  
       font-family: Arial, sans-serif;
       background: #f9f9fb;
       margin: 0;
       padding: 40px;
       color: #003366;
     }
-
-    h1 {
-      color: #004080;
-      margin-bottom: 10px;
-    }
-
     .box {
       background: white;
       border: 1px solid #ddd;
@@ -26,12 +20,12 @@
       max-width: 600px;
       margin: 0 auto;
     }
-
+    h2 { color: #004080; margin-bottom: 5px; }
+    h3 { margin-top: 0; color: #004080; font-size: 1em; }
     .status {
       font-size: 1em;
-      margin-bottom: 20px;
+      margin: 20px 0;
     }
-
     .status.success {
       color: #155724;
       background-color: #d4edda;
@@ -39,7 +33,6 @@
       padding: 12px;
       border-radius: 4px;
     }
-
     .status.error {
       color: #721c24;
       background-color: #f8d7da;
@@ -47,7 +40,6 @@
       padding: 12px;
       border-radius: 4px;
     }
-
     button {
       background-color: #004080;
       color: white;
@@ -57,7 +49,6 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     button:disabled {
       background-color: #cccccc;
       cursor: not-allowed;
@@ -66,11 +57,11 @@
 </head>
 <body>
 
-   <div class="box">
+  <div class="box">
     <h2>Stuur uw rapportage in</h2>
     <h3>Controleer of u alle formulieren heeft ingevuld en gevalideerd.</h3>
-    <p class="status" id="statusBox">Controleert formulier T 01.01…</p>
-    <button id="submitBtn" disabled>Indienen rapportage</button>
+    <p class="status error" id="statusBox">❌ T 01.01 is nog niet gevalideerd.</p>
+    <button id="submitBtn" disabled>📤 Indienen rapportage</button>
   </div>
 
   <script>
@@ -78,13 +69,11 @@
     const submitBtn = document.getElementById('submitBtn');
     const iframe    = parent.document.getElementById('formFrame');
 
-    function checkValidation() {
-      // Toegang tot de Next-knop in T 01.01
-      const doc     = iframe.contentWindow.document;
-      const nextBtn = doc.getElementById('nextBtn');
-      const txt     = nextBtn ? nextBtn.textContent.trim() : '';
-
-      if (txt === 'Naar volgend formulier') {
+    function evaluateIframe() {
+      // Haal het pad van de huidige iframe-src
+      const src = iframe.getAttribute('src') || '';
+      if (src.includes('reporting-t01-02.html')) {
+        // de user is door naar T01.02, dus T01.01 is gevalideerd
         statusBox.className = 'status success';
         statusBox.textContent = '✅ T 01.01 is gevalideerd. Indienen mogelijk.';
         submitBtn.disabled = false;
@@ -95,17 +84,16 @@
       }
     }
 
-    // 1) Check meteen bij laden
-    iframe.addEventListener('load', checkValidation);
+    // Evalueer direct bij laden
+    iframe.addEventListener('load', evaluateIframe);
 
-    // 2) En nog eens als de user terugklikt of iets verandert
-    //    (voor demo is dit meestal niet nodig, maar je kunt het toevoegen)
-    setInterval(checkValidation, 500);
+    // En evalueer nog eens elke halve seconde (handig als je in de iframe navigeert)
+    setInterval(evaluateIframe, 500);
 
-    // 3) Fictieve indiende-actie
     submitBtn.addEventListener('click', () => {
-      alert('De rapportage is ingediend en geaccepteerd. Bedankt voor uw inzending.');
+      alert('📨 De rapportage is (fictief) ingediend! Goed gedaan.');
     });
   </script>
+
 </body>
 </html>
