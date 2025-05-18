@@ -445,6 +445,11 @@ establishment of the reporting entity itself.">ℹ</span>
         // maak Next eenmaal om naar volgende sheet te gaan
         btnNext.textContent = 'Naar volgend formulier';
         btnNext.removeEventListener('click', onNext);
+        const prevKey = `T01.01-${rapportagejaar}`;  
+        const rows    = Array.from(tbody.rows).map(r =>
+          Array.from(r.querySelectorAll('input')).map(i => i.value)
+        );
+        localStorage.setItem(prevKey, JSON.stringify(rows));
         btnNext.addEventListener('click', () => {
           parent.loadForm('reporting-t01-02.html',
             parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
