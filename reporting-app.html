@@ -112,6 +112,22 @@
       left: 0;
     }
 
+    .home-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 8px;
+      color: #004080;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.95em;
+      margin-bottom: 15px;
+    }
+
+    .home-link:hover {
+      background-color: #e6f4ff;
+      border-radius: 4px;
+    }
+
     
   </style>
 </head>
@@ -130,10 +146,12 @@
 
   <div class="app-container">
     <div class="sidebar" id="sidebar">
-      <div class="sidebar" id="sidebar">
-        <button onclick="location.href='dashboard.html'" style="background:none;border:none;font-size:1.5em;cursor:pointer;margin-bottom:10px;">
-        🏠 Terug naar rapportage-overzicht
-        </button>
+      <a href="reporting-obligations.html" class="home-link" title="Terug naar rapportage-overzicht">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 8px;" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#004080" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        <span>Terug naar rapportage-overzicht</span>
+      </a>
 
       <h2>Formulieren</h2>
       
