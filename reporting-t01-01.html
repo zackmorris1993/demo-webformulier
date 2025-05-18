@@ -239,114 +239,95 @@ establishment of the reporting entity itself.">ℹ</span>
     <li>United Kingdom</li><li>United States</li>
     <!-- … alle overige landen … -->
   </ul>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // ── 1) References & helpers ───────────────────────────────
+  const tbody       = document.querySelector('#subsidiariesTable tbody');
+  const templateRow = document.createElement('tr');
+  templateRow.innerHTML = `
+    <td class="country-cell">
+      <input type="text" class="country-input" placeholder="Typ om te zoeken…" required>
+      <div class="country-dropdown"></div>
+    </td>
+    <td><input type="number" step="0.01" required></td>
+    <td><input type="number" step="0.01" required></td>
+    <td><input type="number" step="0.01" required></td>
+    <td><input type="number" step="0.01" required></td>
+    <td><button class="delete-button">🗑</button></td>`;
+  const btnAdd   = document.getElementById('addRowBtn');
+  const btnReset = document.getElementById('resetBtn');
+  const btnNext  = document.getElementById('nextBtn');
+  const helpLink = document.getElementById('helpLink');
+  const helpBox  = document.getElementById('helpBox');
+  const reportSec= document.getElementById('validationReport');
+  const msgCont  = document.getElementById('validationMessages');
 
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const qCard = document.getElementById('initialQuestion');
-    const form  = document.querySelector('form');
-    const yesBtn= document.getElementById('questionYes');
-    const noBtn = document.getElementById('questionNo');
-
-    // 2) References
-    const tbody         = document.querySelector('#subsidiariesTable tbody');
-    const templateRow   = document.createElement('tr');
-    templateRow.innerHTML = `
-      <td class="country-cell">
-        <input type="text" class="country-input" placeholder="Typ om te zoeken…" required>
-        <div class="country-dropdown"></div>
-      </td>
-      <td><input type="number" step="0.01" required></td>
-      <td><input type="number" step="0.01" required></td>
-      <td><input type="number" step="0.01" required></td>
-      <td><input type="number" step="0.01" required></td>
-      <td><button class="delete-button">🗑</button></td>`;
-    const btnAdd    = document.getElementById('addRowBtn');
-    const btnReset  = document.getElementById('resetBtn');
-    const btnNext   = document.getElementById('nextBtn');
-    const helpLink  = document.getElementById('helpLink');
-    const helpBox   = document.getElementById('helpBox');
-    const reportSec = document.getElementById('validationReport');
-    const msgCont   = document.getElementById('validationMessages');
-
-    // 3) Dropdown data
-    const countries = Array.from(document.querySelectorAll('#allCountries li'))
-                            .map(li=>li.textContent);
-
-    // 4) Helpers
-    function addRow() {
-      const tr = templateRow.cloneNode(true);
-      tr.querySelectorAll('input').forEach(i=>i.value='');
-      tr.querySelector('.delete-button').addEventListener('click', e => {
-        e.preventDefault();
-        if (tbody.rows.length>1) tr.remove();
-        else alert('Minstens één rij vereist.');
-      });
-      tbody.appendChild(tr);
-    }
-    function resetTable() {
-      if (!confirm('Weet je zeker? Gegevens verdwijnen.')) return;
-      Object.keys(localStorage)
-        .filter(k=>k.startsWith('T01.01'))
-        .forEach(k=>localStorage.removeItem(k));
-      tbody.innerHTML = ''; addRow(); clearHighlights(); hideReports();
-    }
-    function toggleHelp() {
-      helpBox.style.display = helpBox.style.display==='block'?'none':'block';
-    }
-    function hideReports() {
-      reportSec.style.display = 'none';
-      msgCont.style.display   = 'none';
-    }
-
-    // 5) Searchable dropdown
-    tbody.addEventListener('input', e => {
-      if (!e.target.classList.contains('country-input')) return;
-      const dd = e.target.nextElementSibling;
-      const val = e.target.value.toLowerCase();
-      dd.innerHTML = countries
-        .filter(c=>c.toLowerCase().includes(val))
-        .map(c=>`<div>${c}</div>`).join('');
-      dd.style.display = dd.innerHTML? 'block':'none';
+  function addRow() {
+    const tr = templateRow.cloneNode(true);
+    tr.querySelectorAll('input').forEach(i=>i.value='');
+    tr.querySelector('.delete-button').addEventListener('click', e => {
+      e.preventDefault();
+      if (tbody.rows.length>1) tr.remove();
+      else alert('Minstens één rij vereist.');
     });
-    tbody.addEventListener('click', e => {
-      if (e.target.parentNode.classList.contains('country-dropdown')) {
-        const inp = e.target.closest('.country-cell').querySelector('.country-input');
-        inp.value = e.target.textContent;
-        e.target.parentNode.style.display = 'none';
-      }
-    });
-    document.addEventListener('click', e => {
-      if (!e.target.classList.contains('country-input'))
-        document.querySelectorAll('.country-dropdown')
-                .forEach(d=>d.style.display='none');
-    });
+    tbody.appendChild(tr);
+  }
+  function resetTable() {
+    if (!confirm('Weet je zeker? Gegevens verdwijnen.')) return;
+    Object.keys(localStorage)
+      .filter(k=>k.startsWith('T01.01'))
+      .forEach(k=>localStorage.removeItem(k));
+    tbody.innerHTML = ''; addRow(); clearHighlights(); hideReports();
+  }
+  function toggleHelp() {
+    helpBox.style.display = helpBox.style.display==='block'?'none':'block';
+  }
+  function hideReports() {
+    reportSec.style.display = 'none';
+    msgCont.style.display   = 'none';
+  }
 
-    document.addEventListener('DOMContentLoaded', () => {
-  // 1) Lees rapportagejaar uit URL
+  // Zoekbare dropdown
+  const countries = Array.from(document.querySelectorAll('#allCountries li'))
+                          .map(li=>li.textContent);
+  tbody.addEventListener('input', e => {
+    if (!e.target.classList.contains('country-input')) return;
+    const dd = e.target.nextElementSibling;
+    const val = e.target.value.toLowerCase();
+    dd.innerHTML = countries
+      .filter(c=>c.toLowerCase().includes(val))
+      .map(c=>`<div>${c}</div>`).join('');
+    dd.style.display = dd.innerHTML? 'block':'none';
+  });
+  tbody.addEventListener('click', e => {
+    if (e.target.parentNode.classList.contains('country-dropdown')) {
+      const inp = e.target.closest('.country-cell').querySelector('.country-input');
+      inp.value = e.target.textContent;
+      e.target.parentNode.style.display = 'none';
+    }
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.classList.contains('country-input'))
+      document.querySelectorAll('.country-dropdown').forEach(d=>d.style.display='none');
+  });
+
+  // ── 2) Rapportagejaar en previous-year load ─────────────────
   const urlParams      = new URLSearchParams(window.location.search);
   const rapportagejaar = urlParams.get('periode') || '2024';
+  const prevYear       = String(Number(rapportagejaar) - 1);
+  const keyPrev        = `T01.01-${prevYear}`;
+  const keyCurr        = `T01.01-${rapportagejaar}`;
 
-  // 2) Bepaal keys voor localStorage
-  const prevYear  = String(Number(rapportagejaar) - 1);
-  const keyPrev   = `T01.01-${prevYear}`;            // data van vorig jaar
-  const keyCurr   = `T01.01-${rapportagejaar}`;       // data van deze periode
-  const keyExcel  = Object.keys(localStorage)
-                      .find(k => k.startsWith('T01.01')); // je bestaande Excel-import
+  tbody.innerHTML = ''; // leeg de tabel
 
-  // 3) Leeg de tabel
-  tbody.innerHTML = '';
-
-  // 4) Probeer in deze volgorde in te laden:
   if (localStorage.getItem(keyPrev)) {
-    // — eerst: data van vorig jaar (voor 2024)
-    const rows = JSON.parse(localStorage.getItem(keyPrev));
-    rows.forEach(cols => {
+    // Laad data uit vorig jaar
+    JSON.parse(localStorage.getItem(keyPrev)).forEach(cols => {
       addRow();
       const tr = tbody.lastElementChild;
       cols.forEach((val, idx) => {
         tr.cells[idx].querySelector('input').value = val;
       });
-      // markeer beginstand readonly als 2024
       if (rapportagejaar === '2024') {
         const bInput = tr.cells[1].querySelector('input');
         bInput.readOnly            = true;
@@ -355,142 +336,138 @@ establishment of the reporting entity itself.">ℹ</span>
     });
 
   } else if (localStorage.getItem(keyCurr)) {
-    // — dan: je bestaande “Excel-import” data voor deze periode
-    const rows = JSON.parse(localStorage.getItem(keyCurr)).slice(1);
-    if (rows.length) {
-      rows.forEach(cols => {
-        addRow();
-        const tr = tbody.lastElementChild;
-        tr.cells[0].querySelector('input').value = cols[0] || '';
-        for (let i = 1; i <= 4; i++) {
-          tr.cells[i].querySelector('input').value =
-            cols[i] != null ? cols[i] : '';
-        }
-      });
-    } else {
-      // sheet bestaat, maar geen data-rijen
+    // Laad Excel-import data van deze periode
+    JSON.parse(localStorage.getItem(keyCurr)).slice(1).forEach(cols => {
       addRow();
-    }
+      const tr = tbody.lastElementChild;
+      tr.cells[0].querySelector('input').value = cols[0]||'';
+      for (let i=1; i<=4; i++) {
+        tr.cells[i].querySelector('input').value = cols[i]!=null? cols[i] : '';
+      }
+    });
 
   } else {
-    // — fallback: gewoon een lege rij
+    // Fallback: lege rij
     addRow();
   }
 
-    // 7) Validatie-rules
-    const rules = [
-      { id:'dnb_v0056',sev:'ERROR',validate:r=>{
-          const a=+r.cells[1].querySelector('input').value||0,
-                b=r.cells[2].querySelector('input').value;
-          return !(a>300000000 && !b);
-        }
-      },
-      { id:'dnb_v0057',sev:'WARNING',validate:r=>{
-          const a=+r.cells[1].querySelector('input').value||0,
-                b=+r.cells[2].querySelector('input').value||0;
-          return !(a<300000000 && a>=b);
-        }
-      },
-      { id:'dnb_v0054',sev:'ERROR',validate:r=>
-          (+r.cells[3].querySelector('input').value||0) >= -30000000
-      },
-      { id:'dnb_v0058',sev:'ERROR',validate:r=>
-          (+r.cells[4].querySelector('input').value||0) >= 0
+  // ── 3) Validatie-rules ───────────────────────────────────────
+  const rules = [
+    { id:'dnb_v0056',sev:'ERROR',validate:r=>{
+        const a=+r.cells[1].querySelector('input').value||0,
+              b=r.cells[2].querySelector('input').value;
+        return !(a>300000000 && !b);
       }
-    ];
-    const desc = {
-      dnb_v0056:'Als beginpositie > 300 000 000 → slotpositie verplicht.',
-      dnb_v0057:'Als beginpositie < 300 000 000 → begin < slot.',
-      dnb_v0054:'Dividend mag niet negatief.',
-      dnb_v0058:'Operationeel resultaat mag niet negatief.'
-    };
-    function runValidation(){
-      const errs=[], warns=[];
-      Array.from(tbody.rows).forEach((r,i)=>{
-        rules.forEach(rule=>{
-          if (!rule.validate(r)) {
-            (rule.sev==='ERROR'? errs:warns).push({row:i,rule:rule.id});
-          }
-        });
+    },
+    { id:'dnb_v0057',sev:'WARNING',validate:r=>{
+        const a=+r.cells[1].querySelector('input').value||0,
+              b=+r.cells[2].querySelector('input').value||0;
+        return !(a<300000000 && a>=b);
+      }
+    },
+    { id:'dnb_v0054',sev:'ERROR',validate:r=>
+        (+r.cells[3].querySelector('input').value||0) >= -30000000
+    },
+    { id:'dnb_v0058',sev:'ERROR',validate:r=>
+        (+r.cells[4].querySelector('input').value||0) >= 0
+    }
+  ];
+  const desc = {
+    dnb_v0056:'Als beginpositie > 300 000 000 → slotpositie verplicht.',
+    dnb_v0057:'Als beginpositie < 300 000 000 → begin < slot.',
+    dnb_v0054:'Dividend mag niet negatief.',
+    dnb_v0058:'Operationeel resultaat mag niet negatief.'
+  };
+  function runValidation(){
+    const errs=[], warns=[];
+    Array.from(tbody.rows).forEach((r,i)=>{
+      rules.forEach(rule=>{
+        if (!rule.validate(r)) {
+          (rule.sev==='ERROR'? errs:warns).push({row:i,rule:rule.id});
+        }
       });
-      return {errs,warns};
-    }
-    function clearHighlights(){
-      document.querySelectorAll('.error-cell, .warning-cell').forEach(e=>e.classList.remove('error-cell', 'warning-cell'));
-    }
-
-    function markHighlights(errs, warns){
+    });
+    return {errs,warns};
+  }
+  function clearHighlights(){
+    document.querySelectorAll('.error-cell, .warning-cell')
+            .forEach(e=>e.classList.remove('error-cell','warning-cell'));
+  }
+  function markHighlights(errs, warns){
     const colMap={ dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
-
-    // markeer errors (rood)
     errs.forEach(e=>{
       const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
       inp && inp.classList.add('error-cell');
     });
-
-    // markeer warnings (geel)
     warns.forEach(e=>{
       const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
       inp && inp.classList.add('warning-cell');
     });
   }
 
-
-   window.addEventListener('message', evt => {
+  // ── 4) postMessage-handler ──────────────────────────────────
+  window.addEventListener('message', evt => {
     if (evt.data.action === 'runValidation') {
       const { errs, warns } = runValidation();
       markHighlights(errs, warns);
-      window.parent.postMessage({
-        action: 'validationResult',
-        errs, warns
-      }, '*');
-    }   // <-- sluit de if hier af
+      window.parent.postMessage({ action:'validationResult', errs, warns }, '*');
+    }
+  });
 
-  });  // <-- sluit de addEventListener hier af
+  // ── 5) Bind buttons & Next-handler ─────────────────────────
+  btnAdd.addEventListener('click', addRow);
+  btnReset.addEventListener('click', resetTable);
+  helpLink.addEventListener('click', toggleHelp);
 
-    // 8) Bind buttons
-    document.getElementById('addRowBtn').addEventListener('click', addRow);
-    document.getElementById('resetBtn').addEventListener('click', resetTable);
-    helpLink.addEventListener('click', toggleHelp);
-
-    btnNext.addEventListener('click', function onNext(){
-      clearHighlights(); hideReports();
-      const {errs,warns} = runValidation();
-      if (errs.length||warns.length) {
-        let html = '<h3>Validatierapport</h3>';
-        if (errs.length) {
-          html += '<div class="error"><strong>Errors:</strong><ul>';
-          errs.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
-          html+='</ul></div>';
-        }
-        if (warns.length) {
-          html+='<div class="warning"><strong>Warnings:</strong><ul>';
-          warns.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
-          html+='</ul></div>';
-        }
-        reportSec.innerHTML = html;
-        reportSec.style.display = 'block';
-        markHighlights(errs, warns);
-      } else {
-        msgCont.innerHTML = `<div class="success-box"> De rapportagedata op deze pagina is gevalideerd, u kunt nu verder.</div>`;
-        msgCont.style.display = 'block';
-        // maak Next eenmaal om naar volgende sheet te gaan
-        btnNext.textContent = 'Naar volgend formulier';
-        btnNext.removeEventListener('click', onNext);
-        const prevKey = `T01.01-${rapportagejaar}`;  
-        const rows    = Array.from(tbody.rows).map(r =>
-          Array.from(r.querySelectorAll('input')).map(i => i.value)
-        );
-        localStorage.setItem(prevKey, JSON.stringify(rows));
-        btnNext.addEventListener('click', () => {
-          parent.loadForm('reporting-t01-02.html',
-            parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
-          );
-        });
+  btnNext.addEventListener('click', function onNext(){
+    clearHighlights(); hideReports();
+    const {errs, warns} = runValidation();
+    if (errs.length || warns.length) {
+      // toon validatierapport…
+      let html = '<h3>Validatierapport</h3>';
+      if (errs.length) {
+        html += '<div class="error"><strong>Errors:</strong><ul>';
+        errs.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
+        html += '</ul></div>';
       }
-    });
+      if (warns.length) {
+        html += '<div class="warning"><strong>Warnings:</strong><ul>';
+        warns.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
+        html += '</ul></div>';
+      }
+      reportSec.innerHTML = html;
+      reportSec.style.display = 'block';
+      markHighlights(errs, warns);
+    } else {
+      // validatie OK → opslag & Next
+      msgCont.innerHTML = `<div class="success-box">
+        De rapportagedata op deze pagina is gevalideerd, u kunt nu verder.
+      </div>`;
+      msgCont.style.display = 'block';
+      btnNext.textContent = 'Naar volgend formulier';
+      btnNext.removeEventListener('click', onNext);
 
-  }); // end DOMContentLoaded
-  </script>
+      // ── Opslaan in localStorage ───────────────────────────
+      const prevKey = `T01.01-${rapportagejaar}`;
+      const rows    = Array.from(tbody.rows).map(r =>
+        Array.from(r.querySelectorAll('input')).map(i => i.value)
+      );
+      localStorage.setItem(prevKey, JSON.stringify(rows));
+
+      btnNext.addEventListener('click', () => {
+        parent.loadForm(
+          'reporting-t01-02.html',
+          parent.document.querySelector(
+            '.sidebar button[onclick*="reporting-t01-02.html"]'
+          )
+        );
+      });
+    }
+  });
+
+}); // einde DOMContentLoaded
+</script>
+
+
 </body>
 </html>
