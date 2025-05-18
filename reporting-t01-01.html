@@ -321,27 +321,59 @@ establishment of the reporting entity itself.">ℹ</span>
                 .forEach(d=>d.style.display='none');
     });
 
-    // 6) Excel‐import
-    const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
-    tbody.innerHTML = ''; // altijd eerst leegmaken
+    document.addEventListener('DOMContentLoaded', () => {
+  // 1) Lees rapportagejaar uit URL
+  const urlParams      = new URLSearchParams(window.location.search);
+  const rapportagejaar = urlParams.get('periode') || '2024';
 
-    if (key) {
-      const rows = JSON.parse(localStorage.getItem(key)).slice(1);
-        if (rows.length > 0) {
-          rows.forEach(cols => {
+  // 2) Bepaal keys voor localStorage
+  const prevYear  = String(Number(rapportagejaar) - 1);
+  const keyPrev   = `T01.01-${prevYear}`;            // data van vorig jaar
+  const keyCurr   = `T01.01-${rapportagejaar}`;       // data van deze periode
+  const keyExcel  = Object.keys(localStorage)
+                      .find(k => k.startsWith('T01.01')); // je bestaande Excel-import
+
+  // 3) Leeg de tabel
+  tbody.innerHTML = '';
+
+  // 4) Probeer in deze volgorde in te laden:
+  if (localStorage.getItem(keyPrev)) {
+    // — eerst: data van vorig jaar (voor 2024)
+    const rows = JSON.parse(localStorage.getItem(keyPrev));
+    rows.forEach(cols => {
+      addRow();
+      const tr = tbody.lastElementChild;
+      cols.forEach((val, idx) => {
+        tr.cells[idx].querySelector('input').value = val;
+      });
+      // markeer beginstand readonly als 2024
+      if (rapportagejaar === '2024') {
+        const bInput = tr.cells[1].querySelector('input');
+        bInput.readOnly            = true;
+        bInput.style.backgroundColor = '#f0f0f0';
+      }
+    });
+
+  } else if (localStorage.getItem(keyCurr)) {
+    // — dan: je bestaande “Excel-import” data voor deze periode
+    const rows = JSON.parse(localStorage.getItem(keyCurr)).slice(1);
+    if (rows.length) {
+      rows.forEach(cols => {
         addRow();
         const tr = tbody.lastElementChild;
-        tr.cells[0].querySelector('input').value = cols[0]||'';
+        tr.cells[0].querySelector('input').value = cols[0] || '';
         for (let i = 1; i <= 4; i++) {
-          tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
+          tr.cells[i].querySelector('input').value =
+            cols[i] != null ? cols[i] : '';
         }
       });
     } else {
-      // sheet bestaat maar bevat geen data‐rijen
+      // sheet bestaat, maar geen data-rijen
       addRow();
     }
+
   } else {
-    // geen sheet gevonden
+    // — fallback: gewoon een lege rij
     addRow();
   }
 
