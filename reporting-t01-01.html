@@ -318,6 +318,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const keyPrev        = `T01.01-${prevYear}`;
   const keyCurr        = `T01.01-${rapportagejaar}`;
 
+  // toon melding als er een vorige aanlevering is
+  if (localStorage.getItem(keyPrev)) {
+    // maak een tijdelijk meldingselement
+    const info = document.createElement('div');
+    info.className = 'success-box';
+    info.textContent = `ℹ Er is een vorige aanlevering voor ${prevYear} gevonden; deze gegevens zijn voor u alvast ingeladen.`;
+    // voeg 'm boven de tabel toe (of onder je help-box)
+    document.body.insertBefore(info, document.querySelector('form'));
+  }
+
   tbody.innerHTML = ''; // leeg de tabel
 
   if (localStorage.getItem(keyPrev)) {
