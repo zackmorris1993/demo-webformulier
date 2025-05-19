@@ -243,6 +243,20 @@ establishment of the reporting entity itself.">ℹ</span>
   </ul>
 
   <script>
+
+  function loadForm(page, button) {
+    const frame = document.getElementById('formFrame');
+    // Forceer eerst een lege src
+    frame.src = 'about:blank';
+    // Na een tiny delay de echte pagina laden
+    setTimeout(() => frame.src = page, 10);
+
+    // Activeer de aangeklikte knop
+    const buttons = document.querySelectorAll('.sidebar .nav-button');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    if (button) button.classList.add('active');
+  }
+    
   document.addEventListener('DOMContentLoaded', () => {
     const qCard = document.getElementById('initialQuestion');
     const form  = document.querySelector('form');
