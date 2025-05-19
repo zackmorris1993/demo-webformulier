@@ -416,13 +416,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── 4) postMessage-handler ──────────────────────────────────
+  // In reporting-t01-01.html
   window.addEventListener('message', evt => {
     if (evt.data.action === 'runValidation') {
       const { errs, warns } = runValidation();
       markHighlights(errs, warns);
-      window.parent.postMessage({ action:'validationResult', errs, warns }, '*');
+      window.parent.postMessage({
+        action: 'validationResult',
+        errs, warns
+      }, '*');
     }
   });
+
 
   // ── 5) Bind buttons & Next-handler ─────────────────────────
   btnAdd.addEventListener('click', addRow);
