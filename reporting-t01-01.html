@@ -229,6 +229,7 @@ establishment of the reporting entity itself.">ℹ</span>
     <div class="button-group">
       <button type="button" id="addRowBtn">➕ Voeg rij toe</button>
       <button type="button" id="resetBtn">🔄 Reset formulier</button>
+      <button type="button" id="saveBtn">💾 Sla data op</button> 
       <button type="button" id="nextBtn">Valideer</button>
     </div>
   </form>
@@ -296,6 +297,46 @@ establishment of the reporting entity itself.">ℹ</span>
     function hideReports() {
       reportSec.style.display = 'none';
       msgCont.style.display   = 'none';
+    }
+
+     // KEY voor opslag
+  const STORAGE_KEY = 'T01.01-draft';
+
+  // 2A) Sla data op
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    // Verzamel alle input‐waarden in een array
+    const rows = Array.from(tbody.rows).map(row =>
+      Array.from(row.querySelectorAll('input')).map(i => i.value)
+    );
+    // Opslaan
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+    alert('💾 Data is opgeslagen.');
+  });
+
+  // 2B) (Her)laden van eerder opgeslagen draft
+  function loadDraft() {
+    const draft = localStorage.getItem(STORAGE_KEY);
+    if (!draft) return false;
+    const rows = JSON.parse(draft);
+    tbody.innerHTML = '';       // lege tabel
+    rows.forEach(cols => {
+      addRow();
+      const tr = tbody.lastElementChild;
+      tr.querySelectorAll('input').forEach((inp,i) => {
+        inp.value = cols[i] || '';
+      });
+    });
+    return true;
+  }
+
+  // In je DOMContentLoaded, vóór je excel/xbrl/periode‐logic:
+  document.addEventListener('DOMContentLoaded', () => {
+    // Probeer eerst de draft te laden
+    if (loadDraft()) {
+      console.log('Draft geladen uit localStorage');
+    } else {
+      // bestaande import‐/periode‐logic…
+      // (bijv. loadData() of excel/xbrl/periode)
     }
 
     // 5) Searchable dropdown
