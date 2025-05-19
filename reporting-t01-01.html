@@ -358,7 +358,12 @@ establishment of the reporting entity itself.">ℹ</span>
     });
     return true;
   }
+  
+  window.addEventListener('load', () => {
+  loadDraft();
+  });
 
+    
   // In je DOMContentLoaded, vóór je excel/xbrl/periode‐logic:
   document.addEventListener('DOMContentLoaded', () => {
     // Probeer eerst de draft te laden
@@ -369,6 +374,10 @@ establishment of the reporting entity itself.">ℹ</span>
       // (bijv. loadData() of excel/xbrl/periode)
     }
     });
+    
+    
+
+    
 
     // 5) Searchable dropdown
     tbody.addEventListener('input', e => {
