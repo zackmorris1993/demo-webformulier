@@ -185,68 +185,62 @@
   </div>
 
   <script>
-
-    function loadForm(page, button) {
+  function loadForm(page, button) {
+    // Laad het formulier in de iframe
     document.getElementById('formFrame').src = page;
 
-    const buttons = document.querySelectorAll('.sidebar button[onclick^="loadForm"]');
-    buttons.forEach(btn => btn.classList.remove('active'));
+    // Activeer alleen de aangeklikte knop
+    const navBtns = document.querySelectorAll('.sidebar .nav-button');
+    navBtns.forEach(btn => btn.classList.remove('active'));
+    if (button) button.classList.add('active');
+  }
 
-      if (button) button.classList.add('active');
-    }
+  function toggleSidebar() {
+    const sb  = document.getElementById('sidebar');
+    const btn = document.getElementById('toggleBtn');
+    sb.classList.toggle('hidden');
+    btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
+  }
 
-    function toggleSidebar() {
-      var sb = document.getElementById('sidebar');
-      sb.classList.toggle('hidden');
-      var btn = document.getElementById('toggleBtn');
-      btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
-    }
-
-   // 1) Luister naar messages van de iframe (validatie-resultaat)
+  // 1) Luister naar validatie-resultaten uit de iframe
   window.addEventListener('message', evt => {
-    if (evt.data.action === 'validationResult') {
-      const { errs, warns } = evt.data;
-      // bepaal welk formulier er momenteel in de iframe staat
-      const iframe = document.getElementById('formFrame');
-      const src    = iframe.getAttribute('src') || '';
-      const formPage = src.split('/').pop(); // bv. "reporting-t01-01.html"
+    if (evt.data.action !== 'validationResult') return;
 
-      // vind bijpassende knop in de sidebar
-      const btn = document.querySelector(
-        `.sidebar .nav-button[onclick*="${formPage}"]`
-      );
-      if (!btn) return;
+    const { errs, warns } = evt.data;
+    const iframe  = document.getElementById('formFrame');
+    const formPage= iframe.src.split('/').pop(); // bijv. "reporting-t01-01.html"
 
-      // verwijder eventueel oud vinkje
-      let check = btn.querySelector('.checkmark');
-      if (check) check.remove();
+    // Vind de corresponderende knop
+    const btn = document.querySelector(
+      `.sidebar .nav-button[onclick*="${formPage}"]`
+    );
+    if (!btn) return;
 
-      // als er geen errors én geen warnings zijn, voeg groen vinkje toe
-      if (errs.length === 0 && warns.length === 0) {
-        btn.classList.add('ingevuld');   // optioneel, voor filter
-        // maak een <span> voor de check
-        check = document.createElement('span');
-        check.className = 'checkmark';
-        check.textContent = ' ✓';
-        check.style.color = 'green';
-        check.style.fontWeight = 'bold';
-        btn.appendChild(check);
-      } else {
-        // geen check toevoegen als validatie faalt
-        btn.classList.remove('ingevuld');
-      }
+    // Verwijder oud vinkje
+    const old = btn.querySelector('.checkmark');
+    if (old) old.remove();
+    btn.classList.remove('ingevuld');
+
+    // Bij 0 errors én 0 warnings: groen vinkje en markeer ingevuld
+    if (errs.length === 0 && warns.length === 0) {
+      btn.classList.add('ingevuld');
+      const check = document.createElement('span');
+      check.className = 'checkmark';
+      check.textContent = ' ✓';
+      check.style.color = 'green';
+      check.style.marginLeft = '6px';
+      btn.appendChild(check);
     }
   });
 
   let filterActive = false;
-
   function filterForms() {
-    const buttons = document.querySelectorAll('.sidebar button[onclick^="loadForm"]');
     filterActive = !filterActive;
+    const navBtns = document.querySelectorAll('.sidebar .nav-button');
 
-    buttons.forEach(btn => {
-      const isIngevuld = btn.dataset.status === 'ingevuld';
-      btn.style.display = (!filterActive || isIngevuld) ? 'block' : 'none';
+    navBtns.forEach(btn => {
+      const show = !filterActive || btn.classList.contains('ingevuld');
+      btn.style.display = show ? '' : 'none';
     });
 
     const toggleBtn = document.getElementById('filterToggleBtn');
@@ -254,17 +248,22 @@
       ? 'Toon alle formulieren'
       : 'Toon alleen ingevulde formulieren';
   }
-    
+
   document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.querySelector('.sidebar button[onclick*="reporting-start.html"]');
-  loadForm('reporting-start.html', btn);
+    // Filter-knop koppelen
+    document.getElementById('filterToggleBtn')
+      .addEventListener('click', filterForms);
 
-  // Zorg dat alle knoppen zichtbaar zijn bij start
-  filterForms(); // activeert filter één keer
-  filterForms(); // deactiveert het direct weer (start met alle knoppen zichtbaar)
+    // Laad de start-pagina en highlight
+    const startBtn = document.querySelector('.sidebar .nav-button[onclick*="reporting-start.html"]');
+    loadForm('reporting-start.html', startBtn);
+
+    // Start met alle knoppen zichtbaar
+    filterForms();
+    filterForms();
   });
+</script>
 
-  </script>
 
 </body>
 </html>
