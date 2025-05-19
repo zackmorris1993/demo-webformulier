@@ -172,6 +172,21 @@
     cursor: help;
     color: #004080;
   }
+
+  .icon-btn {
+    background: none;      /* geen achtergrond */
+    border: none;          /* geen rand */
+    padding: 4px;           /* kleine padding rond het icoon */
+    margin: 0 6px;          /* horizontale ruimte tussen knoppen */
+    font-size: 1.4em;       /* icon-size */
+    cursor: pointer;
+    line-height: 1;         /* voorkom verticale verschuiving */
+    color: #004080;         /* je icon-kleur */
+  }
+  
+  .icon-btn:hover {
+    color: #002d60;         /* iets donkerder bij hover */
+  }
     
 </style>
 
@@ -228,9 +243,9 @@ establishment of the reporting entity itself.">ℹ</span>
     </table>
 
     <div class="button-group">
-      <button type="button" id="addRowBtn">➕</button>
-      <button type="button" id="resetBtn">🔄</button>
-      <button type="button" id="saveBtn">💾</button> 
+      <button type="button" id="addRowBtn" class ="icon-btn">➕</button>
+      <button type="button" id="resetBtn" class ="icon-btn">🔄</button>
+      <button type="button" id="saveBtn" class ="icon-btn">💾</button> 
       <button type="button" id="nextBtn">Valideer</button>
     </div>
   </form>
