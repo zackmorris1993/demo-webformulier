@@ -202,58 +202,41 @@
       btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
     }
 
-    // 1-klik validatie over alle formulieren
-  function runAllForms() {
-    const forms = [
-      'reporting-t01-01.html',
-      'reporting-t01-02.html',
-      'reporting-t01-03.html',
-      'reporting-t01-04.html',
-      'reporting-t02-01.html',
-      'reporting-t02-02.html',
-      'reporting-t02-03.html',
-      'reporting-t02-04.html',
-      'reporting-t03-01.html',
-      'reporting-t04-01.html',
-      'reporting-t05-01.html'
-    ];
+   // 1) Luister naar messages van de iframe (validatie-resultaat)
+  window.addEventListener('message', evt => {
+    if (evt.data.action === 'validationResult') {
+      const { errs, warns } = evt.data;
+      // bepaal welk formulier er momenteel in de iframe staat
+      const iframe = document.getElementById('formFrame');
+      const src    = iframe.getAttribute('src') || '';
+      const formPage = src.split('/').pop(); // bv. "reporting-t01-01.html"
 
-    (async () => {
-      for (let page of forms) {
-        // laad formulier in iframe
-        const btn = document.querySelector(.sidebar button[onclick*="${page}"]);
-        loadForm(page, btn);
+      // vind bijpassende knop in de sidebar
+      const btn = document.querySelector(
+        `.sidebar .nav-button[onclick*="${formPage}"]`
+      );
+      if (!btn) return;
 
-        // wacht op iframe load
-        await new Promise(res => {
-          const iframe = document.getElementById('formFrame');
-          iframe.onload = () => res();
-        });
+      // verwijder eventueel oud vinkje
+      let check = btn.querySelector('.checkmark');
+      if (check) check.remove();
 
-        // vraag validatie op
-        const result = await new Promise(res => {
-          window.addEventListener('message', function handler(evt) {
-            if (evt.data.action === 'validationResult') {
-              window.removeEventListener('message', handler);
-              res(evt.data);
-            }
-          });
-          document.getElementById('formFrame').contentWindow.postMessage(
-            { action: 'runValidation' },
-            '*'
-          );
-        });
-
-        if (result.errs.length) {
-          alert(Er zijn fouten in ${page}.\nGa eerst naar dat formulier om te corrigeren.);
-          return;
-        }
+      // als er geen errors én geen warnings zijn, voeg groen vinkje toe
+      if (errs.length === 0 && warns.length === 0) {
+        btn.classList.add('ingevuld');   // optioneel, voor filter
+        // maak een <span> voor de check
+        check = document.createElement('span');
+        check.className = 'checkmark';
+        check.textContent = ' ✓';
+        check.style.color = 'green';
+        check.style.fontWeight = 'bold';
+        btn.appendChild(check);
+      } else {
+        // geen check toevoegen als validatie faalt
+        btn.classList.remove('ingevuld');
       }
-
-      alert('✅ Alle formulieren zijn succesvol gevalideerd. U kunt nu indienen.');
-      // eventueel: hier de “Indienen”-knop activeren
-    })();
-  }
+    }
+  });
 
   let filterActive = false;
 
