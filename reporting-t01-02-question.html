@@ -2,81 +2,45 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>T 01.02 – Loans granted (Question)</title>
+  <title>T 01.02 – Loans granted (Vraag)</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f9f9fb; margin:0; padding:30px; }
-    .card {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      max-width: 500px;
-      margin: 60px auto;
-      padding: 30px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    h2 {
-      color: #004080;
-      margin-bottom: 20px;
-    }
-    p {
-      font-size: 1em;
-      color: #333;
-      margin-bottom: 30px;
-      line-height: 1.4;
-    }
-    .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
+    body { font-family: Arial,sans-serif; background:#f9f9fb; margin:0; padding:30px; }
+    .card { background:#fff; border:1px solid #ddd; border-radius:6px; max-width:500px;
+            margin:60px auto; padding:30px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    h2 { color:#004080; margin-bottom:20px; }
+    p  { color:#333; margin-bottom:30px; line-height:1.4; }
+    .button-group { display:flex; justify-content:center; gap:20px; }
     .button-group button {
-      background: #004080;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1em;
-      transition: background 0.2s;
+      background:#004080; color:#fff; border:none; padding:12px 24px;
+      border-radius:5px; cursor:pointer; transition:background .2s;
     }
-    .button-group button:hover {
-      background: #003060;
-    }
+    .button-group button:hover { background:#003060; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2>Vraag vooraf</h2>
-    <p>
-      Heeft u in de rapportageperiode <strong>01-01-2024 t/m 31-12-2024</strong><br>
-      leningen uitgegeven?
-    </p>
+    <h3>Heeft u in de periode 01-01-2024 t/m 31-12-2024 leningen uitgegeven?</h3>
     <div class="button-group">
-      <button id="btnYes">Ja, ik wil het formulier invullen</button>
-      <button id="btnNo">Nee, ga door naar volgende</button>
+      <button id="btnYes">Ja</button>
+      <button id="btnNo">Nee</button>
     </div>
   </div>
 
   <script>
-    // Alleen tonen als we in “blank” modus begonnen zijn:
-    if (sessionStorage.getItem('reportStartMode') !== 'blank') {
-      // Anders direct doorsturen naar T01.02
-      window.location.href = 'reporting-t01-02.html';
-    }
+    // 1) Zet de modus op 'blank'
+    sessionStorage.setItem('reportStartMode','blank');
 
     document.getElementById('btnYes').addEventListener('click', () => {
-      // Als je hier extra reset-logic nodig hebt (zoals Excel wissen), kun je dat doen.
+      // “Ja”: ga door naar het daadwerkelijke formulier
       window.location.href = 'reporting-t01-02.html';
     });
 
     document.getElementById('btnNo').addEventListener('click', () => {
-      // Overslaan naar T02.01
+      // “Nee”: skip naar de volgende pagina
       parent.loadForm(
-        'reporting-t02-01.html',
-        parent.document.querySelector('.sidebar button[onclick*="reporting-t02-01.html"]')
+        'reporting-t01-02-question.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t01-03-question.html"]')
       );
     });
   </script>
