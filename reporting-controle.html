@@ -23,8 +23,7 @@
     h2 { color: #004080; margin-bottom: 5px; }
     h3 { margin-top: 0; color: #004080; font-size: 1em; }
     .status {
-      font-size: 1em;
-      margin: 20px 0;
+      font-size: 1em; margin: 20px 0;
     }
     .status.success {
       color: #155724;
@@ -58,10 +57,12 @@
 <body>
 
   <div class="box">
-    <h3>Stuur uw rapportage in</h3>
-    <p>Controleer of u alle formulieren heeft ingevuld en gevalideerd.</p>
-    <p class="status error" id="statusBox">❌ Formulier T 01.01 - Subsidiaries is nog niet gevalideerd:</p>
-    <button id="submitBtn" disabled>Indienen rapportage</button>
+    <h2>Stuur uw rapportage in</h2>
+    <h3>Controleer of T 01.01 is gevalideerd.</h3>
+    <p class="status error" id="statusBox">
+      ❌ T 01.01 is nog niet gevalideerd.
+    </p>
+    <button id="submitBtn" disabled>📤 Indienen rapportage</button>
   </div>
 
   <script>
@@ -69,31 +70,50 @@
     const submitBtn = document.getElementById('submitBtn');
     const iframe    = parent.document.getElementById('formFrame');
 
-    function evaluateIframe() {
-      // Haal het pad van de huidige iframe-src
+    // Functie om validatiestatus te checken
+    function checkValidation() {
+      // Kijk of T01.01 in de iframe is geladen
       const src = iframe.getAttribute('src') || '';
-      if (src.includes('reporting-t01-02.html')) {
-        // de user is door naar T01.02, dus T01.01 is gevalideerd
-        statusBox.className = 'status success';
-        statusBox.textContent = '✅ T 01.01 is gevalideerd. Indienen mogelijk.';
-        submitBtn.disabled = false;
+      // Als pagina-URL reporting-t01-01.html in src zit, vragen we validatie-resultaat
+      if (src.includes('reporting-t01-01.html')) {
+        // Post message om validatie te starten
+        iframe.contentWindow.postMessage({ action: 'runValidation' }, '*');
       } else {
+        // Iets anders geladen (bijv. reporting-controle.html zelf), disable knop
         statusBox.className = 'status error';
-        statusBox.textContent = '❌ Formulier T 01.01 - Subsidiaries is nog niet gevalideerd.';
+        statusBox.textContent = '❌ Laad eerst het formulier T 01.01.';
         submitBtn.disabled = true;
       }
     }
 
-    // Evalueer direct bij laden
-    iframe.addEventListener('load', evaluateIframe);
+    // Ontvang validatie-resultaat
+    window.addEventListener('message', evt => {
+      if (evt.data.action === 'validationResult') {
+        const { errs, warns } = evt.data;
+        if (errs.length === 0 && warns.length === 0) {
+          statusBox.className = 'status success';
+          statusBox.textContent = '✅ T 01.01 is gevalideerd. Indienen mogelijk.';
+          submitBtn.disabled = false;
+        } else {
+          statusBox.className = 'status error';
+          statusBox.textContent = `❌ Validatie faalde: ${errs.length} errors, ${warns.length} warnings.`;
+          submitBtn.disabled = true;
+        }
+      }
+    });
 
-    // En evalueer nog eens elke halve seconde (handig als je in de iframe navigeert)
-    setInterval(evaluateIframe, 500);
+    // Start check zodra controle-pagina opent
+    iframe.addEventListener('load', checkValidation);
 
+    // Ook een interval, zodat terugklikken in de iframe opgepikt wordt
+    const interval = setInterval(checkValidation, 500);
+
+    // Fictieve indiende-actie
     submitBtn.addEventListener('click', () => {
-      alert('De rapportage is geaccepteerd en ingediend. Bedankt voor uw inzending.');
+      clearInterval(interval);
+      alert('📨 Rapportage is (fictief) succesvol ingediend!');
     });
   </script>
-
 </body>
 </html>
+
