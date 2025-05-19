@@ -4,60 +4,18 @@
   <meta charset="UTF-8">
   <title>Controle & Indienen</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9fb;
-      margin: 0;
-      padding: 40px;
-      color: #003366;
+    /* ... je bestaande styles ... */
+    .status { /* zoals eerder */ }
+    .status.success { /* zoals eerder */ }
+    .status.warning { /* nieuw: voor waarschuwingen */ 
+      background: #fff3cd;
+      color: #856404;
+      border-left: 4px solid #ffeeba;
     }
-    .box {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 25px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-    h2 { color: #004080; margin-bottom:5px; }
-    h3 { margin-top:0; color: #004080; font-size:1em; }
-    .status {
-      display: block;
-      font-size: 1em;
-      padding: 12px;
-      border-radius: 4px;
-      margin: 20px 0;
-    }
-    .status.success {
-      background: #d4edda;
-      color: #155724;
-      border-left: 4px solid #c3e6cb;
-    }
-    .status.error {
-      background: #f8d7da;
-      color: #721c24;
-      border-left: 4px solid #f5c6cb;
-    }
-    button {
-      background-color: #004080;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1em;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-    }
-    /* Verberg de iframe */
-    #validatorFrame { display: none; }
+    .status.error { /* zoals eerder */ }
   </style>
 </head>
 <body>
-
   <div class="box">
     <h2>Stuur uw rapportage in</h2>
     <h3>Controleer of T 01.01 is gevalideerd.</h3>
@@ -67,42 +25,48 @@
     <button id="submitBtn" disabled>📤 Indienen rapportage</button>
   </div>
 
-  <!-- Verborgen iframe laadt T01.01 en voert validatie uit -->
-  <iframe id="validatorFrame" src="reporting-t01-01.html"></iframe>
+  <iframe id="validatorFrame" src="reporting-t01-01.html" style="display:none;"></iframe>
 
   <script>
     const statusBox = document.getElementById('statusBox');
     const submitBtn = document.getElementById('submitBtn');
     const validator = document.getElementById('validatorFrame');
 
-    // 1) Zodra de iframe haar inhoud geladen heeft, vraag validatie aan
+    // Zodra de iframe geladen is, vraag validatie aan
     validator.addEventListener('load', () => {
       validator.contentWindow.postMessage({ action: 'runValidation' }, '*');
     });
 
-    // 2) Ontvang resultaat van T01.01
+    // Ontvang het validatieresultaat
     window.addEventListener('message', evt => {
       if (evt.data.action !== 'validationResult') return;
       const { errs, warns } = evt.data;
 
-      if (errs.length === 0 && warns.length === 0) {
-        // succesvol gevalideerd
+      if (errs.length > 0) {
+        // Als er errors zijn: blokkeren
+        statusBox.textContent =
+          `❌ Validatie mislukt: ${errs.length} error(s).`;
+        statusBox.className = 'status error';
+        submitBtn.disabled = true;
+      } else if (warns.length > 0) {
+        // Geen errors, wel warnings: allow submit, maar toon warning
+        statusBox.textContent =
+          `⚠️ Gevalideerd met ${warns.length} warning(s). Indienen mogelijk.`;
+        statusBox.className = 'status warning';
+        submitBtn.disabled = false;
+      } else {
+        // Geen errors én geen warnings: volledig groen
         statusBox.textContent = '✅ T 01.01 is gevalideerd. Indienen mogelijk.';
         statusBox.className = 'status success';
         submitBtn.disabled = false;
-      } else {
-        // fouten of waarschuwingen
-        statusBox.textContent =
-          `❌ Validatie mislukt: ${errs.length} error(s), ${warns.length} warning(s).`;
-        statusBox.className = 'status error';
-        submitBtn.disabled = true;
       }
     });
 
-    // 3) Fictieve indien-actie
+    // Fictieve indien-actie
     submitBtn.addEventListener('click', () => {
       alert('📨 Rapportage is (demo) succesvol ingediend!');
     });
   </script>
 </body>
 </html>
+
