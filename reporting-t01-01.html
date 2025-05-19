@@ -3,58 +3,219 @@
 <head>
   <meta charset="UTF-8">
   <title>T 01.01 – Subsidiaries</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #f9f9fb; margin:0; padding:30px; }
-    h2 { color: #004080; margin-bottom:10px; }
-    .help-link { font-size:0.9em; color:#004080; text-decoration:underline; cursor:pointer; margin-bottom:12px; display:inline-block; }
-    .help-box { display:none; background:#e6f4ff; padding:15px; margin-bottom:20px; border-left:4px solid #004080; border-radius:4px; color:#003366; }
-    table { width:100%; border-collapse:collapse; background:#fff; box-shadow:0 0 8px rgba(0,0,0,0.1); margin-bottom:20px; }
-    th, td { border:1px solid #ddd; padding:8px; text-align:center; }
-    th { background:#f0f6ff; color:#004080; }
-    input[type="number"], .country-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; }
-    .button-group { display:flex; justify-content:space-between; gap:10px; }
-    .button-group button { background:#004080; color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; transition:background .2s; }
-    .button-group button:hover { background:#003060; }
-    .delete-button { background:transparent; border:none; color:red; font-size:1.2em; cursor:pointer; }
-    .error-cell { background-color:#ff6666!important; }
-    .warning-cell { background-color:#fff3cd!important; }
-    #validationReport { display:none; background:#fff; border:1px solid #ddd; border-radius:6px; padding:20px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
-    #validationMessages { display:none; }
-    .success-box { background:#d4edda; color:#155724; border-left:4px solid #c3e6cb; padding:12px; border-radius:4px; margin-bottom:10px; }
-    .country-cell { position:relative; }
-    .country-dropdown { position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #ccc; max-height:150px; overflow-y:auto; display:none; z-index:10; }
-    .country-dropdown div { padding:5px 10px; cursor:pointer; }
-    .country-dropdown div:hover { background:#e6f4ff; }
-    /* import buttons */
-    .import-group { margin-bottom:20px; display:flex; gap:10px; }
-  </style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9fb;
+    margin: 0;
+    padding: 30px;
+  }
+
+  h2 {
+    color: #004080;
+    margin-bottom: 10px;
+  }
+
+  .help-link {
+    font-size: 0.9em;
+    color: #004080;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+
+  .help-box {
+    display: none;
+    background: #e6f4ff;
+    padding: 15px;
+    margin: 0 0 20px;
+    border-left: 4px solid #004080;
+    border-radius: 4px;
+    color: #003366;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;               /* iets minder padding voor strakkere look */
+    text-align: center;
+  }
+
+  th {
+    background: #f0f6ff;
+    color: #004080;
+  }
+
+  /* zorg dat alle inputs netjes passen */
+  #subsidiariesTable td input,
+  input[type="number"],
+  .country-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin: 0;                  /* template-rij cleanup */
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .button-group button {
+    background: #004080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .button-group button:hover {
+    background: #003060;
+  }
+
+  .delete-button {
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+
+  /* searchable dropdown */
+  .country-cell {
+    position: relative;
+  }
+
+  .country-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+  }
+
+  .country-dropdown div {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .country-dropdown div:hover {
+    background: #e6f4ff;
+  }
+
+  /* ERRORS */
+  .error-cell {
+    background-color: #ff6666 !important;
+  }
+
+  /* Warnings */
+  .warning-cell { background-color: #fff3cd !important; 
+  }
+
+  /* inline validatieberichten */
+  #validationReport {
+    display: none;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  #validationReport h3 {
+    margin-top: 0;
+    color: #004080;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+
+  #validationReport .error,
+  #validationReport .warning {
+    background: white;
+    color: #004080;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  /* SUCCESS */
+  .success-box {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid #c3e6cb;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .info-tooltip {
+    font-size: 0.9em;
+    margin-left: 6px;
+    cursor: help;
+    color: #004080;
+  }
+</style>
+
 </head>
 <body>
 
   <h2>T 01.01 – Subsidiaries</h2>
 
-  <div class="import-group">
-    <button id="excelImportBtn">Excel import</button>
-    <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display:none;">
-    <button id="xbrlImportBtn">XBRL import</button>
-    <input type="file" id="xbrlFileInput" accept=".xml" style="display:none;">
-  </div>
-
+  <!-- 1) Help -->
   <a class="help-link" id="helpLink">Hulp bij invullen</a>
   <div id="helpBox" class="help-box">
-    <p>Op formulier T01.01 …</p>
-    <!-- help content -->
+    <p>On form T01.01, reporting institutions must indicate the total positions at the beginning and at the end 
+of the financial year for “participating interests” and “direct holdings” (i.e. not through foreign 
+subsidiaries or branches) in real estate, both in the Netherlands and abroad. The purpose of a 
+participating interest is to acquire a lasting interest and control in the management. A 10% interest 
+(including a group interest) is used as the threshold for what constitutes a participating interest. 
+Interests below the 10% threshold must be reported on form T01.03 (‘Securities held’). Participating 
+interests include both unlisted and listed shares. Any branches that a reporting institution owns are 
+statistically considered to be participating interests. Both Dutch and foreign branches must be listed on 
+this form. For the value of the branch, its net asset value can be used.
+</p>
+    <hr>
+    <ul>
+      <li><code>dnb_v0056</code> ERROR: Als beginpositie > 300 000 000 → slotpositie verplicht</li>
+      <li><code>dnb_v0057</code> WARNING: Als beginpositie < 300 000 000 → begin < slot</li>
+      <li><code>dnb_v0054</code> ERROR: Dividend ≥ –30 000 000</li>
+      <li><code>dnb_v0058</code> ERROR: Operationeel resultaat ≥ 0</li>
+    </ul>
   </div>
 
+  <!-- 2) Validatierapport -->
   <div id="validationReport"></div>
-  <div id="validationMessages"></div>
+  <div id="validationMessages" style="display:none;"></div>
 
+  <!-- 3) Formulier -->
   <form onsubmit="return false;">
     <table id="subsidiariesTable">
       <thead>
         <tr>
-          <th>Country of counterparty ℹ</th>
+          <th>Country of counterparty
+            <span class="info-tooltip" title="The reporting institution must break down total holdings and real estate holdings by country by selecting 
+the appropriate country in the ‘Country of counterparty’ column. When selecting these countries, the 
+country of establishment of the reported counterparty is the correct selection, and not the country of 
+establishment of the reporting entity itself.">ℹ</span>
+          </th>
           <th>Position beginning (010)</th>
           <th>Position end (020)</th>
           <th>Dividend received (030)</th>
@@ -64,6 +225,7 @@
       </thead>
       <tbody></tbody>
     </table>
+
     <div class="button-group">
       <button type="button" id="addRowBtn">➕ Voeg rij toe</button>
       <button type="button" id="resetBtn">🔄 Reset formulier</button>
@@ -71,16 +233,23 @@
     </div>
   </form>
 
+  <!-- 4) Landenlijst -->
   <ul id="allCountries" style="display:none;">
     <li>Netherlands</li><li>Belgium</li><li>Germany</li><li>France</li>
     <li>United Kingdom</li><li>United States</li>
+    <!-- … alle overige landen … -->
   </ul>
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Refs
-    const tbody       = document.querySelector('#subsidiariesTable tbody');
-    const templateRow = document.createElement('tr');
+    const qCard = document.getElementById('initialQuestion');
+    const form  = document.querySelector('form');
+    const yesBtn= document.getElementById('questionYes');
+    const noBtn = document.getElementById('questionNo');
+
+    // 2) References
+    const tbody         = document.querySelector('#subsidiariesTable tbody');
+    const templateRow   = document.createElement('tr');
     templateRow.innerHTML = `
       <td class="country-cell">
         <input type="text" class="country-input" placeholder="Typ om te zoeken…" required>
@@ -91,164 +260,200 @@
       <td><input type="number" step="0.01" required></td>
       <td><input type="number" step="0.01" required></td>
       <td><button class="delete-button">🗑</button></td>`;
-    const btnAdd       = document.getElementById('addRowBtn');
-    const btnReset     = document.getElementById('resetBtn');
-    const btnNext      = document.getElementById('nextBtn');
-    const helpLink     = document.getElementById('helpLink');
-    const helpBox      = document.getElementById('helpBox');
-    const vrpt         = document.getElementById('validationReport');
-    const vmsg         = document.getElementById('validationMessages');
-    const btnExcel     = document.getElementById('excelImportBtn');
-    const inputExcel   = document.getElementById('excelFileInput');
-    const btnXbrl      = document.getElementById('xbrlImportBtn');
-    const inputXbrl    = document.getElementById('xbrlFileInput');
+    const btnAdd    = document.getElementById('addRowBtn');
+    const btnReset  = document.getElementById('resetBtn');
+    const btnNext   = document.getElementById('nextBtn');
+    const helpLink  = document.getElementById('helpLink');
+    const helpBox   = document.getElementById('helpBox');
+    const reportSec = document.getElementById('validationReport');
+    const msgCont   = document.getElementById('validationMessages');
 
-    // Helpers
+    // 3) Dropdown data
+    const countries = Array.from(document.querySelectorAll('#allCountries li'))
+                            .map(li=>li.textContent);
+
+    // 4) Helpers
     function addRow() {
       const tr = templateRow.cloneNode(true);
       tr.querySelectorAll('input').forEach(i=>i.value='');
-      tr.querySelector('.delete-button').addEventListener('click', e=>{
+      tr.querySelector('.delete-button').addEventListener('click', e => {
         e.preventDefault();
         if (tbody.rows.length>1) tr.remove();
         else alert('Minstens één rij vereist.');
       });
       tbody.appendChild(tr);
     }
-    function resetTable(){
-      if(!confirm('Weet je zeker?'))return;
-      Object.keys(localStorage).filter(k=>k.startsWith('T01.01')).forEach(k=>localStorage.removeItem(k));
-      loadData();
-      clearHighlights(); hideReports();
+    function resetTable() {
+      if (!confirm('Weet je zeker? Gegevens verdwijnen.')) return;
+      Object.keys(localStorage)
+        .filter(k=>k.startsWith('T01.01'))
+        .forEach(k=>localStorage.removeItem(k));
+      tbody.innerHTML = ''; addRow(); clearHighlights(); hideReports();
     }
-    function toggleHelp(){
+    function toggleHelp() {
       helpBox.style.display = helpBox.style.display==='block'?'none':'block';
     }
-    function hideReports(){
-      vrpt.style.display='none'; vmsg.style.display='none';
+    function hideReports() {
+      reportSec.style.display = 'none';
+      msgCont.style.display   = 'none';
     }
 
-    // Dropdown search
-    const countries = Array.from(document.querySelectorAll('#allCountries li')).map(li=>li.textContent);
-    tbody.addEventListener('input', e=>{
-      if(!e.target.classList.contains('country-input'))return;
-      const dd=e.target.nextElementSibling, val=e.target.value.toLowerCase();
-      dd.innerHTML = countries.filter(c=>c.toLowerCase().includes(val)).map(c=>`<div>${c}</div>`).join('');
-      dd.style.display = dd.innerHTML?'block':'none';
+    // 5) Searchable dropdown
+    tbody.addEventListener('input', e => {
+      if (!e.target.classList.contains('country-input')) return;
+      const dd = e.target.nextElementSibling;
+      const val = e.target.value.toLowerCase();
+      dd.innerHTML = countries
+        .filter(c=>c.toLowerCase().includes(val))
+        .map(c=>`<div>${c}</div>`).join('');
+      dd.style.display = dd.innerHTML? 'block':'none';
     });
-    tbody.addEventListener('click', e=>{
-      if(e.target.parentNode.classList.contains('country-dropdown')){
-        e.target.closest('.country-cell').querySelector('input').value=e.target.textContent;
-        e.target.parentNode.style.display='none';
+    tbody.addEventListener('click', e => {
+      if (e.target.parentNode.classList.contains('country-dropdown')) {
+        const inp = e.target.closest('.country-cell').querySelector('.country-input');
+        inp.value = e.target.textContent;
+        e.target.parentNode.style.display = 'none';
       }
     });
-    document.addEventListener('click', e=>{
-      if(!e.target.classList.contains('country-input'))
-        document.querySelectorAll('.country-dropdown').forEach(d=>d.style.display='none');
+    document.addEventListener('click', e => {
+      if (!e.target.classList.contains('country-input'))
+        document.querySelectorAll('.country-dropdown')
+                .forEach(d=>d.style.display='none');
     });
 
-    // Excel import
-    inputExcel.addEventListener('change', e=>{
-      const f=e.target.files[0]; if(!f)return;
-      const r=new FileReader();
-      r.onload=ev=>{
-        const data=new Uint8Array(ev.target.result);
-        const wb=XLSX.read(data,{type:'array'});
-        const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
-        localStorage.setItem('T01.01-excel',JSON.stringify(rows));
-        loadData();
-      };
-      r.readAsArrayBuffer(f);
-    });
-    btnExcel.addEventListener('click',()=>inputExcel.click());
+    // 6) Excel‐import
+    const key = Object.keys(localStorage).find(k=>k.startsWith('T01.01'));
+    tbody.innerHTML = ''; // altijd eerst leegmaken
 
-    // XBRL import
-    inputXbrl.addEventListener('change', e=>{
-      const f=e.target.files[0]; if(!f)return;
-      const r=new FileReader();
-      r.onload=ev=>{
-        const xml=new DOMParser().parseFromString(ev.target.result,'application/xml');
-        const rows=Array.from(xml.querySelectorAll('row')).map(r=>Array.from(r.querySelectorAll('col')).map(c=>c.textContent));
-        localStorage.setItem('T01.01-xbrl',JSON.stringify([].concat(rows)));
-        loadData();
-      };
-      r.readAsText(f);
-    });
-    btnXbrl.addEventListener('click',()=>inputXbrl.click());
-
-    // Load data function
-    function loadData(){
-      tbody.innerHTML='';
-      if(localStorage.getItem('T01.01-excel')){
-        JSON.parse(localStorage.getItem('T01.01-excel')).slice(1).forEach(cols=>{
-          addRow(); const tr=tbody.lastElementChild;
-          tr.querySelectorAll('input').forEach((inp,i)=>inp.value=cols[i]||'');
-        });
-        return;
-      }
-      if(localStorage.getItem('T01.01-xbrl')){
-        JSON.parse(localStorage.getItem('T01.01-xbrl')).forEach(cols=>{
-          addRow(); const tr=tbody.lastElementChild;
-          tr.querySelectorAll('input').forEach((inp,i)=>inp.value=cols[i]||'');
-        });
-        return;
-      }
-      const pkeys=Object.keys(localStorage).filter(k=>k.startsWith('T01.01-')).sort();
-      if(pkeys.length){
-        JSON.parse(localStorage.getItem(pkeys.pop())).forEach(cols=>{
-          addRow(); const tr=tbody.lastElementChild;
-          tr.querySelectorAll('input').forEach((inp,i)=>inp.value=cols[i]||'');
-        });
-      } else addRow();
+    if (key) {
+      const rows = JSON.parse(localStorage.getItem(key)).slice(1);
+        if (rows.length > 0) {
+          rows.forEach(cols => {
+        addRow();
+        const tr = tbody.lastElementChild;
+        tr.cells[0].querySelector('input').value = cols[0]||'';
+        for (let i = 1; i <= 4; i++) {
+          tr.cells[i].querySelector('input').value = cols[i] != null ? cols[i] : '';
+        }
+      });
+    } else {
+      // sheet bestaat maar bevat geen data‐rijen
+      addRow();
     }
+  } else {
+    // geen sheet gevonden
+    addRow();
+  }
 
-    // Validation setup
-    const rules=[
-      {id:'dnb_v0056',sev:'ERROR',validate:r=>{const a=+r.cells[1].querySelector('input').value||0,b=r.cells[2].querySelector('input').value;return!(a>300000000&&!b);}},
-      {id:'dnb_v0057',sev:'WARNING',validate:r=>{const a=+r.cells[1].querySelector('input').value||0,b=+r.cells[2].querySelector('input').value||0;return!(a<300000000&&a>=b);}},
-      {id:'dnb_v0054',sev:'ERROR',validate:r=>(+r.cells[3].querySelector('input').value||0)>=-30000000},
-      {id:'dnb_v0058',sev:'ERROR',validate:r=>(+r.cells[4].querySelector('input').value||0)>=0}
+    // 7) Validatie-rules
+    const rules = [
+      { id:'dnb_v0056',sev:'ERROR',validate:r=>{
+          const a=+r.cells[1].querySelector('input').value||0,
+                b=r.cells[2].querySelector('input').value;
+          return !(a>300000000 && !b);
+        }
+      },
+      { id:'dnb_v0057',sev:'WARNING',validate:r=>{
+          const a=+r.cells[1].querySelector('input').value||0,
+                b=+r.cells[2].querySelector('input').value||0;
+          return !(a<300000000 && a>=b);
+        }
+      },
+      { id:'dnb_v0054',sev:'ERROR',validate:r=>
+          (+r.cells[3].querySelector('input').value||0) >= -30000000
+      },
+      { id:'dnb_v0058',sev:'ERROR',validate:r=>
+          (+r.cells[4].querySelector('input').value||0) >= 0
+      }
     ];
-    const desc={
+    const desc = {
       dnb_v0056:'Als beginpositie > 300 000 000 → slotpositie verplicht.',
       dnb_v0057:'Als beginpositie < 300 000 000 → begin < slot.',
       dnb_v0054:'Dividend mag niet negatief.',
       dnb_v0058:'Operationeel resultaat mag niet negatief.'
     };
-    function runValidation(){const errs=[],warns=[];Array.from(tbody.rows).forEach((r,i)=>rules.forEach(rule=>{if(!rule.validate(r))((rule.sev==='ERROR')?errs:warns).push({row:i,rule:rule.id});}));return{errs,warns};}
-    function clearHighlights(){document.querySelectorAll('.error-cell,.warning-cell').forEach(e=>e.classList.remove('error-cell','warning-cell'));}
-    function markHighlights(errs,warns){const m={dnb_v0056:2,dnb_v0057:1,dnb_v0054:3,dnb_v0058:4};errs.forEach(e=>{const inp=tbody.rows[e.row].cells[m[e.rule]].querySelector('input');inp&&inp.classList.add('error-cell');});warns.forEach(e=>{const inp=tbody.rows[e.row].cells[m[e.rule]].querySelector('input');inp&&inp.classList.add('warning-cell');});}
+    function runValidation(){
+      const errs=[], warns=[];
+      Array.from(tbody.rows).forEach((r,i)=>{
+        rules.forEach(rule=>{
+          if (!rule.validate(r)) {
+            (rule.sev==='ERROR'? errs:warns).push({row:i,rule:rule.id});
+          }
+        });
+      });
+      return {errs,warns};
+    }
+    function clearHighlights(){
+      document.querySelectorAll('.error-cell, .warning-cell').forEach(e=>e.classList.remove('error-cell', 'warning-cell'));
+    }
 
-    // postMessage handler
-    window.addEventListener('message',evt=>{if(evt.data.action==='runValidation'){const{errs,warns}=runValidation();markHighlights(errs,warns);window.parent.postMessage({action:'validationResult',errs,warns},'*');}});
+    function markHighlights(errs, warns){
+    const colMap={ dnb_v0056:2, dnb_v0057:1, dnb_v0054:3, dnb_v0058:4 };
 
-    // Bind buttons
-    btnAdd.addEventListener('click',addRow);
-    btnReset.addEventListener('click',resetTable);
-    helpLink.addEventListener('click',toggleHelp);
+    // markeer errors (rood)
+    errs.forEach(e=>{
+      const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
+      inp && inp.classList.add('error-cell');
+    });
 
-    btnNext.addEventListener('click',function onNext(){
-      clearHighlights();hideReports();
-      const{errs,warns}=runValidation();
-      if(errs.length||warns.length){
-        let html='<h3>Validatierapport</h3>';
-        if(errs.length){html+='<div class="error"><strong>Errors:</strong><ul>';errs.forEach(e=>html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);html+='</ul></div>';}
-        if(warns.length){html+='<div class="warning"><strong>Warnings:</strong><ul>';warns.forEach(e=>html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);html+='</ul></div>';}
-        vrpt.innerHTML=html;vrpt.style.display='block';markHighlights(errs,warns);
+    // markeer warnings (geel)
+    warns.forEach(e=>{
+      const inp = tbody.rows[e.row].cells[colMap[e.rule]].querySelector('input');
+      inp && inp.classList.add('warning-cell');
+    });
+  }
+
+
+   window.addEventListener('message', evt => {
+    if (evt.data.action === 'runValidation') {
+      const { errs, warns } = runValidation();
+      markHighlights(errs, warns);
+      window.parent.postMessage({
+        action: 'validationResult',
+        errs, warns
+      }, '*');
+    }   // <-- sluit de if hier af
+
+  });  // <-- sluit de addEventListener hier af
+
+    // 8) Bind buttons
+    document.getElementById('addRowBtn').addEventListener('click', addRow);
+    document.getElementById('resetBtn').addEventListener('click', resetTable);
+    helpLink.addEventListener('click', toggleHelp);
+
+    btnNext.addEventListener('click', function onNext(){
+      clearHighlights(); hideReports();
+      const {errs,warns} = runValidation();
+      if (errs.length||warns.length) {
+        let html = '<h3>Validatierapport</h3>';
+        if (errs.length) {
+          html += '<div class="error"><strong>Errors:</strong><ul>';
+          errs.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
+          html+='</ul></div>';
+        }
+        if (warns.length) {
+          html+='<div class="warning"><strong>Warnings:</strong><ul>';
+          warns.forEach(e=> html+=`<li>Rij ${e.row+1} [${e.rule}]: ${desc[e.rule]}</li>`);
+          html+='</ul></div>';
+        }
+        reportSec.innerHTML = html;
+        reportSec.style.display = 'block';
+        markHighlights(errs, warns);
       } else {
-        const rows=Array.from(tbody.rows).map(r=>Array.from(r.querySelectorAll('input')).map(i=>i.value));
-        localStorage.setItem('T01.01-latest',JSON.stringify(rows));
-        vmsg.innerHTML='<div class="success-box">De rapportagedata is gevalideerd, u kunt verder.</div>';
-        vmsg.style.display='block';
-        this.textContent='Naar volgend formulier';
-        this.removeEventListener('click',onNext);
-        this.addEventListener('click',()=>{parent.loadForm('reporting-t01-02.html',parent.document.querySelector('.sidebar .nav-button[onclick*="reporting-t01-02.html"]'));});
+        msgCont.innerHTML = `<div class="success-box"> De rapportagedata op deze pagina is gevalideerd, u kunt nu verder.</div>`;
+        msgCont.style.display = 'block';
+        // maak Next eenmaal om naar volgende sheet te gaan
+        btnNext.textContent = 'Naar volgend formulier';
+        btnNext.removeEventListener('click', onNext);
+        btnNext.addEventListener('click', () => {
+          parent.loadForm('reporting-t01-02.html',
+            parent.document.querySelector('.sidebar button[onclick*="reporting-t01-02.html"]')
+          );
+        });
       }
     });
 
-    // Initial load
-    loadData();
-  });
+  }); // end DOMContentLoaded
   </script>
 </body>
 </html>
-
