@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Uw gegevens</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9fb;
+      margin: 0;
+      padding: 30px;
+    }
+    h2 {
+      color: #004080;
+      margin-bottom: 20px;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .field-group {
+      margin-bottom: 15px;
+    }
+    .field-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    .field-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #addSecondBtn {
+      background: none;
+      border: none;
+      color: #004080;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+    }
+    .button-group {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .button-group button {
+      background: #004080;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .button-group button:hover {
+      background: #003060;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Uw gegevens</h2>
+  <form id="contactForm" onsubmit="return false;">
+    <!-- Eerste contactpersoon -->
+    <div class="field-group">
+      <label for="name1">Naam contactpersoon 1 <span style="color:red;">*</span></label>
+      <input type="text" id="name1" name="name1" required placeholder="Bijv. Jan Jansen">
+    </div>
+    <div class="field-group">
+      <label for="email1">E-mail contactpersoon 1 <span style="color:red;">*</span></label>
+      <input type="email" id="email1" name="email1" required placeholder="bijv. jan.jansen@bedrijf.nl">
+    </div>
+
+    <!-- Knop om tweede contactpersoon toe te voegen -->
+    <button id="addSecondBtn">+ Tweede contactpersoon toevoegen</button>
+
+    <!-- Tweede contactpersoon (verbergbaar) -->
+    <div id="secondContact" style="display:none;">
+      <div class="field-group">
+        <label for="name2">Naam contactpersoon 2</label>
+        <input type="text" id="name2" name="name2" placeholder="Bijv. Piet Pietersen">
+      </div>
+      <div class="field-group">
+        <label for="email2">E-mail contactpersoon 2</label>
+        <input type="email" id="email2" name="email2" placeholder="bijv. piet.pietersen@bedrijf.nl">
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="button" id="cancelBtn">Annuleren</button>
+      <button type="submit" id="saveBtn">Opslaan en verder</button>
+    </div>
+  </form>
+
+  <script>
+    const addSecondBtn = document.getElementById('addSecondBtn');
+    const secondGroup  = document.getElementById('secondContact');
+    const cancelBtn    = document.getElementById('cancelBtn');
+    const saveBtn      = document.getElementById('saveBtn');
+
+    // Toon/verberg tweede contactpersoon
+    addSecondBtn.addEventListener('click', e => {
+      e.preventDefault();
+      secondGroup.style.display = secondGroup.style.display === 'none' ? 'block' : 'none';
+      addSecondBtn.textContent = secondGroup.style.display === 'none'
+        ? '+ Tweede contactpersoon toevoegen'
+        : '– Tweede contactpersoon verbergen';
+    });
+
+    // Annuleer: terug naar overzicht
+    cancelBtn.addEventListener('click', () => {
+      parent.loadForm('reporting-controle.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-controle.html"]')
+      );
+    });
+
+    // Opslaan en verder
+    saveBtn.addEventListener('click', () => {
+      const name1  = document.getElementById('name1').value.trim();
+      const email1 = document.getElementById('email1').value.trim();
+      const name2  = document.getElementById('name2').value.trim();
+      const email2 = document.getElementById('email2').value.trim();
+
+      if (!name1 || !email1) {
+        alert('Vul de verplichte velden voor contactpersoon 1 in.');
+        return;
+      }
+
+      // Sla op in localStorage
+      const contacts = {
+        contact1: { name: name1, email: email1 },
+        contact2: name2 || email2 ? { name: name2, email: email2 } : null
+      };
+      localStorage.setItem('reportingContacts', JSON.stringify(contacts));
+
+      // Navigeer naar de controle-pagina
+      parent.loadForm('reporting-controle.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-controle.html"]')
+      );
+    });
+  </script>
+
+</body>
+</html>
