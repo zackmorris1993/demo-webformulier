@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>T 01.04 – Derivative assets (Vraag)</title>
+  <style>
+    body { font-family: Arial,sans-serif; background:#f9f9fb; margin:0; padding:30px; }
+    .card { background:#fff; border:1px solid #ddd; border-radius:6px; max-width:500px;
+            margin:60px auto; padding:30px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    h2 { color:#004080; margin-bottom:20px; }
+    p  { color:#333; margin-bottom:30px; line-height:1.4; }
+    .button-group { display:flex; justify-content:center; gap:20px; }
+    .button-group button {
+      background:#004080; color:#fff; border:none; padding:12px 24px;
+      border-radius:5px; cursor:pointer; transition:background .2s;
+    }
+    .button-group button:hover { background:#003060; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h3>Heeft u in de periode 01-01-2024 t/m 31-12-2024 posities in derivative assets gehad?</h3>
+    <div class="button-group">
+      <button id="btnYes">Ja</button>
+      <button id="btnNo">Nee</button>
+    </div>
+  </div>
+
+  <script>
+    // 1) Zet de modus op 'blank'
+    sessionStorage.setItem('reportStartMode','blank');
+
+    document.getElementById('btnYes').addEventListener('click', () => {
+      // “Ja”: ga door naar het daadwerkelijke formulier
+      window.location.href = 'reporting-t01-04.html';
+    });
+
+    document.getElementById('btnNo').addEventListener('click', () => {
+      // “Nee”: skip naar de volgende pagina
+      parent.loadForm(
+        'reporting-t02-01-question.html',
+        parent.document.querySelector('.sidebar button[onclick*="reporting-t02-01-question.html"]')
+      );
+    });
+  </script>
+
+</body>
+</html>
