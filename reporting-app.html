@@ -185,85 +185,32 @@
   </div>
 
   <script>
+  // Alle navigatie-knoppen in de sidebar krijgen de klasse .nav-button
+  // Pas je HTML aan: <button class="nav-button" onclick="loadForm(...)" ...
 
-    function loadForm(page, button) {
+  function loadForm(page, button) {
     document.getElementById('formFrame').src = page;
 
-    const buttons = document.querySelectorAll('.sidebar button[onclick^="loadForm"]');
-    buttons.forEach(btn => btn.classList.remove('active'));
+    // Activeer alleen de aangeklikte nav-button
+    const navBtns = document.querySelectorAll('.sidebar .nav-button');
+    navBtns.forEach(btn => btn.classList.remove('active'));
+    if (button) button.classList.add('active');
+  }
 
-      if (button) button.classList.add('active');
-    }
-
-    function toggleSidebar() {
-      var sb = document.getElementById('sidebar');
-      sb.classList.toggle('hidden');
-      var btn = document.getElementById('toggleBtn');
-      btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
-    }
-
-    // 1-klik validatie over alle formulieren
-  function runAllForms() {
-    const forms = [
-      'reporting-t01-01.html',
-      'reporting-t01-02.html',
-      'reporting-t01-03.html',
-      'reporting-t01-04.html',
-      'reporting-t02-01.html',
-      'reporting-t02-02.html',
-      'reporting-t02-03.html',
-      'reporting-t02-04.html',
-      'reporting-t03-01.html',
-      'reporting-t04-01.html',
-      'reporting-t05-01.html'
-    ];
-
-    (async () => {
-      for (let page of forms) {
-        // laad formulier in iframe
-        const btn = document.querySelector(`.sidebar button[onclick*="${page}"]`);
-        loadForm(page, btn);
-
-        // wacht op iframe load
-        await new Promise(res => {
-          const iframe = document.getElementById('formFrame');
-          iframe.onload = () => res();
-        });
-
-        // vraag validatie op
-        const result = await new Promise(res => {
-          window.addEventListener('message', function handler(evt) {
-            if (evt.data.action === 'validationResult') {
-              window.removeEventListener('message', handler);
-              res(evt.data);
-            }
-          });
-          document.getElementById('formFrame').contentWindow.postMessage(
-            { action: 'runValidation' },
-            '*'
-          );
-        });
-
-        if (result.errs.length) {
-          alert(`Er zijn fouten in ${page}.\nGa eerst naar dat formulier om te corrigeren.`);
-          return;
-        }
-      }
-
-      alert('✅ Alle formulieren zijn succesvol gevalideerd. U kunt nu indienen.');
-      // eventueel: hier de “Indienen”-knop activeren
-    })();
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    sb.classList.toggle('hidden');
+    const btn = document.getElementById('toggleBtn');
+    btn.innerHTML = sb.classList.contains('hidden') ? '▸' : '◂';
   }
 
   let filterActive = false;
-
   function filterForms() {
-    const buttons = document.querySelectorAll('.sidebar button[onclick^="loadForm"]');
     filterActive = !filterActive;
 
-    buttons.forEach(btn => {
-      const isIngevuld = btn.dataset.status === 'ingevuld';
-      btn.style.display = (!filterActive || isIngevuld) ? 'block' : 'none';
+    document.querySelectorAll('.sidebar .nav-button').forEach(btn => {
+      const isFilled = btn.dataset.status === 'ingevuld';
+      btn.style.display = (!filterActive || isFilled) ? '' : 'none';
     });
 
     const toggleBtn = document.getElementById('filterToggleBtn');
@@ -271,17 +218,18 @@
       ? 'Toon alle formulieren'
       : 'Toon alleen ingevulde formulieren';
   }
-    
+
   document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.querySelector('.sidebar button[onclick*="reporting-start.html"]');
-  loadForm('reporting-start.html', btn);
+    // Laad direct de eerste pagina
+    const startBtn = document.querySelector('.sidebar .nav-button[onclick*="reporting-start.html"]');
+    loadForm('reporting-start.html', startBtn);
 
-  // Zorg dat alle knoppen zichtbaar zijn bij start
-  filterForms(); // activeert filter één keer
-  filterForms(); // deactiveert het direct weer (start met alle knoppen zichtbaar)
+    // Eén keer filter initialiseren (zorgt dat alle knoppen zichtbaar zijn)
+    filterForms();
+    filterForms();
   });
+</script>
 
-  </script>
 
 </body>
 </html>
