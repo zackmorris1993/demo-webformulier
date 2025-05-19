@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Controle & Indienen</title>
   <style>
-    body {  
+    body {
       font-family: Arial, sans-serif;
       background: #f9f9fb;
       margin: 0;
@@ -16,28 +16,28 @@
       border: 1px solid #ddd;
       border-radius: 6px;
       padding: 25px;
+      max-width: 500px;
+      margin: auto;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      max-width: 600px;
-      margin: 0 auto;
     }
-    h2 { color: #004080; margin-bottom: 5px; }
-    h3 { margin-top: 0; color: #004080; font-size: 1em; }
+    h2 { color: #004080; margin-bottom:5px; }
+    h3 { margin-top:0; color: #004080; font-size:1em; }
     .status {
-      font-size: 1em; margin: 20px 0;
+      display: block;
+      font-size: 1em;
+      padding: 12px;
+      border-radius: 4px;
+      margin: 20px 0;
     }
     .status.success {
+      background: #d4edda;
       color: #155724;
-      background-color: #d4edda;
       border-left: 4px solid #c3e6cb;
-      padding: 12px;
-      border-radius: 4px;
     }
     .status.error {
+      background: #f8d7da;
       color: #721c24;
-      background-color: #f8d7da;
       border-left: 4px solid #f5c6cb;
-      padding: 12px;
-      border-radius: 4px;
     }
     button {
       background-color: #004080;
@@ -52,6 +52,8 @@
       background-color: #cccccc;
       cursor: not-allowed;
     }
+    /* Verberg de iframe */
+    #validatorFrame { display: none; }
   </style>
 </head>
 <body>
@@ -59,61 +61,48 @@
   <div class="box">
     <h2>Stuur uw rapportage in</h2>
     <h3>Controleer of T 01.01 is gevalideerd.</h3>
-    <p class="status error" id="statusBox">
-      ❌ T 01.01 is nog niet gevalideerd.
-    </p>
+    <span id="statusBox" class="status error">
+      ❌ Validatie wordt uitgevoerd…
+    </span>
     <button id="submitBtn" disabled>📤 Indienen rapportage</button>
   </div>
+
+  <!-- Verborgen iframe laadt T01.01 en voert validatie uit -->
+  <iframe id="validatorFrame" src="reporting-t01-01.html"></iframe>
 
   <script>
     const statusBox = document.getElementById('statusBox');
     const submitBtn = document.getElementById('submitBtn');
-    const iframe    = parent.document.getElementById('formFrame');
+    const validator = document.getElementById('validatorFrame');
 
-    // Functie om validatiestatus te checken
-    function checkValidation() {
-      // Kijk of T01.01 in de iframe is geladen
-      const src = iframe.getAttribute('src') || '';
-      // Als pagina-URL reporting-t01-01.html in src zit, vragen we validatie-resultaat
-      if (src.includes('reporting-t01-01.html')) {
-        // Post message om validatie te starten
-        iframe.contentWindow.postMessage({ action: 'runValidation' }, '*');
-      } else {
-        // Iets anders geladen (bijv. reporting-controle.html zelf), disable knop
-        statusBox.className = 'status error';
-        statusBox.textContent = '❌ Laad eerst het formulier T 01.01.';
-        submitBtn.disabled = true;
-      }
-    }
+    // 1) Zodra de iframe haar inhoud geladen heeft, vraag validatie aan
+    validator.addEventListener('load', () => {
+      validator.contentWindow.postMessage({ action: 'runValidation' }, '*');
+    });
 
-    // Ontvang validatie-resultaat
+    // 2) Ontvang resultaat van T01.01
     window.addEventListener('message', evt => {
-      if (evt.data.action === 'validationResult') {
-        const { errs, warns } = evt.data;
-        if (errs.length === 0 && warns.length === 0) {
-          statusBox.className = 'status success';
-          statusBox.textContent = '✅ T 01.01 is gevalideerd. Indienen mogelijk.';
-          submitBtn.disabled = false;
-        } else {
-          statusBox.className = 'status error';
-          statusBox.textContent = `❌ Validatie faalde: ${errs.length} errors, ${warns.length} warnings.`;
-          submitBtn.disabled = true;
-        }
+      if (evt.data.action !== 'validationResult') return;
+      const { errs, warns } = evt.data;
+
+      if (errs.length === 0 && warns.length === 0) {
+        // succesvol gevalideerd
+        statusBox.textContent = '✅ T 01.01 is gevalideerd. Indienen mogelijk.';
+        statusBox.className = 'status success';
+        submitBtn.disabled = false;
+      } else {
+        // fouten of waarschuwingen
+        statusBox.textContent =
+          `❌ Validatie mislukt: ${errs.length} error(s), ${warns.length} warning(s).`;
+        statusBox.className = 'status error';
+        submitBtn.disabled = true;
       }
     });
 
-    // Start check zodra controle-pagina opent
-    iframe.addEventListener('load', checkValidation);
-
-    // Ook een interval, zodat terugklikken in de iframe opgepikt wordt
-    const interval = setInterval(checkValidation, 500);
-
-    // Fictieve indiende-actie
+    // 3) Fictieve indien-actie
     submitBtn.addEventListener('click', () => {
-      clearInterval(interval);
-      alert('📨 Rapportage is (fictief) succesvol ingediend!');
+      alert('📨 Rapportage is (demo) succesvol ingediend!');
     });
   </script>
 </body>
 </html>
-
