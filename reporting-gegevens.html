@@ -71,6 +71,7 @@
 <body>
 
   <h2>Uw gegevens</h2>
+  <p>Op dit formulier kunt u uw gegevens ter contact over de ingezonden rapportage achterlaten. U bent verplicht om minimaal één contactpersoon op te geven.</p>
   <form id="contactForm" onsubmit="return false;">
     <!-- Eerste contactpersoon -->
     <div class="field-group">
@@ -98,7 +99,6 @@
     </div>
 
     <div class="button-group">
-      <button type="button" id="cancelBtn">Annuleren</button>
       <button type="submit" id="saveBtn">Opslaan en verder</button>
     </div>
   </form>
@@ -106,7 +106,6 @@
   <script>
     const addSecondBtn = document.getElementById('addSecondBtn');
     const secondGroup  = document.getElementById('secondContact');
-    const cancelBtn    = document.getElementById('cancelBtn');
     const saveBtn      = document.getElementById('saveBtn');
 
     // Toon/verberg tweede contactpersoon
@@ -116,13 +115,6 @@
       addSecondBtn.textContent = secondGroup.style.display === 'none'
         ? '+ Tweede contactpersoon toevoegen'
         : '– Tweede contactpersoon verbergen';
-    });
-
-    // Annuleer: terug naar overzicht
-    cancelBtn.addEventListener('click', () => {
-      parent.loadForm('reporting-controle.html',
-        parent.document.querySelector('.sidebar button[onclick*="reporting-controle.html"]')
-      );
     });
 
     // Opslaan en verder
