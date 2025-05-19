@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>T 05.01 – Totals CFI Benchmark</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9fb; margin: 0; padding: 30px; }
+    h2  { color: #004080; margin-bottom: 15px; }
+    table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1); margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd; padding: 8px; text-align: left;
+    }
+    th {
+      background: #f0f6ff; color: #004080;
+    }
+    input {
+      width: 100%; padding: 6px; border: 1px solid #ccc;
+      border-radius: 4px; background: #e9ecef; box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>T 05.01 – Totals CFI Benchmark</h2>
+  <p>Hieronder vind je de som van alle “Position end (020)”-waarden uit T 01.01.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Formulier</th>
+        <th>Code</th>
+        <th>Total amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T 01.01 – Subsidiaries, Position at end of the book year</td>
+        <td>010</td>
+        <td><input id="total010" readonly></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    // Vind alle localStorage-keys die beginnen met "T01.01-"
+    const keys = Object.keys(localStorage)
+      .filter(k => k.startsWith('T01.01-'));
+
+    if (keys.length === 0) {
+      document.getElementById('total010').value = '0.00';
+    } else {
+      // Kies de meest recente key (laatste in alfabetische volgorde)
+      keys.sort();
+      const latestKey = keys[keys.length - 1];
+      // Parse de opgeslagen data (array van rijen, elke rij is array van waarden)
+      const rows = JSON.parse(localStorage.getItem(latestKey));
+
+      // Bereken de som van kolom index 2 ("Position end")
+      const sum = rows.reduce((acc, row) => {
+        const v = parseFloat(row[2]);
+        return acc + (isNaN(v) ? 0 : v);
+      }, 0);
+
+      // Toon resultaat
+      document.getElementById('total010').value = sum.toFixed(2);
+    }
+  </script>
+
+</body>
+</html>
