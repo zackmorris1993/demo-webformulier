@@ -79,6 +79,56 @@
       display: none;
       background: #007b00;
     }
+
+    .file-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.file-name {
+  font-size: 0.9em;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  color: #c00;
+  cursor: pointer;
+  font-size: 1.2em;
+  line-height: 1;
+  padding: 0;
+}
+
+/* hergebruik je bestaande button-stijlen */
+.btn-primary {
+  background: #002d9c;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #007b00;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.start-btn {
+  display: none; /* standaard onzichtbaar */
+}
   </style>
 </head>
 <body>
@@ -93,15 +143,29 @@
       <button id="btnBlank">Start lege rapportage</button>
     </div>
     
-    <!-- Excel-template -->
-    <div class="card" id="card-excel">
-      <h3>Upload Excel‐template</h3>
-      <p>Gebruik uw ingevulde Excel‐template. Deze wordt automatisch ingeladen.</p>
-      <input type="file" id="excelUpload" accept=".xlsx,.xls">
-      <button id="btnExcel">📁 Bestand kiezen…</button>
-      <div id="excelFilename" class="filename"></div>
-      <button id="btnStartExcel" class="start-btn">▶️ Start met Excel</button>
-    </div>
+   <div class="card" id="card-excel">
+  <h3>Upload Excel-template</h3>
+  <p>Gebruik uw ingevulde Excel-template. Deze wordt automatisch ingeladen.</p>
+
+  <!-- verborgen file input -->
+  <input type="file" id="excelUpload" accept=".xlsx,.xls">
+
+  <!-- inline bestands‐selector + naam + verwijder -->
+  <div class="file-control">
+    <button type="button" id="btnExcel" class="btn-primary">
+      📁 Bestand kiezen…
+    </button>
+    <span id="excelFilename" class="file-name"></span>
+    <button type="button" id="btnRemoveExcel" class="btn-icon" title="Verwijder bestand">
+      ✕
+    </button>
+  </div>
+
+  <!-- startknop, pas verschijnt na keuze -->
+  <button id="btnStartExcel" class="btn-secondary start-btn">
+    ▶ Start met rapporteren op basis van bovenstaand Excel-bestand
+  </button>
+  </div>
 
     <!-- XBRL-upload -->
     <div class="card" id="card-xbrl">
@@ -114,89 +178,95 @@
     </div>
 
   </div>
-
-  <script>
-    // --- Lege rapportage ---
-    document.getElementById('btnBlank').addEventListener('click', () => {
+<script>
+  // --- Lege rapportage ---
+  document.getElementById('btnBlank')
+    .addEventListener('click', () => {
       sessionStorage.setItem('reportStartMode','blank');
       location.href = 'reporting-t01-01-question.html';
     });
 
-    // --- Excel upload ---
-    const excelInput    = document.getElementById('excelUpload');
-    const btnExcel      = document.getElementById('btnExcel');
-    const excelFilename = document.getElementById('excelFilename');
-    const btnStartExcel = document.getElementById('btnStartExcel');
+  // --- Excel upload inline ---
+  const excelInput      = document.getElementById('excelUpload');
+  const btnExcel        = document.getElementById('btnExcel');
+  const excelFilename   = document.getElementById('excelFilename');
+  const btnRemoveExcel  = document.getElementById('btnRemoveExcel');
+  const btnStartExcel   = document.getElementById('btnStartExcel');
 
-    btnExcel.addEventListener('click', () => excelInput.click());
+  // Open file-picker
+  btnExcel.addEventListener('click', () => excelInput.click());
 
-    excelInput.addEventListener('change', () => {
-      const file = excelInput.files[0];
-      if (!file) return;
-      excelFilename.innerHTML = `
-        <span>${file.name}</span>
-        <button title="Verwijder bestand">✕</button>
-      `;
-      btnStartExcel.style.display = 'inline-block';
-      // Verwijder-knop
-      excelFilename.querySelector('button').addEventListener('click', () => {
-        excelInput.value = '';
-        excelFilename.textContent = '';
-        btnStartExcel.style.display = 'none';
-      });
-    });
+  // Na keuze bestand
+  excelInput.addEventListener('change', () => {
+    const file = excelInput.files[0];
+    if (!file) return;
+    excelFilename.textContent = file.name;
+    btnRemoveExcel.style.display  = 'inline-block';
+    btnStartExcel.style.display   = 'inline-block';
+  });
 
-    btnStartExcel.addEventListener('click', () => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const data = new Uint8Array(e.target.result);
-        const wb   = XLSX.read(data, { type: 'array' });
-        wb.SheetNames.forEach(name => {
-          const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
-            header: 1, raw: true
-          });
-          localStorage.setItem(name, JSON.stringify(arr2d));
+  // Verwijder geselecteerd bestand
+  btnRemoveExcel.addEventListener('click', () => {
+    excelInput.value             = '';
+    excelFilename.textContent    = '';
+    btnRemoveExcel.style.display = 'none';
+    btnStartExcel.style.display  = 'none';
+  });
+
+  // Start met Excel: inladen en navigeren
+  btnStartExcel.addEventListener('click', () => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const data = new Uint8Array(e.target.result);
+      const wb   = XLSX.read(data, { type: 'array' });
+      wb.SheetNames.forEach(name => {
+        const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
+          header: 1, raw: true
         });
-        sessionStorage.setItem('reportStartMode','upload');
-        location.href = 'reporting-t01-01.html';
-      };
-      reader.readAsArrayBuffer(excelInput.files[0]);
-    });
-
-    // --- XBRL upload ---
-    const xbrlInput    = document.getElementById('xbrlUpload');
-    const btnXBRL      = document.getElementById('btnXBRL');
-    const xbrlFilename = document.getElementById('xbrlFilename');
-    const btnStartXBRL = document.getElementById('btnStartXBRL');
-
-    btnXBRL.addEventListener('click', () => xbrlInput.click());
-
-    xbrlInput.addEventListener('change', () => {
-      const file = xbrlInput.files[0];
-      if (!file) return;
-      xbrlFilename.innerHTML = `
-        <span>${file.name}</span>
-        <button title="Verwijder bestand">✕</button>
-      `;
-      btnStartXBRL.style.display = 'inline-block';
-      // Verwijder-knop
-      xbrlFilename.querySelector('button').addEventListener('click', () => {
-        xbrlInput.value = '';
-        xbrlFilename.textContent = '';
-        btnStartXBRL.style.display = 'none';
+        localStorage.setItem(name, JSON.stringify(arr2d));
       });
-    });
+      sessionStorage.setItem('reportStartMode','upload');
+      location.href = 'reporting-t01-01.html';
+    };
+    reader.readAsArrayBuffer(excelInput.files[0]);
+  });
 
-    btnStartXBRL.addEventListener('click', () => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        localStorage.setItem('XBRL', e.target.result);
-        sessionStorage.setItem('reportStartMode','upload');
-        location.href = 'reporting-t01-01.html';
-      };
-      reader.readAsText(xbrlInput.files[0]);
-    });
-  </script>
+  // --- XBRL upload inline ---
+  const xbrlInput      = document.getElementById('xbrlUpload');
+  const btnXBRL        = document.getElementById('btnXBRL');
+  const xbrlFilename   = document.getElementById('xbrlFilename');
+  const btnRemoveXBRL  = document.getElementById('btnRemoveXBRL');
+  const btnStartXBRL   = document.getElementById('btnStartXBRL');
+
+  btnXBRL.addEventListener('click', () => xbrlInput.click());
+
+  xbrlInput.addEventListener('change', () => {
+    const file = xbrlInput.files[0];
+    if (!file) return;
+    xbrlFilename.textContent = file.name;
+    btnRemoveXBRL.style.display  = 'inline-block';
+    btnStartXBRL.style.display   = 'inline-block';
+  });
+
+  btnRemoveXBRL.addEventListener('click', () => {
+    xbrlInput.value             = '';
+    xbrlFilename.textContent    = '';
+    btnRemoveXBRL.style.display = 'none';
+    btnStartXBRL.style.display  = 'none';
+  });
+
+  btnStartXBRL.addEventListener('click', () => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      localStorage.setItem('XBRL', e.target.result);
+      sessionStorage.setItem('reportStartMode','upload');
+      location.href = 'reporting-t01-01.html';
+    };
+    reader.readAsText(xbrlInput.files[0]);
+  });
+</script>
+
+ 
 
 </body>
 </html>
