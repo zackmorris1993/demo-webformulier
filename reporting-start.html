@@ -53,6 +53,18 @@
       font-size: 0.9em;
       color: #333;
       min-height: 1.2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .filename button {
+      background: none;
+      border: none;
+      color: #c00;
+      cursor: pointer;
+      font-size: 1.2em;
+      line-height: 1;
     }
     .card button {
       margin-top: 15px;
@@ -83,87 +95,109 @@
     
     <!-- Excel-template -->
     <div class="card" id="card-excel">
-      <h3>Upload Excel-template</h3>
-      <p>Gebruik uw ingevulde Excel-template. Deze wordt automatisch ingeladen.</p>
+      <h3>Upload Excel‐template</h3>
+      <p>Gebruik uw ingevulde Excel‐template. Deze wordt automatisch ingeladen.</p>
       <input type="file" id="excelUpload" accept=".xlsx,.xls">
-      <button id="btnExcel">Bestand kiezen…</button>
+      <button id="btnExcel">📁 Bestand kiezen…</button>
       <div id="excelFilename" class="filename"></div>
-      <button id="btnStartExcel" class="start-btn">Start met rapporteren op basis van dit bestand</button>
+      <button id="btnStartExcel" class="start-btn">▶️ Start met Excel</button>
     </div>
 
     <!-- XBRL-upload -->
     <div class="card" id="card-xbrl">
-      <h3>Upload XBRL-rapportage</h3>
-      <p>Upload uw XBRL-file. Deze wordt automatisch ingeladen.</p>
+      <h3>Upload XBRL‐rapportage</h3>
+      <p>Upload uw XBRL‐file. Deze wordt automatisch ingeladen.</p>
       <input type="file" id="xbrlUpload" accept=".xbrl,.xml">
-      <button id="btnXBRL">Bestand kiezen…</button>
+      <button id="btnXBRL">📁 Bestand kiezen…</button>
       <div id="xbrlFilename" class="filename"></div>
-      <button id="btnStartXBRL" class="start-btn">Start met rapporteren op basis van dit bestand</button>
+      <button id="btnStartXBRL" class="start-btn">▶️ Start met XBRL</button>
     </div>
 
   </div>
 
   <script>
-  // === Excel upload in één stap ===
-const excelInput    = document.getElementById('excelUpload');
-const btnExcel      = document.getElementById('btnExcel');
-const excelFilename = document.getElementById('excelFilename');
-
-btnExcel.addEventListener('click', () => excelInput.click());
-
-excelInput.addEventListener('change', () => {
-  const file = excelInput.files[0];
-  if (!file) return;
-  excelFilename.textContent = file.name;
-
-  const reader = new FileReader();
-  reader.onload = e => {
-    const data = new Uint8Array(e.target.result);
-    const wb   = XLSX.read(data, { type: 'array' });
-    wb.SheetNames.forEach(name => {
-      const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
-        header: 1,
-        raw: true
-      });
-      localStorage.setItem(name, JSON.stringify(arr2d));
+    // --- Lege rapportage ---
+    document.getElementById('btnBlank').addEventListener('click', () => {
+      sessionStorage.setItem('reportStartMode','blank');
+      location.href = 'reporting-t01-01-question.html';
     });
-    // zet de mode en navigeer door
-    sessionStorage.setItem('reportStartMode','upload');
-    location.href = 'reporting-t01-01.html';
-  };
-  reader.readAsArrayBuffer(file);
-});
 
-// === XBRL upload in één stap ===
-const xbrlInput    = document.getElementById('xbrlUpload');
-const btnXBRL      = document.getElementById('btnXBRL');
-const xbrlFilename = document.getElementById('xbrlFilename');
+    // --- Excel upload ---
+    const excelInput    = document.getElementById('excelUpload');
+    const btnExcel      = document.getElementById('btnExcel');
+    const excelFilename = document.getElementById('excelFilename');
+    const btnStartExcel = document.getElementById('btnStartExcel');
 
-btnXBRL.addEventListener('click', () => xbrlInput.click());
+    btnExcel.addEventListener('click', () => excelInput.click());
 
-xbrlInput.addEventListener('change', () => {
-  const file = xbrlInput.files[0];
-  if (!file) return;
-  xbrlFilename.textContent = file.name;
-
-  const reader = new FileReader();
-  reader.onload = e => {
-    localStorage.setItem('XBRL', e.target.result);
-    sessionStorage.setItem('reportStartMode','upload');
-    location.href = 'reporting-t01-01.html';
-  };
-  reader.readAsText(file);
-});
-
-    
-
-    // === Start lege rapportage ===
-    document.getElementById('btnBlank')
-      .addEventListener('click', () => {
-        sessionStorage.setItem('reportStartMode','blank');
-        location.href = 'reporting-t01-01-question.html';
+    excelInput.addEventListener('change', () => {
+      const file = excelInput.files[0];
+      if (!file) return;
+      excelFilename.innerHTML = `
+        <span>${file.name}</span>
+        <button title="Verwijder bestand">✕</button>
+      `;
+      btnStartExcel.style.display = 'inline-block';
+      // Verwijder-knop
+      excelFilename.querySelector('button').addEventListener('click', () => {
+        excelInput.value = '';
+        excelFilename.textContent = '';
+        btnStartExcel.style.display = 'none';
       });
+    });
+
+    btnStartExcel.addEventListener('click', () => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const data = new Uint8Array(e.target.result);
+        const wb   = XLSX.read(data, { type: 'array' });
+        wb.SheetNames.forEach(name => {
+          const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
+            header: 1, raw: true
+          });
+          localStorage.setItem(name, JSON.stringify(arr2d));
+        });
+        sessionStorage.setItem('reportStartMode','upload');
+        location.href = 'reporting-t01-01.html';
+      };
+      reader.readAsArrayBuffer(excelInput.files[0]);
+    });
+
+    // --- XBRL upload ---
+    const xbrlInput    = document.getElementById('xbrlUpload');
+    const btnXBRL      = document.getElementById('btnXBRL');
+    const xbrlFilename = document.getElementById('xbrlFilename');
+    const btnStartXBRL = document.getElementById('btnStartXBRL');
+
+    btnXBRL.addEventListener('click', () => xbrlInput.click());
+
+    xbrlInput.addEventListener('change', () => {
+      const file = xbrlInput.files[0];
+      if (!file) return;
+      xbrlFilename.innerHTML = `
+        <span>${file.name}</span>
+        <button title="Verwijder bestand">✕</button>
+      `;
+      btnStartXBRL.style.display = 'inline-block';
+      // Verwijder-knop
+      xbrlFilename.querySelector('button').addEventListener('click', () => {
+        xbrlInput.value = '';
+        xbrlFilename.textContent = '';
+        btnStartXBRL.style.display = 'none';
+      });
+    });
+
+    btnStartXBRL.addEventListener('click', () => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        localStorage.setItem('XBRL', e.target.result);
+        sessionStorage.setItem('reportStartMode','upload');
+        location.href = 'reporting-t01-01.html';
+      };
+      reader.readAsText(xbrlInput.files[0]);
+    });
   </script>
 
 </body>
 </html>
+
