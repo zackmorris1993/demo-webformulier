@@ -99,7 +99,7 @@
     }
 
     .file-info-row {
-      display: flex;
+      display: none;
       align-items: center;
       gap: 8px;
     }
@@ -182,46 +182,50 @@
         location.href = 'reporting-t01-01-question.html';
       });
 
-    // --- Excel upload inline ---
-    const excelInput      = document.getElementById('excelUpload');
-    const btnExcel        = document.getElementById('btnExcel');
-    const excelFilename   = document.getElementById('excelFilename');
-    const btnRemoveExcel  = document.getElementById('btnRemoveExcel');
-    const btnStartExcel   = document.getElementById('btnStartExcel');
+// --- Excel upload inline ---
+const excelInput      = document.getElementById('excelUpload');
+const btnExcel        = document.getElementById('btnExcel');
+const excelFilename   = document.getElementById('excelFilename');
+const btnRemoveExcel  = document.getElementById('btnRemoveExcel');
+const btnStartExcel   = document.getElementById('btnStartExcel');
+const fileInfoRow     = document.getElementById('fileInfoRow'); // ← toegevoegd
 
-    btnExcel.addEventListener('click', () => excelInput.click());
+btnExcel.addEventListener('click', () => excelInput.click());
 
-    excelInput.addEventListener('change', () => {
-      const file = excelInput.files[0];
-      if (!file) return;
-      excelFilename.textContent    = file.name;
-      btnRemoveExcel.style.display = 'inline';
-      btnStartExcel.style.display  = 'inline-block';
+excelInput.addEventListener('change', () => {
+  const file = excelInput.files[0];
+  if (!file) return;
+  excelFilename.textContent    = file.name;
+  btnRemoveExcel.style.display = 'inline';
+  btnStartExcel.style.display  = 'inline-block';
+  fileInfoRow.style.display    = 'flex'; // ← toegevoegd
+});
+
+btnRemoveExcel.addEventListener('click', () => {
+  excelInput.value             = '';
+  excelFilename.textContent    = '';
+  btnRemoveExcel.style.display = 'none';
+  btnStartExcel.style.display  = 'none';
+  fileInfoRow.style.display    = 'none'; // ← toegevoegd
+});
+
+btnStartExcel.addEventListener('click', () => {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = new Uint8Array(e.target.result);
+    const wb   = XLSX.read(data, { type: 'array' });
+    wb.SheetNames.forEach(name => {
+      const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
+        header: 1, raw: true
+      });
+      localStorage.setItem(name, JSON.stringify(arr2d));
     });
+    sessionStorage.setItem('reportStartMode','upload');
+    location.href = 'reporting-t01-01.html';
+  };
+  reader.readAsArrayBuffer(excelInput.files[0]);
+});
 
-    btnRemoveExcel.addEventListener('click', () => {
-      excelInput.value             = '';
-      excelFilename.textContent    = '';
-      btnRemoveExcel.style.display = 'none';
-      btnStartExcel.style.display  = 'none';
-    });
-
-    btnStartExcel.addEventListener('click', () => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const data = new Uint8Array(e.target.result);
-        const wb   = XLSX.read(data, { type: 'array' });
-        wb.SheetNames.forEach(name => {
-          const arr2d = XLSX.utils.sheet_to_json(wb.Sheets[name], {
-            header: 1, raw: true
-          });
-          localStorage.setItem(name, JSON.stringify(arr2d));
-        });
-        sessionStorage.setItem('reportStartMode','upload');
-        location.href = 'reporting-t01-01.html';
-      };
-      reader.readAsArrayBuffer(excelInput.files[0]);
-    });
 
     // --- XBRL upload inline ---
     const xbrlInput      = document.getElementById('xbrlUpload');
