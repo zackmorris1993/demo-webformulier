@@ -3,129 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mijn DNB - TOC Rapportage</title>
+  <title>Mijn DNB – TOC Rapportage</title>
   <style>
-    /* Body & reset */
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9fb;
+      background: #f9f9fb;
       margin: 0;
-      padding: 0;
-    }
-    /* Header */
-    header {
-      background-color: #002d9c;
-      color: white;
-      padding: 15px 30px;
-      font-size: 1.4em;
-    }
-    /* Card container */
-    .container {
-      max-width: 600px;
-      background: white;
-      margin: 30px auto;
       padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .container {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
     }
     h2 {
-      color: #002d9c;
+      color: #004080;
       margin-top: 0;
       margin-bottom: 20px;
+      font-size: 1.5em;
     }
-    /* Labels & fields */
     label {
       display: block;
       margin-top: 15px;
+      color: #004080;
       font-weight: bold;
-      color: #333;
     }
     input[type="text"],
     select {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      box-sizing: border-box;
       font-size: 1em;
-      background-color: #e9ecef;
+      background: #fff;
     }
-    input[type="text"][readonly] {
+    input[readonly] {
+      background: #e9ecef;
       color: #555;
     }
-    select {
-      background-color: white;
-    }
-    /* Help link & box */
     .help-link {
       display: inline-block;
-      margin-top: 5px;
-      font-size: 0.9em;
-      color: #0056b3;
+      margin-top: 6px;
+      color: #004080;
       text-decoration: underline;
+      font-size: 0.9em;
       cursor: pointer;
     }
     .help-box {
       display: none;
-      background-color: #e6f4ff;
-      padding: 10px;
+      background: #e6f4ff;
+      padding: 15px;
       margin-top: 10px;
-      border-radius: 6px;
-      font-size: 0.95em;
+      border-left: 4px solid #004080;
+      border-radius: 4px;
       color: #003366;
-      border-left: 4px solid #002d9c;
     }
-    /* Buttons */
     .button-group {
       display: flex;
       justify-content: space-between;
       margin-top: 30px;
     }
-    button {
-      background-color: #002d9c;
+    .button-group button {
+      background: #004080;
       color: white;
       border: none;
-      padding: 12px 25px;
+      padding: 10px 20px;
+      border-radius: 5px;
       font-size: 1em;
-      border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: background 0.2s;
     }
-    button:hover {
-      background-color: #001f6b;
+    .button-group button:hover {
+      background: #003060;
     }
-    button:disabled {
-      background-color: #999;
+    .button-group button:disabled {
+      background: #999;
       cursor: not-allowed;
     }
-
-    /* Zorg dat het identifier-veld altijd wit is */
-    #identifier {
-      background-color: white;
-    }
-    
   </style>
 </head>
 <body>
-
-  <header>
-    Mijn DNB - TOC Rapportage
-  </header>
 
   <div class="container">
     <h2>TOC – Algemene gegevens</h2>
 
     <form id="tocForm" onsubmit="return false;">
-      <label for="periodStart">Period Start</label>
+      <label for="periodStart">Periode Start</label>
       <input type="text" id="periodStart" value="01-01-2024" readonly>
 
-      <label for="periodEnd">Period End</label>
+      <label for="periodEnd">Periode Eind</label>
       <input type="text" id="periodEnd" value="31-12-2024" readonly>
 
       <label for="identifier">Identifier <span style="color:red">*</span></label>
       <input type="text" id="identifier" name="identifier" placeholder="Vul hier de identifier in" required>
       <a class="help-link" onclick="toggleHelp()">Hulp bij invullen</a>
-
       <div id="helpBox" class="help-box">
         <p>Om u te identificeren als rapporterende instelling dient u hier een identificatie-code in te vullen. Dit kan een:</p>
         <ul>
@@ -160,8 +136,9 @@
   <script>
     function toggleHelp() {
       const box = document.getElementById('helpBox');
-      box.style.display = box.style.display === 'block' ? 'none' : 'block';
+      box.style.display = (box.style.display === 'block' ? 'none' : 'block');
     }
+
     function goNext() {
       const id = document.getElementById('identifier').value.trim();
       const sc = document.getElementById('scheme').value;
@@ -169,10 +146,10 @@
         alert('Vul zowel Identifier als Scheme in voordat je doorgaat.');
         return;
       }
+      // doorgaan naar T01.01
       window.location.href = 'reporting-t01-01.html';
     }
   </script>
 
 </body>
 </html>
-
