@@ -79,12 +79,16 @@
       margin-top: 4px;
     }
     /* bestand-preview inline */
+
     .file-control {
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
       margin-top: 10px;
+      margin-bottom: 10px;
     }
+    
     .file-name {
       font-size: 0.9em;
       color: #333;
@@ -93,6 +97,13 @@
       text-overflow: ellipsis;
       max-width: 140px;
     }
+
+    .file-info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     /* startknop standaard verborgen */
     .start-btn {
       display: none;
@@ -119,16 +130,18 @@
       <!-- verborgen file-input -->
       <input type="file" id="excelUpload" accept=".xlsx,.xls">
 
-      <!-- inline bestands-selector + preview + verwijderknop -->
-      <div class="file-control">
-        <button type="button" id="btnExcel" class="btn-primary">
-          📁 Bestand kiezen…
-        </button>
+    <!-- inline bestands-selector + preview + verwijderknop -->
+    <div class="file-control">
+      <button type="button" id="btnExcel" class="btn-primary">
+        📁 Bestand kiezen…
+      </button>
+      <div class="file-info-row">
         <span id="excelFilename" class="file-name"></span>
         <button type="button" id="btnRemoveExcel" class="btn-icon" title="Verwijder bestand">
           ✕
         </button>
       </div>
+    </div>
 
       <!-- startknop pas zichtbaar na bestandkeuze -->
       <button id="btnStartExcel" class="btn-secondary start-btn">
