@@ -85,6 +85,28 @@
       background: #999;
       cursor: not-allowed;
     }
+
+    /* reporting-toc.html stylesheet */
+.toc-info {
+  background: #e6f4ff;
+  border-left: 4px solid #004080;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 4px;
+  max-width: 300px; /* of een percentage */
+}
+.toc-info h3 {
+  margin-top: 0;
+  color: #004080;
+}
+.toc-info ul {
+  margin: 10px 0 0 1em;
+  color: #003366;
+}
+.toc-info li {
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
   </style>
 </head>
 <body>
@@ -143,6 +165,15 @@
 
       <label for="T05.01">T 05.01 – Totals CFI Benchmark</label>
       <input type="text" id="T05.01" value="positive" readonly>
+
+      <aside class="toc-info">
+        <h3>Waarom is voorinvullen belangrijk?</h3>
+          <ul>
+            <li>Voor elke 10 aanleveringen worden er 4 niet geaccepteerd.</li>
+            <li>71 procent van de niet geaccepteerde aanleveringen zijn technische fouten.</li>
+            <li>26 procent van de niet geaccepteerde aanleveringen zijn inhoudelijke (taxonomie) fouten.</li>
+          </ul>
+      </aside>
 
 
       <div class="button-group">
