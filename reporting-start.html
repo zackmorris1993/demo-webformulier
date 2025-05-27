@@ -290,7 +290,7 @@ btnStartExcel.addEventListener('click', () => {
       localStorage.setItem(name, JSON.stringify(arr2d));
     });
     sessionStorage.setItem('reportStartMode','upload');
-    location.href = 'reporting-t01-01.html';
+    location.href = 'reporting-controle.html';
   };
   reader.readAsArrayBuffer(excelInput.files[0]);
 });
@@ -325,7 +325,7 @@ btnStartExcel.addEventListener('click', () => {
       reader.onload = e => {
         localStorage.setItem('XBRL', e.target.result);
         sessionStorage.setItem('reportStartMode','upload');
-        location.href = 'reporting-t01-01.html';
+        location.href = 'reporting-controle.html';
       };
       reader.readAsText(xbrlInput.files[0]);
     });
