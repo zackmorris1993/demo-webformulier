@@ -99,26 +99,11 @@
       <label for="periodEnd">Periode Eind</label>
       <input type="text" id="periodEnd" value="31-12-2024" readonly>
 
-      <label for="identifier">Identifier <span style="color:red">*</span></label>
-      <input type="text" id="identifier" name="identifier" placeholder="Vul hier de identifier in" required>
-      <a class="help-link" onclick="toggleHelp()">Hulp bij invullen</a>
-      <div id="helpBox" class="help-box">
-        <p>Om u te identificeren als rapporterende instelling dient u hier een identificatie-code in te vullen. Dit kan een:</p>
-        <ul>
-          <li>KvK-nummer</li>
-          <li>RIAD-code</li>
-          <li>LEI-code</li>
-        </ul>
-        <p>Kies bij “Scheme” het bijbehorende type code.</p>
-      </div>
+      <label for="identifier">Identifier</label>
+      <input type="text" id="identifier" value="900004485" readonly>
 
-      <label for="scheme">Scheme <span style="color:red">*</span></label>
-      <select id="scheme" name="scheme" required>
-        <option value="">-- Maak een keuze --</option>
-        <option value="http://www.dnb.nl/kvk">http://www.dnb.nl/kvk</option>
-        <option value="http://www.dnb.nl/riad">http://www.dnb.nl/riad</option>
-        <option value="http://www.dnb.nl/lei">http://www.dnb.nl/lei</option>
-      </select>
+      <label for="identifier">Scheme</label>
+      <input type="text" id="scheme" value="http://www.dnb.nl/kvk" readonly>
 
       <label for="currency">Currency</label>
       <input type="text" id="currency" value="EUR" readonly>
