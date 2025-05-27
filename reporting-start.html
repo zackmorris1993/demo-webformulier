@@ -107,6 +107,46 @@
     .start-btn {
       display: none;
     }
+
+    /* Maak ruimte tussen de blokken */
+.options.profiles {
+  margin-top: 30px;
+}
+
+/* Profile-card header */
+.profile-card .profile-header {
+  background: #002d9c;
+  color: white;
+  padding: 12px 16px;
+  font-weight: bold;
+  border-radius: 6px 6px 0 0;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+/* Profile-card body */
+.profile-card .profile-body {
+  padding: 16px;
+}
+
+/* Bullet-list in de profielen */
+.profile-card .profile-body ul {
+  list-style: disc inside;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.profile-card .profile-body li {
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+/* Zorg dat de drie profielen naast elkaar blijven zoals de upload-cards */
+.options.profiles .profile-card {
+  flex: 1 1 280px; /* past bij jouw .card breedte */
+}
+
   </style>
 </head>
 <body>
@@ -172,6 +212,49 @@
     </div>
 
   </div>
+
+  <!-- … ná je upload-cards … -->
+<div class="options">
+  <!-- jouw bestaande drie upload-cards hier -->
+</div>
+
+<!-- Profielen onder de upload-keuze -->
+<div class="options profiles">
+  <div class="card profile-card">
+    <div class="profile-header">Holding</div>
+    <div class="profile-body">
+      <ul>
+        <li>Levert aan via Excel-template</li>
+        <li>Rapporteert niet frequent</li>
+        <li>CFI Benchmark, PAY-D</li>
+        <li>Rapporteren één van de taken</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card profile-card">
+    <div class="profile-header">Beleggingsinstelling</div>
+    <div class="profile-body">
+      <ul>
+        <li>Levert aan via Excel-template</li>
+        <li>Moet frequent rapporteren</li>
+        <li>MESRAP-IF, MESRAP-OFI</li>
+        <li>Gespecialiseerde collega’s</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card profile-card">
+    <div class="profile-header">Bank, pensioenfonds</div>
+    <div class="profile-body">
+      <ul>
+        <li>Levert aan via XBRL-bestand</li>
+        <li>Moet frequent rapporteren</li>
+        <li>MESRAP-DTC, MSR-CUST</li>
+        <li>Heeft afdeling voor reporting</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 
   <script>
     // --- Lege rapportage ---
