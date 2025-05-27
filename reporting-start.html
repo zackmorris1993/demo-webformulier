@@ -113,6 +113,21 @@
   margin-top: 30px;
 }
 
+.options {
+  display: flex;
+  flex-wrap: wrap;           /* laat regels breken */
+  justify-content: center;   /* centreert alle kaarten */
+  gap: 20px;                 /* ruimte ertussen */
+  max-width: 1200px;         /* optioneel: breedtebegrenzing */
+  margin: 0 auto;            /* centreer container op pagina */
+}
+
+/* behoud je bestaande .card styling */
+.card {
+  flex: 1 1 280px;           /* zorgt dat elke kaart min. 280px wordt */
+}
+    
+
 /* Profile-card header */
 .profile-card .profile-header {
   background: #002d9c;
@@ -154,106 +169,78 @@
   <h2>Kies een startmethode om uw rapportage aan te leveren</h2>
   <div class="options">
 
-    <!-- Lege rapportage -->
+    <!-- 1) Upload-cards -->
     <div class="card" id="card-blank">
       <h3>Start lege rapportage</h3>
       <p>Geen bestand? U kunt het formulier ook handmatig invullen.</p>
       <button id="btnBlank" class="btn-primary">Start lege rapportage</button>
     </div>
     
-    <!-- Excel-upload -->
     <div class="card" id="card-excel">
       <h3>Upload Excel-template</h3>
       <p>Gebruik uw ingevulde Excel-template. Deze wordt automatisch ingeladen.</p>
-
-      <!-- verborgen file-input -->
-      <input type="file" id="excelUpload" accept=".xlsx,.xls">
-
-    <!-- inline bestands-selector + preview + verwijderknop -->
-    <div class="file-control">
-      <button type="button" id="btnExcel" class="btn-primary">
-        📁 Bestand kiezen…
-      </button>
-      <div class="file-info-row">
-        <span id="excelFilename" class="file-name"></span>
-        <button type="button" id="btnRemoveExcel" class="btn-icon" title="Verwijder bestand">
-          ✕
-        </button>
+      <input type="file" id="excelUpload" accept=".xlsx,.xls" style="display:none;">
+      <div class="file-control">
+        <button type="button" id="btnExcel" class="btn-primary">📁 Bestand kiezen…</button>
+        <div class="file-info-row">
+          <span id="excelFilename" class="file-name"></span>
+          <button type="button" id="btnRemoveExcel" class="btn-icon" title="Verwijder bestand">✕</button>
+        </div>
       </div>
+      <button id="btnStartExcel" class="btn-secondary start-btn">▶ Start met Excel</button>
     </div>
-
-      <!-- startknop pas zichtbaar na bestandkeuze -->
-      <button id="btnStartExcel" class="btn-secondary start-btn">
-        ▶ Start met Excel
-      </button>
-    </div>
-
-    <!-- XBRL-upload -->
+    
     <div class="card" id="card-xbrl">
       <h3>Upload XBRL-rapportage</h3>
       <p>Upload uw XBRL-file. Deze wordt automatisch ingeladen.</p>
-
-      <!-- verborgen file-input -->
-      <input type="file" id="xbrlUpload" accept=".xbrl,.xml">
-
+      <input type="file" id="xbrlUpload" accept=".xbrl,.xml" style="display:none;">
       <div class="file-control">
-        <button type="button" id="btnXBRL" class="btn-primary">
-          📁 Bestand kiezen…
-        </button>
-        <span id="xbrlFilename" class="file-name"></span>
-        <button type="button" id="btnRemoveXBRL" class="btn-icon" title="Verwijder bestand">
-          ✕
-        </button>
+        <button type="button" id="btnXBRL" class="btn-primary">📁 Bestand kiezen…</button>
+        <div class="file-info-row">
+          <span id="xbrlFilename" class="file-name"></span>
+          <button type="button" id="btnRemoveXBRL" class="btn-icon" title="Verwijder bestand">✕</button>
+        </div>
       </div>
+      <button id="btnStartXBRL" class="btn-secondary start-btn">▶ Start met XBRL</button>
+    </div>
 
-      <button id="btnStartXBRL" class="btn-secondary start-btn">
-        ▶ Start met XBRL
-      </button>
+    <!-- 2) Profiel-cards -->
+    <div class="card profile-card">
+      <div class="profile-header">Holding</div>
+      <div class="profile-body">
+        <ul>
+          <li>Levert aan via Excel-template</li>
+          <li>Rapporteert niet frequent</li>
+          <li>CFI Benchmark, PAY-D</li>
+          <li>Rapporteren één van de taken</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card profile-card">
+      <div class="profile-header">Beleggingsinstelling</div>
+      <div class="profile-body">
+        <ul>
+          <li>Levert aan via Excel-template</li>
+          <li>Moet frequent rapporteren</li>
+          <li>MESRAP-IF, MESRAP-OFI</li>
+          <li>Gespecialiseerde collega’s</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card profile-card">
+      <div class="profile-header">Bank, pensioenfonds</div>
+      <div class="profile-body">
+        <ul>
+          <li>Levert aan via XBRL-bestand</li>
+          <li>Moet frequent rapporteren</li>
+          <li>MESRAP-DTC, MSR-CUST</li>
+          <li>Heeft afdeling voor reporting</li>
+        </ul>
+      </div>
     </div>
 
   </div>
-
-  <!-- … ná je upload-cards … -->
-<div class="options">
-  <!-- jouw bestaande drie upload-cards hier -->
-</div>
-
-<!-- Profielen onder de upload-keuze -->
-<div class="options profiles">
-  <div class="card profile-card">
-    <div class="profile-header">Holding</div>
-    <div class="profile-body">
-      <ul>
-        <li>Levert aan via Excel-template</li>
-        <li>Rapporteert niet frequent</li>
-        <li>CFI Benchmark, PAY-D</li>
-        <li>Rapporteren één van de taken</li>
-      </ul>
-    </div>
-  </div>
-  <div class="card profile-card">
-    <div class="profile-header">Beleggingsinstelling</div>
-    <div class="profile-body">
-      <ul>
-        <li>Levert aan via Excel-template</li>
-        <li>Moet frequent rapporteren</li>
-        <li>MESRAP-IF, MESRAP-OFI</li>
-        <li>Gespecialiseerde collega’s</li>
-      </ul>
-    </div>
-  </div>
-  <div class="card profile-card">
-    <div class="profile-header">Bank, pensioenfonds</div>
-    <div class="profile-body">
-      <ul>
-        <li>Levert aan via XBRL-bestand</li>
-        <li>Moet frequent rapporteren</li>
-        <li>MESRAP-DTC, MSR-CUST</li>
-        <li>Heeft afdeling voor reporting</li>
-      </ul>
-    </div>
-  </div>
-</div>
+</body>
 
 
   <script>
